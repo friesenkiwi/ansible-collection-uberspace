@@ -1,0 +1,33 @@
+- name: Get dashboard
+  uri:
+    url: "{{ uberspace_authentication_url }}"
+    method: GET
+    return_content: yes
+    headers:
+      Cookie: "{{ uberspace_cookieheader }}"
+  register: dashboardresult
+- name: Show firstbootresult
+  debug:
+    var: dashboardresult
+- name: Deploy key
+  vars:
+    csrftoken: "{{ dashboardresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
+  uri:
+    url: "{{ uberspace_addkey_url }}"
+    headers:
+      Cookie: "has_seen_register_page=1; {{ uberspace_cookie | default (firstbootresult.cookies_string) }}"
+      Origin: "https://{{ uberspace_firstboot_url  | urlsplit('hostname') }}"
+      Referer: "{{ uberspace_firstboot_url }}"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      _csrf_token: "{{ csrftoken }}"
+      return_to: "authentication"
+      ssh_key: "{{ uberspace_loginkey }}"
+    return_content: yes
+    status_code: 302
+  register: keydeployresult
+
+- name: Show keydeployresult
+  debug:
+    var: keydeployresult

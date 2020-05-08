@@ -1,0 +1,198 @@
+- name: Retrieve registerform
+  uri:
+    url: "{{ uberspace_registerform_url }}"
+    return_content: yes
+  register: formresult
+# - name: output formresult
+#   debug:
+#     var: formresult
+# - name: Get the CSRF token
+#   xml:
+#     xmlstring: "{{ formresult.content }}"
+#     xpath: /html/body//form/input[@name='_csrf_token']/@value
+#   register: csrftoken
+- name: output csrftoken
+  vars:
+    csrftoken: "{{ formresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
+  debug:
+    var: csrftoken
+- name: check name availability
+  uri:
+    url: "{{ uberspace_register_url }}"
+  register: checkresult
+  failed_when: checkresult.status!=200 and checkresult.status!=403
+- name: output checkresult
+  debug:
+    var: checkresult
+- name: Successful
+  when: checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
+  debug:
+    msg: "Dieser Wunschname ist noch zu haben!"
+- name: Unsuccessful
+  when: checkresult.status==403
+  debug:
+    msg: "Diesen Namen hat sich leider schon jemand anders gewünscht :-("
+
+# - name: Register
+#   vars:
+#     csrftoken: "{{ formresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1') }}"
+#   uri:
+#     url: "{{ uberspace_create_url }}"
+#     headers:
+#       Cookie: "has_seen_register_page=1; {{ uberspace_cookie | default(formresult.cookies_string) }}"
+#       Origin: "https://{{ uberspace_registerform_url  | urlsplit('hostname') }}"
+#       Referer: "{{ uberspace_registerform_url }}"
+#     method: POST
+#     body_format: form-urlencoded
+#     body:
+#       _csrf_token: "{{ csrftoken }}"
+#       mail: ""
+#       login: "{{ uberspace_loginname }}"
+#       u7: 1
+#     return_content: yes
+#     status_code: 302
+#   register: registerresult
+# - name: output registerresult
+#   debug:
+#     var: registerresult
+
+- name: Pause play until space has been created
+  uri:
+    url: "{{ uberspace_check_url }}"
+    follow_redirects: none
+    method: GET
+    return_content: yes
+    headers:
+      Cookie: "{{ uberspace_cookieheader }}"
+  register: checkresult
+  until: checkresult.status == 200
+  retries: 100
+  delay: 3 # Every 3 seconds
+- name: output checkresult
+  debug:
+    var: checkresult
+
+- name: Get firstboot page
+  uri:
+    url: "{{ uberspace_firstboot_url }}"
+    method: GET
+    return_content: yes
+    headers:
+      Cookie: "{{ uberspace_cookieheader }}"
+  register: registerresult
+
+- name: Get firstboot page
+  uri:
+    url: "{{ uberspace_authentication_url }}"
+    method: GET
+    return_content: yes
+    headers:
+      Cookie: "{{ uberspace_cookieheader }}"
+  register: registerresult
+
+- name: Show firstboot page
+  debug:
+    var: registerresult
+
+- name: Set password
+  vars:
+    csrftoken: "{{ registerresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
+  uri:
+    url: "{{ uberspace_setwebpassword_url }}"
+    headers:
+      Cookie: "has_seen_register_page=1; {{ uberspace_cookie | default (registerresult.cookies_string) }}"
+      Origin: "https://{{ uberspace_authentication_url | urlsplit('hostname') }}"
+      Referer: "{{ uberspace_authentication_url }}"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      _csrf_token: "{{ csrftoken }}"
+      return_to: "authentication"
+      password: "{{ uberspace_loginpassword }}"
+    return_content: yes
+    status_code: 302
+  register: setpasswordresult
+
+- name: Show setpasswordresult
+  debug:
+    var: setpasswordresult
+
+
+- name: Show password
+  vars:
+    password: "{{ registerresult.content | regex_search(uberspace_password_field) | regex_replace(uberspace_password_field, '\\2') }}"
+  debug:
+    var: password
+
+- name: Show csrf token
+  vars:
+    csrftoken: "{{ registerresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1') }}"
+  debug:
+    var: csrftoken
+
+# - name: store password locally
+#   delegate_to: localhost
+#   copy:
+#     content: "{{ registerresult.content | regex_search(uberspace_password_field) | regex_replace(uberspace_password_field, '\\2') }}"
+#     dest: "{{ uberspace_passwordfetch_destination }}"
+
+- name: Configure (first boot)
+  vars:
+    csrftoken: "{{ registerresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1') }}"
+    # password: "{{ registerresult.content | regex_search(uberspace_password_field) | regex_replace(uberspace_password_field, '\\2') }}"
+  uri:
+    url: "{{ uberspace_firstboot_url }}"
+    headers:
+      Cookie: "{{ uberspace_cookieheader }}"
+      Origin: "https://{{ uberspace_firstboot_url | urlsplit('hostname') }}"
+      Referer: "{{ uberspace_firstboot_url }}"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      _csrf_token: "{{ csrftoken }}"
+      return_to: ../dashboard
+      default_email_address: ""
+      username: "{{ uberspace_loginname }}"
+      web_password: "{{ password | default(uberspace_loginpassword) }}"
+      price: 10
+    return_content: yes
+    status_code: 302
+  register: firstbootresult
+
+- name: Show firstbootresult
+  debug:
+    var: firstbootresult
+
+- name: Get dashboard
+  uri:
+    url: "{{ uberspace_authentication_url }}"
+    method: GET
+    return_content: yes
+    headers:
+      Cookie: "{{ uberspace_cookieheader }}"
+  register: dashboardresult
+- name: Show firstbootresult
+  debug:
+    var: dashboardresult
+- name: Deploy key
+  vars:
+    csrftoken: "{{ dashboardresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
+  uri:
+    url: "{{ uberspace_addkey_url }}"
+    headers:
+      Cookie: "has_seen_register_page=1; {{ uberspace_cookie | default (firstbootresult.cookies_string) }}"
+      Origin: "https://{{ uberspace_firstboot_url  | urlsplit('hostname') }}"
+      Referer: "{{ uberspace_firstboot_url }}"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      _csrf_token: "{{ csrftoken }}"
+      return_to: "authentication"
+      ssh_key: "{{ uberspace_loginkey }}"
+    return_content: yes
+    status_code: 302
+  register: keydeployresult
+
+- name: Show keydeployresult
+  debug:
+    var: keydeployresult

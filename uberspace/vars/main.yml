@@ -1,0 +1,26 @@
+uberspace_loginname: foobar1
+uberspace_passwordfetch_destination: "credentials/uberspace_loginpassword_{{ uberspace_loginname }}"
+uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
+
+#uberspace_session:  "{{ lookup('file', 'credentials/uberspace_session_' + uberspace_loginname) }}"
+#uberspace_cookie: "uberspace_session={{ uberspace_session }}"
+#uberspace_cookieheader: "has_seen_register_page=1; {{ uberspace_cookie | default(checkresult.cookies_string) }}"
+#uberspace_cookieheader: "{{ uberspace_cookie | default(checkresult.cookies_string) }}"
+uberspace_csrf_field: '<input type=\"hidden\" name=\"_csrf_token\" value=\"(.*)\" />'
+uberspace_password_field: '<input type=\"password\" (.*) value=\"(.*)\" onkeyup=(.*) />'
+
+uberspace_loginkey: "{{ lookup('file', 'credentials/id_rsa_uberspace_refuger.pub') }}"
+
+uberspace_registerform_url: "https://dashboard.uberspace.de/register"
+uberspace_register_url: "https://dashboard.uberspace.de/register/check_name?login={{ uberspace_loginname }}&AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
+uberspace_create_url: "https://dashboard.uberspace.de/register/create"
+uberspace_check_url: "https://dashboard.uberspace.de/dashboard/ajax_state?AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
+uberspace_login_url: "https://dashboard.uberspace.de/login"
+uberspace_firstboot_url: "https://dashboard.uberspace.de/dashboard/firstboot"
+uberspace_dashboard_url: "https://dashboard.uberspace.de/dashboard/"
+uberspace_authentication_url: "https://dashboard.uberspace.de/dashboard/authentication"
+uberspace_setwebpassword_url: "https://dashboard.uberspace.de/dashboard/set_web_password"
+uberspace_addkey_url: "https://dashboard.uberspace.de/dashboard/add_ssh_key"
+
+uberspace_headers:
+  Cookie: "{{ uberspace_cookie }}"
