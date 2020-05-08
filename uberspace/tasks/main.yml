@@ -9,9 +9,9 @@
 - name: Do login
   when: checkresult.status==403 and uberspace_session is not defined
   include_tasks: login.yml
-- name: Set password
+- name: Do passwordset
   include_tasks: password.yml
-- name: Deploy key
+- name: Do key deployment
   import_tasks: key.yml
-- name: Delete
-  include_tasks: delete.yml
+# - name: Do delete
+#   include_tasks: delete.yml
