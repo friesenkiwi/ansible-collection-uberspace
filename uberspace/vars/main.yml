@@ -24,3 +24,5 @@ uberspace_addkey_url: "https://dashboard.uberspace.de/dashboard/add_ssh_key"
 
 uberspace_headers:
   Cookie: "{{ uberspace_cookie }}"
+
+csrftoken: "{{ formresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"

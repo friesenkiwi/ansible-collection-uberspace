@@ -9,3 +9,7 @@
 - name: Do login
   when: checkresult.status==403
   import_tasks: login.yml
+- name: Set password
+  import_tasks: password.yml
+- name: Deploy key
+  import_tasks: key.yml
