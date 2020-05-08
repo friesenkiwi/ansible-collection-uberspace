@@ -27,7 +27,7 @@
   set_fact:
     uberspace_cookie: "{{ registerresult.set_cookie.split(';')[0] }}"
 
-- name: Pause play until space has been created
+- name: Wait for space creation to finish
   uri:
     url: "{{ uberspace_check_url }}"
     follow_redirects: none
@@ -35,7 +35,7 @@
     return_content: yes
     headers: "{{ uberspace_headers }}"
   register: checkresult
-  until: checkresult.status == 200
+  until: checkresult.content == "active"
   retries: 100
   delay: 3 # Every 3 seconds
 - name: Output checkresult
@@ -53,18 +53,3 @@
 - name: Show firstboot page
   debug:
     var: firstbootresult
-
-- name: Get authentication page
-  uri:
-    url: "{{ uberspace_authentication_url }}"
-    method: GET
-    return_content: yes
-    headers: "{{ uberspace_headers }}"
-  register: authenticationresult
-
-- name: Show authentication page
-  debug:
-    var: authenticationresult
-
-- name: Set password
-  import_tasks: password.yml

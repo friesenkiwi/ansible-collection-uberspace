@@ -2,7 +2,7 @@
   uri:
     url: "{{ uberspace_login_url }}"
     return_content: yes
-  register: loginformresult
+  register: formresult
 
 - name: Login to get session
   uri:
