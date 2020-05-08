@@ -3,9 +3,9 @@
     url: "{{ uberspace_register_url }}"
   register: checkresult
   failed_when: checkresult.status!=200 and checkresult.status!=403
-# - name: Do registration
-#   when: checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
-#   import_tasks: register.yml
+- name: Do registration
+  when: checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
+  import_tasks: register.yml
 - name: Do login
   when: checkresult.status==403
   import_tasks: login.yml

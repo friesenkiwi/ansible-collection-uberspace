@@ -5,8 +5,6 @@
   register: loginformresult
 
 - name: Login to get session
-  vars:
-    csrftoken: "{{ loginformresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
   uri:
     url: "{{ uberspace_login_url }}"
     method: POST

@@ -21,6 +21,8 @@ uberspace_dashboard_url: "https://dashboard.uberspace.de/dashboard/"
 uberspace_authentication_url: "https://dashboard.uberspace.de/dashboard/authentication"
 uberspace_setwebpassword_url: "https://dashboard.uberspace.de/dashboard/set_web_password"
 uberspace_addkey_url: "https://dashboard.uberspace.de/dashboard/add_ssh_key"
+uberspace_delete_url: "https://dashboard.uberspace.de/dashboard/delete"
+uberspace_deletequeue_url: "https://dashboard.uberspace.de/dashboard/delete_queue"
 
 uberspace_headers:
   Cookie: "{{ uberspace_cookie }}"

@@ -1,0 +1,16 @@
+- name: Get deletion page
+  uri:
+    url: "{{ uberspace_delete_url }}"
+    headers: "{{ uberspace_headers }}"
+    return_content: yes
+  register: formresult
+
+- name: Delete uberspace
+  uri:
+    url: "{{ uberspace_deletequeue_url }}"
+    headers: "{{ uberspace_headers }}"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      _csrf_token: "{{ csrftoken }}"
+    status_code: 302
