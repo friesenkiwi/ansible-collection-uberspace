@@ -13,3 +13,5 @@
   import_tasks: password.yml
 - name: Deploy key
   import_tasks: key.yml
+- name: Delete
+  import_tasks: delete.yml
