@@ -1,10 +1,12 @@
 - name: Get authentication page
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_authentication_url }}"
     headers: "{{ uberspace_headers }}"
     return_content: yes
   register: formresult
 - name: Deploy key
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_addkey_url }}"
     headers: "{{ uberspace_headers }}"

@@ -1,10 +1,12 @@
 - name: Get login form for CSRF token
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_login_url }}"
     return_content: yes
   register: formresult
 
 - name: Login to get session
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_login_url }}"
     method: POST
@@ -17,17 +19,18 @@
     status_code: 302
   register: loginresult
 
-- name: Store session as cookie
+- name: Store session cookie as fact
   set_fact:
     uberspace_cookie: "{{ loginresult.set_cookie.split(';')[0] }}"
 
-- name: Get dashboard
-  uri:
-    url: "{{ uberspace_dashboard_url }}"
-    headers: "{{ uberspace_headers }}"
-    return_content: yes
-  register: dashboardresult
-
-- name: Show dashboardresult page
-  debug:
-    var: dashboardresult
+# - name: Get dashboard
+#   delegate_to: localhost
+#   uri:
+#     url: "{{ uberspace_dashboard_url }}"
+#     headers: "{{ uberspace_headers }}"
+#     return_content: yes
+#   register: dashboardresult
+#
+# - name: Show dashboardresult page
+#   debug:
+#     var: dashboardresult

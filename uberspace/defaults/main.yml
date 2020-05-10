@@ -2,3 +2,5 @@ uberspace_loginname:
 uberspace_passwordfetch_destination: "credentials/uberspace_loginpassword_{{ uberspace_loginname }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
 uberspace_loginkey: "{{ lookup('file', 'credentials/uberspace_loginkey_' + uberspace_loginname) }}"
+uberspace_action_delete: false
+uberspace_action_setup: false

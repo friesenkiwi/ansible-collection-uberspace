@@ -1,4 +1,5 @@
 - name: Get register form for CSRF token
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_registerform_url }}"
     return_content: yes
@@ -9,6 +10,7 @@
     uberspace_cookie: "{{ formresult.set_cookie.split(';')[0] }}"
 
 - name: Register
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_create_url }}"
     method: POST
@@ -28,6 +30,7 @@
     uberspace_cookie: "{{ registerresult.set_cookie.split(';')[0] }}"
 
 - name: Wait for space creation to finish
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_check_url }}"
     follow_redirects: none
@@ -38,11 +41,12 @@
   until: checkresult.content == "active"
   retries: 100
   delay: 3 # Every 3 seconds
-- name: Output checkresult
-  debug:
-    var: checkresult
+# - name: Output checkresult
+#   debug:
+#     var: checkresult
 
 - name: Get firstboot page
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_firstboot_url }}"
     method: GET
@@ -50,6 +54,6 @@
     headers: "{{ uberspace_headers }}"
   register: firstbootresult
 
-- name: Show firstboot page
-  debug:
-    var: firstbootresult
+# - name: Show firstboot page
+#   debug:
+#     var: firstbootresult

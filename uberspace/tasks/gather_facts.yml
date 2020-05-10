@@ -1,0 +1,19 @@
+- name: List ports
+  tags: ports
+  command: "uberspace port list"
+  changed_when: false
+  register: uberspace_ports
+- name: Store ports as fact
+  tags: ports
+  set_fact:
+    uberspace_ports: "{{ uberspace_ports.stdout_lines }}"
+
+- name: List domains
+  tags: domains
+  command: "uberspace web domain list"
+  changed_when: false
+  register: uberspace_domains
+- name: Store domains as fact
+  tags: domains
+  set_fact:
+    uberspace_domains: "{{ uberspace_domains.stdout_lines }}"

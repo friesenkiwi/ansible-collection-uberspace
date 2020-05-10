@@ -4,14 +4,20 @@
   register: checkresult
   failed_when: checkresult.status!=200 and checkresult.status!=403
 - name: Do registration
-  when: checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
+  when: uberspace_action_setup and checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
   include_tasks: register.yml
 - name: Do login
   when: checkresult.status==403 and uberspace_session is not defined
   include_tasks: login.yml
 - name: Do passwordset
+  when: uberspace_action_setup
   include_tasks: password.yml
 - name: Do key deployment
+  when: uberspace_action_setup
   import_tasks: key.yml
-# - name: Do delete
-#   include_tasks: delete.yml
+- name: Do facts gathering
+  tags: gatherfacts
+  import_tasks: gather_facts.yml
+- name: Do delete
+  when: uberspace_action_delete
+  include_tasks: delete.yml
