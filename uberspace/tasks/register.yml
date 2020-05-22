@@ -29,6 +29,10 @@
   set_fact:
     uberspace_cookie: "{{ registerresult.set_cookie.split(';')[0] }}"
 
+- name: Output session cookie
+  debug:
+    msg: "{{ uberspace_cookie }}"
+
 - name: Wait for space creation to finish
   delegate_to: localhost
   uri:

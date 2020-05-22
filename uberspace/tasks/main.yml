@@ -17,6 +17,7 @@
   import_tasks: key.yml
 - name: Do facts gathering
   tags: gatherfacts
+  when: not uberspace_action_setup and not uberspace_action_delete
   import_tasks: gather_facts.yml
 - name: Do delete
   when: uberspace_action_delete
