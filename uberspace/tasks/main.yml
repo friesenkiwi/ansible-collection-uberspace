@@ -1,4 +1,5 @@
 - name: Check loginname availability
+  delegate_to: localhost
   uri:
     url: "{{ uberspace_register_url }}"
   register: checkresult
