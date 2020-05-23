@@ -2,11 +2,11 @@
   tags: ports
   command: "uberspace port list"
   changed_when: false
-  register: uberspace_ports
+  register: uberspace_curports
 - name: Store ports as fact
   tags: ports
   set_fact:
-    uberspace_ports: "{{ uberspace_ports.stdout_lines }}"
+    uberspace_curports: "{{ uberspace_curports.stdout_lines }}"
 
 - name: List domains
   tags: domains

@@ -1,0 +1,135 @@
+# TODO still necessary? https://github.com/Uberspace/lab/pull/435#discussion_r303610303
+- name: Configure luarocks - Add luarocks to PATH
+  lineinfile:
+    path: ~/.bash_profile
+    line: PATH=$HOME/.luarocks/bin:$PATH
+    insertbefore: export PATH
+
+- name: Configure luarocks - Get luarocks env variables
+  shell: 'echo "$(luarocks path)"'
+  register: luarocks_path
+  changed_when: false
+
+- name: Configure luarocks - Add luarocks env variables
+  blockinfile:
+    path: ~/.bash_profile
+    block: "{{ luarocks_path.stdout }}"
+    insertbefore: export PATH
+
+- name: Install runtime lua-dependencies
+  loop:
+  - luasocket
+  - luaexpat
+  - luafilesystem
+  - luasec
+  command:
+    cmd: "luarocks install {{ item }} --local"
+    creates: "~/.luarocks/lib64/luarocks/rocks/{{ item }}"
+  register: luarocks_path
+  changed_when: "'is now built and installed in' in luarocks_path.stdout"
+
+- name: Install runtime lua-dependencies (optional)
+  loop:
+  - luabitop
+  - luaevent
+  command:
+    cmd: "luarocks install {{ item }} --local"
+    creates: "~/.luarocks/lib64/luarocks/rocks/{{ item }}"
+  register: luarocks_path
+  changed_when: "'is now built and installed in' in luarocks_path.stdout"
+
+- name: Install runtime lua-dependencies (mysql)
+  vars:
+    argument: ' MYSQL_BINDIR="/usr/bin" MYSQL_INCDIR="/usr/include/mysql" MYSQL_LIBDIR="/usr/lib64"'
+  loop:
+  - luadbi-mysql
+  command:
+    cmd: "luarocks install {{ item }} --local {{ argument }}"
+    creates: "~/.luarocks/lib64/luarocks/rocks/{{ item }}"
+  register: luarocks_path
+  changed_when: "'is now built and installed in' in luarocks_path.stdout"
+
+- name: Create prosody MySQL db
+  mysql_db:
+    name: "{{ uberspace_loginname }}_prosody"
+- name: Create prosody file path
+  file:
+    path: "{{ prosody_src_dir }}"
+    state: directory
+
+- name: "Download and unpack {{ prosody_version }}"
+  unarchive:
+    remote_src: yes
+    src: "{{ prosody_downloadurl }}"
+    dest: "{{ prosody_src_dir }}"
+
+- name: Configure prosody build
+  command:
+    chdir: "{{ prosody_curversion_dir }}"
+    cmd: "./configure --ostype=linux --prefix={{ prosody_dest_dir }} --with-lua-include=/usr/include"
+    creates: "{{ prosody_curversion_dir }}/config.unix"
+
+- name: Check if build necessary
+  stat:
+    path: "{{ prosody_curversion_dir }}/prosody.cfg.lua.install"
+  register: stat_result
+- name: Build prosody
+  when: not stat_result.stat.exists
+  make:
+    chdir: "{{ prosody_curversion_dir }}"
+
+- name: Check if install necessary
+  stat:
+    path: "{{ prosody_dest_dir }}/share/man/man1/prosodyctl.1"
+  register: stat_result
+- name: Install prosody
+  when: not stat_result.stat.exists
+  make:
+    chdir: "{{ prosody_curversion_dir }}"
+    target: install
+  notify: Restart prosody
+
+- name: Create prosody folders
+  loop:
+  - "{{ prosody_upload_folder }}"
+  - "{{ prosody_dhparam_path | dirname }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+
+- name: Add domains to uberspace config
+  tags: domains
+  loop: "{{ uberspace_domains }}"
+  when: item not in uberspace_domains
+  command: "uberspace web domain add {{ item }}"
+
+- name: Touch web URL to trigger certificate generation
+  tags: domains
+  loop: "{{ uberspace_domains }}"
+  uri:
+    url: "https://{{ item }}"
+  failed_when: false
+
+- name: Download the community plugins
+  hg:
+    repo: https://hg.prosody.im/prosody-modules
+    dest: "{{ prosody_communityplugins_folder }}"
+  notify: Restart prosody
+
+- name: Generate strong DHE parameter
+  command: openssl dhparam -out {{ prosody_dhparam_path }} {{ prosody_dhparam_size }}
+  args:
+    creates: "{{ prosody_dhparam_path }}"
+
+- name: Deploy config file
+  tags: config
+  template:
+    src: prosody.cfg.lua.j2
+    dest: "{{ prosody_dest_dir }}/etc/prosody/prosody.cfg.lua"
+  notify: Restart prosody
+
+- name: Deploy service
+  template:
+    src: prosody.ini.j2
+    dest: "{{ uberspace_services_dir }}/prosody.ini"
+  notify: Reload supervisord config

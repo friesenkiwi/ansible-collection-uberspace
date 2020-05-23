@@ -1,0 +1,7 @@
+- name: Reload supervisord config
+  command:
+    cmd: supervisorctl reread
+  notify: Restart prosody
+- name: Restart prosody
+  command:
+    cmd: supervisorctl restart prosody

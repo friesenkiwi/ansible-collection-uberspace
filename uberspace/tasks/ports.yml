@@ -1,0 +1,14 @@
+- name: Add ports to uberspace config
+  tags: ports
+  loop: "{{ uberspace_ports }}"
+  when: item not in uberspace_curports and ((uberspace_curports | length) + (addedports | length)) < (uberspace_ports | length)
+  command: "uberspace port add"
+  register: addedports
+# - name: show addedports
+#   debug:
+#     var: addedports
+- name: Show added ports
+  loop: "{{ addedports.results }}"
+  when: item.stdout is defined
+  debug:
+    msg: "{{ item.stdout.split(' ')[1] }}"

@@ -1,0 +1,8 @@
+[program:prosody]
+command=/bin/bash -c "source /home/{{ uberspace_loginname }}/.bash_profile && prosody"
+autostart=yes
+autorestart=yes
+startretries=1
+stopasgroup=true
+killasgroup=true
+stopsignal=INT

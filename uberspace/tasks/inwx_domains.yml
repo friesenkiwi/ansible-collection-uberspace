@@ -1,0 +1,27 @@
+- name: Set INWX Domains - A(AAA) records
+  tags: dns
+  delegate_to: localhost
+  loop: "{{ inwx_records_a }}"
+  inwx.collection.dns:
+    domain: "{{ uberspace_basedomain }}"
+    record: "{{ item.domain | default('') }}.{{ uberspace_servicedomain }}"
+    type: "{{ item.type }}"
+    value: "{{ (item.type=='A') | ternary (uberspace_ip_public_v4, uberspace_ip_public_v6) }}"
+    username: "{{ inwx_user }}"
+    password: "{{ inwx_pw }}"
+
+- name: Set INWX Domain - SRV records
+  tags: dns
+  delegate_to: localhost
+  loop: "{{ inwx_records_srv }}"
+  inwx.collection.dns:
+    domain: "{{ uberspace_basedomain }}"
+    record: "{{ item.domain }}{{ uberspace_servicedomain }}"
+    type: "SRV"
+    value: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+    port: "{{ item.port }}"
+    priority: 10
+    weight: 0
+    ttl: 3600
+    username: "{{ inwx_user }}"
+    password: "{{ inwx_pw }}"

@@ -1,7 +1,16 @@
-uberspace_loginname:
+uberspace_loginname: "{{ ansible_user }}"
+
 uberspace_passwordfetch_destination: "credentials/uberspace_loginpassword_{{ uberspace_loginname }}"
 uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_destination) }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
-uberspace_loginkey: "{{ lookup('file', 'credentials/uberspace_loginkey_' + uberspace_loginname) }}"
+uberspace_loginkey: "{{ lookup('file', 'credentials/uberspace_loginkey_' + uberspace_loginname + '.pub') }}"
 uberspace_action_delete: false
 uberspace_action_setup: false
+
+uberspace_spacedir: "{{ '/home/' + uberspace_loginname }}"
+uberspace_domain: "{{ uberspace_loginname }}.uber.space"
+uberspace_mail: "{{ uberspace_loginname }}@uber.space"
+uberspace_services_dir: "{{ uberspace_spacedir }}/etc/services.d"
+uberspace_certificates_dir: "{{ uberspace_spacedir }}/etc/certificates"
+
+addedports: []
