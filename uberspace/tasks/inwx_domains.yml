@@ -1,27 +1,28 @@
 - name: Set INWX Domains - A(AAA) records
   tags: dns
   delegate_to: localhost
-  loop: "{{ inwx_records_a }}"
+  loop: "{{ inwx_records_a | product(['A','AAAA']) | list }}"
   inwx.collection.dns:
     domain: "{{ uberspace_basedomain }}"
-    record: "{{ item.domain | default('') }}.{{ uberspace_servicedomain }}"
-    type: "{{ item.type }}"
-    value: "{{ (item.type=='A') | ternary (uberspace_ip_public_v4, uberspace_ip_public_v6) }}"
+    record: "{{ item.0 }}.{{ uberspace_servicedomain }}"
+    type: "{{ item.1 }}"
+    value: "{{ (item.1=='A') | ternary (uberspace_ip_public_v4, uberspace_ip_public_v6) }}"
+    ttl: "{{ inwx_ttl }}"
     username: "{{ inwx_user }}"
     password: "{{ inwx_pw }}"
 
 - name: Set INWX Domain - SRV records
   tags: dns
   delegate_to: localhost
-  loop: "{{ inwx_records_srv }}"
+  loop: "{{ inwx_records_srv | dict2items | subelements('value.domains') }}"
   inwx.collection.dns:
     domain: "{{ uberspace_basedomain }}"
-    record: "{{ item.domain }}{{ uberspace_servicedomain }}"
+    record: "{{ item.0.key }}._{{ inwx_records_srv_protocol }}.{{ item.1 }}{{ (item.1 != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
     type: "SRV"
     value: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
-    port: "{{ item.port }}"
+    port: "{{ item.0.value.port }}"
     priority: 10
     weight: 0
-    ttl: 3600
+    ttl: "{{ inwx_ttl }}"
     username: "{{ inwx_user }}"
     password: "{{ inwx_pw }}"

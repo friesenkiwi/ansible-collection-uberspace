@@ -23,3 +23,36 @@ prosody_db_user: prosody
 prosody_db_pw: "{{ lookup('password', 'credentials/' + 'prosody_dbuser_pw') }}"
 prosody_db_name: prosody_dev
 prosody_db_host: /home/friklout/tmp/
+
+prosody_interface_ipv4: "{{ uberspace_ip_private_v4 }}"
+prosody_interface_ipv6: "{{ uberspace_ip_private_v6 }}"
+
+uberspace_domains:
+  - "{{ prosody_host }}"
+  - "{{ prosody_fulldomain_muc }}"
+  - "{{ prosody_fulldomain_proxy }}"
+  - "{{ prosody_fulldomain_upload }}"
+uberspace_ports:
+# - "{{ prosody_port_http }}"
+# - "{{ prosody_port_https }}"
+- "{{ prosody_port_client }}"
+- "{{ prosody_port_client_tls }}"
+- "{{ prosody_port_server }}"
+# - "{{ prosody_port_proxy65 }}"
+# - "{{ prosody_port_upload }}"
+# - "{{ prosody_port_transfer }}"
+inwx_records_a:
+- ""
+- "{{ prosody_domain_proxy }}"
+- "{{ prosody_domain_upload }}"
+- "{{ prosody_domain_muc }}"
+inwx_records_srv:
+  xmpp-client:
+    port: "{{ prosody_port_client }}"
+    domains: ['']
+  xmpps-client:
+    port: "{{ prosody_port_client_tls }}"
+    domains: ['']
+  xmpp-server:
+    port: "{{ prosody_port_server }}"
+    domains: "{{ inwx_records_a }}"

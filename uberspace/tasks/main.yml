@@ -8,12 +8,14 @@
   when: uberspace_action_setup and checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
   include_tasks: register.yml
 - name: Lookup session
+  tags: session
   vars:
     uberspace_session:  "{{ lookup('file', uberspace_sessionfile, errors='ignore') }}"
   when: uberspace_session | default('', true) | trim != ''
   set_fact:
     uberspace_cookie: "uberspace_session={{ uberspace_session }}"
 - name:
+  tags: session
   block:
   - name: Get main dashboard page to check if session expired
     delegate_to: localhost
@@ -27,6 +29,7 @@
   - name: Re-login
     include_tasks: login.yml
 - name: Do login
+  tags: session
   when: checkresult.status==403 and uberspace_cookie is not defined
   include_tasks: login.yml
 - name: Do passwordset

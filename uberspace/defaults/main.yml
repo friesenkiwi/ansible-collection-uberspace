@@ -19,3 +19,5 @@ uberspace_certificates_dir: "{{ uberspace_spacedir }}/etc/certificates"
 addedports: []
 
 inwx_pw: "{{ lookup('file', 'credentials/' + 'inwx-' + inwx_user + '-pw') }}"
+inwx_ttl: 3600
+inwx_records_srv_protocol: "tcp"
