@@ -1,4 +1,9 @@
+- name: Lookup session
+  when: uberspace_session | default('', true) | trim != ''
+  set_fact:
+    uberspace_cookie: "uberspace_session={{ uberspace_session }}"
 - name: Do login
+  when: uberspace_cookie is not defined
   include_tasks: login.yml
 
 - name: Get test page
@@ -9,15 +14,15 @@
     return_content: yes
   register: testpageresult
 
-- name: Show testpageresult page
-  debug:
-    var: testpageresult
 # - name: Show testpageresult page
-#   vars:
-#     uberspace_html_ipv4address: '<th>IPv4-Adresse</th>\s*<td>\s*<code>(.*)</code>'
 #   debug:
-#     msg: "{{ testpageresult.content | regex_search(uberspace_html_ipv4address)}}"
-
-- name: Show variables
+#     var: testpageresult
+- name: Show parsing result
+  vars:
+    uberspace_html_hostkey: '<th>RSA</th>\s*<td><code>(.*)</code>'
   debug:
-    var: vars
+    msg: "{{ testpageresult.content | regex_search(uberspace_html_hostkey)}}"
+
+# - name: Show variables
+#   debug:
+#     var: vars

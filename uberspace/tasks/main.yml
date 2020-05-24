@@ -13,6 +13,20 @@
   when: uberspace_session | default('', true) | trim != ''
   set_fact:
     uberspace_cookie: "uberspace_session={{ uberspace_session }}"
+- name:
+  block:
+  - name: Get main dashboard page to check if session expired
+    delegate_to: localhost
+    uri:
+      url: "{{ uberspace_url_dashboard }}"
+      headers: "{{ uberspace_headers }}"
+      return_content: yes
+      follow_redirects: none
+    register: dashboardresult
+  rescue:
+  - name: Re-login
+    when: checkresult.status==403
+    include_tasks: login.yml
 - name: Do login
   when: checkresult.status==403 and uberspace_cookie is not defined
   include_tasks: login.yml
