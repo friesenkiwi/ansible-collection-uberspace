@@ -1,0 +1,23 @@
+- name: Do login
+  include_tasks: login.yml
+
+- name: Get test page
+  delegate_to: localhost
+  uri:
+    url: "{{ uberspace_urls.datasheet }}"
+    headers: "{{ uberspace_headers }}"
+    return_content: yes
+  register: testpageresult
+
+- name: Show testpageresult page
+  debug:
+    var: testpageresult
+# - name: Show testpageresult page
+#   vars:
+#     uberspace_html_ipv4address: '<th>IPv4-Adresse</th>\s*<td>\s*<code>(.*)</code>'
+#   debug:
+#     msg: "{{ testpageresult.content | regex_search(uberspace_html_ipv4address)}}"
+
+- name: Show variables
+  debug:
+    var: vars
