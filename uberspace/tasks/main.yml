@@ -1,7 +1,7 @@
 - name: Check loginname availability
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_register_url }}"
+    url: "{{ uberspace_urls.register }}"
   register: checkresult
   failed_when: checkresult.status!=200 and checkresult.status!=403
 - name: Do registration

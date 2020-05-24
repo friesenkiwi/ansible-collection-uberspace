@@ -1,20 +1,25 @@
 uberspace_csrf_field: '<input type=\"hidden\" name=\"_csrf_token\" value=\"(.*)\" />'
 uberspace_password_field: '<input type=\"password\" (.*) value=\"(.*)\" onkeyup=(.*) />'
 
-uberspace_registerform_url: "https://dashboard.uberspace.de/register"
-uberspace_register_url: "https://dashboard.uberspace.de/register/check_name?login={{ uberspace_loginname }}&AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
-uberspace_create_url: "https://dashboard.uberspace.de/register/create"
-uberspace_check_url: "https://dashboard.uberspace.de/dashboard/ajax_state?AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
-uberspace_login_url: "https://dashboard.uberspace.de/login"
-uberspace_firstboot_url: "https://dashboard.uberspace.de/dashboard/firstboot"
-uberspace_dashboard_url: "https://dashboard.uberspace.de/dashboard/"
-uberspace_authentication_url: "https://dashboard.uberspace.de/dashboard/authentication"
-uberspace_setwebpassword_url: "https://dashboard.uberspace.de/dashboard/set_web_password"
-uberspace_addkey_url: "https://dashboard.uberspace.de/dashboard/add_ssh_key"
-uberspace_delete_url: "https://dashboard.uberspace.de/dashboard/delete"
-uberspace_deletequeue_url: "https://dashboard.uberspace.de/dashboard/delete_queue"
-uberspace_deleteresult_register_url: "https://dashboard.uberspace.de/dashboard/../register"
-uberspace_deleteresult_login_url: "https://dashboard.uberspace.de/dashboard/../login"
+uberspace_url_main: "https://dashboard.uberspace.de/"
+uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
+
+uberspace_urls:
+#  dashboard: "{{ uberspace_url_main }}dashboard/"
+  registerform: "{{ uberspace_url_main }}register"
+  register: "{{ uberspace_url_main }}register/check_name?login={{ uberspace_loginname }}&AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
+  create: "{{ uberspace_url_main }}register/create"
+  login: "{{ uberspace_url_main }}login"
+  check: "{{ uberspace_url_dashboard }}ajax_state?AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
+  firstboot: "{{ uberspace_url_dashboard }}firstboot"
+  authentication: "{{ uberspace_url_dashboard }}authentication"
+  setwebpassword: "{{ uberspace_url_dashboard }}set_web_password"
+  addkey: "{{ uberspace_url_dashboard }}add_ssh_key"
+  datasheet: "{{ uberspace_url_dashboard }}datasheet"
+  delete: "{{ uberspace_url_dashboard }}delete"
+  deletequeue: "{{ uberspace_url_dashboard }}delete_queue"
+  deleteresult_register: "{{ uberspace_url_dashboard }}../register"
+  deleteresult_login: "{{ uberspace_url_dashboard }}../login"
 
 uberspace_headers:
   Cookie: "{{ uberspace_cookie }}"

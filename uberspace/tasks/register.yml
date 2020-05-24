@@ -1,7 +1,7 @@
 - name: Get register form for CSRF token
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_registerform_url }}"
+    url: "{{ uberspace_urls.registerform }}"
     return_content: yes
   register: formresult
 
@@ -12,7 +12,7 @@
 - name: Register
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_create_url }}"
+    url: "{{ uberspace_urls.create }}"
     method: POST
     headers: "{{ uberspace_headers }}"
     body_format: form-urlencoded
@@ -36,7 +36,7 @@
 - name: Wait for space creation to finish
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_check_url }}"
+    url: "{{ uberspace_urls.check }}"
     follow_redirects: none
     method: GET
     return_content: yes
@@ -52,7 +52,7 @@
 - name: Get firstboot page
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_firstboot_url }}"
+    url: "{{ uberspace_urls.firstboot }}"
     method: GET
     return_content: yes
     headers: "{{ uberspace_headers }}"

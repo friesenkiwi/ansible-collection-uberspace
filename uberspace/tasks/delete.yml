@@ -1,7 +1,7 @@
 - name: Get deletion page
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_delete_url }}"
+    url: "{{ uberspace_urls.delete }}"
     headers: "{{ uberspace_headers }}"
     return_content: yes
   register: formresult
@@ -9,7 +9,7 @@
 - name: Delete uberspace
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_deletequeue_url }}"
+    url: "{{ uberspace_urls.deletequeue }}"
     headers: "{{ uberspace_headers }}"
     method: POST
     body_format: form-urlencoded
