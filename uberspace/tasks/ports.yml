@@ -1,8 +1,10 @@
 - name: Add ports to uberspace config
   tags: ports
   loop: "{{ uberspace_ports }}"
-  when: item not in uberspace_curports and ((uberspace_curports | length) + (addedports | length)) < (uberspace_ports | length)
   command: "uberspace port add"
+  loop_control:
+    extended: yes
+  when: item not in uberspace_curports and ((uberspace_curports | length) + ansible_loop.index0) < (uberspace_ports | length)
   register: addedports
 # - name: show addedports
 #   debug:
