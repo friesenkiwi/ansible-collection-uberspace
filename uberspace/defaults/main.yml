@@ -14,3 +14,5 @@ uberspace_services_dir: "{{ uberspace_spacedir }}/etc/services.d"
 uberspace_certificates_dir: "{{ uberspace_spacedir }}/etc/certificates"
 
 addedports: []
+
+inwx_pw: "{{ lookup('file', 'credentials/' + 'inwx-' + inwx_user + '-pw') }}"

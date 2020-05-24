@@ -1,3 +1,22 @@
+- name: Gather facts
+  gather_facts:
+
+- name: Get datasheet page
+  delegate_to: localhost
+  uri:
+    url: "{{ uberspace_urls.datasheet }}"
+    headers: "{{ uberspace_headers }}"
+    return_content: yes
+  register: datasheetresult
+
+- name: Set uberspace facts from ansible facts and dashboard
+  set_fact:
+    uberspace_ip_private_v4: "{{ ansible_default_ipv4 }}"
+    uberspace_ip_private_v6: "{{ ansible_default_ipv6 }}"
+    uberspace_ip_public_v4: "{{ parsed_ipv4address }}"
+    uberspace_ip_public_v6: "{{ parsed_ipv6address }}"
+    uberspace_host: "{{ ansible_hostname }}"
+
 - name: List ports
   tags: ports
   command: "uberspace port list"
