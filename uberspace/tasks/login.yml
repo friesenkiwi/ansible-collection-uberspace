@@ -22,3 +22,9 @@
 - name: Store session cookie as fact
   set_fact:
     uberspace_cookie: "{{ loginresult.set_cookie.split(';')[0] }}"
+
+- name: Store session to a local file
+  delegate_to: localhost
+  copy:
+    content: "{{ uberspace_cookie.split('=')[1] }}"
+    dest: "{{ uberspace_sessionfile }}"

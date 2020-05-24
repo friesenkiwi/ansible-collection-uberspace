@@ -1,5 +1,6 @@
 uberspace_loginname: "{{ ansible_user }}"
 
+uberspace_sessionfile: "credentials/uberspace_session_{{ uberspace_loginname }}"
 uberspace_passwordfetch_destination: "credentials/uberspace_loginpassword_{{ uberspace_loginname }}"
 uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_destination) }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"

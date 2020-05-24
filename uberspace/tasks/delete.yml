@@ -17,7 +17,7 @@
       _csrf_token: "{{ csrftoken }}"
     status_code: 302
   register: deleteresult
-  changed_when: (deleteresult.location == uberspace_deleteresult_register_url) or (deleteresult.location == uberspace_deleteresult_login_url)
+  changed_when: (deleteresult.location == uberspace_urls.deleteresult_register) or (deleteresult.location == uberspace_urls.deleteresult_login)
 
 # - name: Show deletion result
 #   debug:
