@@ -25,13 +25,19 @@
     status_code: 302
   register: registerresult
 
-- name: Store session as cookie
+- name: Store session cookie as fact
   set_fact:
     uberspace_cookie: "{{ registerresult.set_cookie.split(';')[0] }}"
 
 - name: Output session cookie
   debug:
     msg: "{{ uberspace_cookie }}"
+
+- name: Store session to a local file
+  delegate_to: localhost
+  copy:
+    content: "{{ uberspace_cookie.split('=')[1] }}"
+    dest: "{{ uberspace_sessionfile }}"
 
 - name: Wait for space creation to finish
   delegate_to: localhost
@@ -43,8 +49,8 @@
     headers: "{{ uberspace_headers }}"
   register: checkresult
   until: checkresult.content == "active"
-  retries: 100
-  delay: 3 # Every 3 seconds
+  retries: 50
+  delay: 5 # Every 5 seconds
 # - name: Output checkresult
 #   debug:
 #     var: checkresult

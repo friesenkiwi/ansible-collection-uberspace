@@ -3,6 +3,8 @@ uberspace_password_field: '<input type=\"password\" (.*) value=\"(.*)\" onkeyup=
 
 uberspace_html_ipv4address: '<th>IPv4-Adresse</th>\s*<td>\s*<code>(.*)</code>'
 uberspace_html_ipv6address: '<th>IPv6-Adresse</th>\s*<td>\s*<code>(.*)</code>'
+uberspace_html_hostkeyfingerprint: "<th>{{ item.upper() }}</th>\\s*<td><code>(.*)</code>"
+uberspace_html_hostname: '<th>Hostname</th>\s*<td>\s*<code>(.*)</code>'
 
 uberspace_url_main: "https://dashboard.uberspace.de/"
 uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
@@ -30,3 +32,5 @@ uberspace_headers:
 csrftoken: "{{ formresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
 parsed_ipv4address: "{{ datasheetresult.content | regex_search(uberspace_html_ipv4address) | regex_replace(uberspace_html_ipv4address, '\\1')}}"
 parsed_ipv6address: "{{ datasheetresult.content | regex_search(uberspace_html_ipv6address) | regex_replace(uberspace_html_ipv6address, '\\1')}}"
+parsed_hostname: "{{ datasheetresult.content | regex_search(uberspace_html_hostname) | regex_replace(uberspace_html_hostname, '\\1')}}"
+parsed_hostkeyfingerprint: "{{ datasheetresult.content | regex_search(uberspace_html_hostkeyfingerprint) | regex_replace(uberspace_html_hostkeyfingerprint, '\\1')}}"

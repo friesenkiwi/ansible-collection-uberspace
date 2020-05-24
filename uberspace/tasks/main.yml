@@ -25,7 +25,6 @@
     register: dashboardresult
   rescue:
   - name: Re-login
-    when: checkresult.status==403
     include_tasks: login.yml
 - name: Do login
   when: checkresult.status==403 and uberspace_cookie is not defined

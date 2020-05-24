@@ -10,6 +10,24 @@
   set_fact:
     uberspace_ip_public_v4: "{{ parsed_ipv4address }}"
     uberspace_ip_public_v6: "{{ parsed_ipv6address }}"
+
+- name: Put host keys into local known_hosts
+  delegate_to: localhost
+  vars:
+    hostkey: "{{ lookup('pipe','ssh-keyscan -t '+item+' '+uberspace_domain+' 2>/dev/null | cut -d \" \" -f 1 --complement') }}"
+    actual_hostkey_fingerprint: "{{ lookup('pipe','echo \"'+hostkey+'\" | ssh-keygen -l -f - | cut -d \" \" -f 2 | cut -d \":\" -f 2') }}"
+    ssh_hostnames:
+    - "{{ uberspace_domain }}"
+    - "{{ uberspace_ip_public_v4 }}"
+    - "{{ uberspace_ip_public_v6 }}"
+  loop:
+  - ed25519
+  - rsa
+  when: actual_hostkey_fingerprint == parsed_hostkeyfingerprint
+  known_hosts:
+    name: "{{ uberspace_domain }}"
+    key: "{{ ssh_hostnames | join(',') }} {{ hostkey }}"
+
 - name: Gather facts
   gather_facts:
 
