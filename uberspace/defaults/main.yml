@@ -8,7 +8,7 @@ uberspace_loginkey: "{{ lookup('file', 'credentials/uberspace_loginkey_' + ubers
 uberspace_action_delete: false
 uberspace_action_setup: false
 
-uberspace_session:  "{{ lookup('file', uberspace_sessionfile, errors='ignore') }}"
+uberspace_session: "{{ lookup('file', uberspace_sessionfile, errors='ignore') }}"
 
 uberspace_spacedir: "{{ '/home/' + uberspace_loginname }}"
 uberspace_domain: "{{ uberspace_loginname }}.uber.space"

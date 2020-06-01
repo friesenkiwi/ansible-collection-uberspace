@@ -4,7 +4,9 @@
     url: "{{ uberspace_urls.authentication }}"
     headers: "{{ uberspace_headers }}"
     return_content: yes
+    follow_redirects: none
   register: formresult
+
 - name: Deploy key
   delegate_to: localhost
   uri:
