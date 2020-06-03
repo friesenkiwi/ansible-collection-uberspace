@@ -32,7 +32,7 @@ uberspace_domains:
   - "{{ prosody_fulldomain_muc }}"
   - "{{ prosody_fulldomain_proxy }}"
   - "{{ prosody_fulldomain_upload }}"
-uberspace_ports:
+uberspace_ports_goal:
 # - "{{ prosody_port_http }}"
 # - "{{ prosody_port_https }}"
 - "{{ prosody_port_client }}"
