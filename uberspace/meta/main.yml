@@ -1,0 +1,27 @@
+galaxy_info:
+  author: friesenkiwi
+  description: Administration of accounts at the german exceptional hoster "Uberspace". Not official. Acting through user frontend via HTTPS and content parsing.
+  license: BSD-3-Clause
+  min_ansible_version: 2.9
+  platforms:
+  - name: Linux
+    versions:
+    - all
+  - name: Uberspace
+    versions:
+    - 7
+
+  galaxy_tags:
+  - uberspace
+  - webhosting
+  - hosting
+  - administration
+  - ports
+  - domains
+  - inwx
+  - register
+  - delete
+  - account
+  - password
+  - key
+  - session
