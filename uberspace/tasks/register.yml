@@ -49,7 +49,7 @@
     headers: "{{ uberspace_headers }}"
   register: checkresult
   until: checkresult.content == "active"
-  retries: 50
+  retries: 60
   delay: 5 # Every 5 seconds
 # - name: Output checkresult
 #   debug:

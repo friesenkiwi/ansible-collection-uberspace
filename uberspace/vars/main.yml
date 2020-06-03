@@ -9,6 +9,8 @@ uberspace_html_hostname: '<th>Hostname</th>\s*<td>\s*<code>(.*)</code>'
 uberspace_url_main: "https://dashboard.uberspace.de/"
 uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
 
+uberspace_domain_short_official: uber.space
+
 uberspace_urls:
 #  dashboard: "{{ uberspace_url_main }}dashboard/"
   registerform: "{{ uberspace_url_main }}register"

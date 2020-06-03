@@ -7,6 +7,13 @@
     follow_redirects: none
   register: formresult
 
+- name: Generate key if necessary
+  delegate_to: localhost
+  when: not uberspace_loginkey
+  openssh_keypair:
+    path: "{{ uberspace_loginkey_path }}"
+    type: ed25519
+
 - name: Deploy key
   delegate_to: localhost
   uri:

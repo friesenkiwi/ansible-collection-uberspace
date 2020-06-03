@@ -1,0 +1,22 @@
+# - name: show uberspace_domains_goal
+#   debug:
+#     var: uberspace_domains_goal
+# - name: show uberspace_domains
+#   debug:
+#     var: uberspace_domains
+
+- name: Add domains to uberspace config
+  tags: domains
+  loop: "{{ uberspace_domains_goal | default([]) }}"
+  when: item not in uberspace_domains
+  command: "uberspace web domain add {{ item }}"
+  register: addeddomains
+  # - name: show addeddomains
+  #   debug:
+  #     var: addeddomains
+- name: Touch web URL to trigger certificate generation
+  tags: domains
+  loop: "{{ uberspace_domains_goal | default([]) }}"
+  uri:
+    url: "https://{{ item }}"
+  failed_when: false

@@ -14,10 +14,10 @@
 - name: Put host keys into local known_hosts
   delegate_to: localhost
   vars:
-    hostkey: "{{ lookup('pipe','ssh-keyscan -t '+item+' '+uberspace_domain+' 2>/dev/null | cut -d \" \" -f 1 --complement') }}"
-    actual_hostkey_fingerprint: "{{ lookup('pipe','echo \"'+hostkey+'\" | ssh-keygen -l -f - | cut -d \" \" -f 2 | cut -d \":\" -f 2') }}"
+    hostkey: "{{ lookup('pipe','ssh-keyscan -t ' + item + ' ' + uberspace_domain_official + ' 2>/dev/null | cut -d \" \" -f 1 --complement') }}"
+    actual_hostkey_fingerprint: "{{ lookup('pipe','echo \"' + hostkey + '\" | ssh-keygen -l -f - | cut -d \" \" -f 2 | cut -d \":\" -f 2') }}"
     ssh_hostnames:
-    - "{{ uberspace_domain }}"
+    - "{{ uberspace_domain_official }}"
     - "{{ uberspace_ip_public_v4 }}"
     - "{{ uberspace_ip_public_v6 }}"
   loop:
@@ -25,7 +25,7 @@
   - rsa
   when: actual_hostkey_fingerprint == parsed_hostkeyfingerprint
   known_hosts:
-    name: "{{ uberspace_domain }}"
+    name: "{{ uberspace_domain_official }}"
     key: "{{ ssh_hostnames | join(',') }} {{ hostkey }}"
 
 - name: Gather facts
@@ -41,11 +41,11 @@
   tags: ports
   command: "uberspace port list"
   changed_when: false
-  register: uberspace_curports
+  register: uberspace_ports
 - name: Store ports as fact
   tags: ports
   set_fact:
-    uberspace_curports: "{{ uberspace_curports.stdout_lines }}"
+    uberspace_ports: "{{ uberspace_ports.stdout_lines }}"
 
 - name: List domains
   tags: domains

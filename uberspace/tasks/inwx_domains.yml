@@ -4,7 +4,7 @@
   loop: "{{ inwx_records_a | product(['A','AAAA']) | list }}"
   inwx.collection.dns:
     domain: "{{ uberspace_basedomain }}"
-    record: "{{ item.0 }}.{{ uberspace_servicedomain }}"
+    record: "{{ item.0 }}"
     type: "{{ item.1 }}"
     value: "{{ (item.1=='A') | ternary (uberspace_ip_public_v4, uberspace_ip_public_v6) }}"
     ttl: "{{ inwx_ttl }}"
@@ -17,9 +17,9 @@
   loop: "{{ inwx_records_srv | dict2items | subelements('value.domains') }}"
   inwx.collection.dns:
     domain: "{{ uberspace_basedomain }}"
-    record: "{{ item.0.key }}._{{ inwx_records_srv_protocol }}.{{ item.1 }}{{ (item.1 != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
+    record: "{{ item.0.key }}._{{ inwx_records_srv_protocol }}{{ (item.1 != '') | ternary('.','') }}{{ item.1 }}"
     type: "SRV"
-    value: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+    value: "{{ uberspace_servicedomain }}{{ (uberspace_servicedomain != '') | ternary('.','') }}{{ uberspace_basedomain }}"
     port: "{{ item.0.value.port }}"
     priority: 10
     weight: 0

@@ -4,15 +4,16 @@ uberspace_sessionfile: "credentials/uberspace_session_{{ uberspace_loginname }}"
 uberspace_passwordfetch_destination: "credentials/uberspace_loginpassword_{{ uberspace_loginname }}"
 uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_destination) }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
-uberspace_loginkey: "{{ lookup('file', 'credentials/uberspace_loginkey_' + uberspace_loginname + '.pub') }}"
+uberspace_loginkey_path: "~/.ssh/id_uberspace_{{ uberspace_loginname }}"
+uberspace_loginkey: "{{ lookup('file', uberspace_loginkey_path + '.pub', errors='ignore') }}"
 uberspace_action_delete: false
 uberspace_action_setup: false
 
 uberspace_session: "{{ lookup('file', uberspace_sessionfile, errors='ignore') }}"
 
 uberspace_spacedir: "{{ '/home/' + uberspace_loginname }}"
-uberspace_domain: "{{ uberspace_loginname }}.uber.space"
-uberspace_mail: "{{ uberspace_loginname }}@uber.space"
+uberspace_domain_official: "{{ uberspace_loginname }}.{{ uberspace_domain_short_official }}"
+uberspace_mail: "{{ uberspace_loginname }}@{{ uberspace_domain_short_official }}"
 uberspace_services_dir: "{{ uberspace_spacedir }}/etc/services.d"
 uberspace_certificates_dir: "{{ uberspace_spacedir }}/etc/certificates"
 
