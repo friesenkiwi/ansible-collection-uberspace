@@ -21,7 +21,7 @@
 -- for the server. Note that you must create the accounts separately
 -- (see https://prosody.im/doc/creating_accounts for info)
 -- Example: admins = { "user1@example.com", "user2@example.net" }
-admins = { "{{ prosody_adminmail }}" }
+admins = { "{{ prosody_adminaccount }}@{{ prosody_host }}" }
 
 -- Enable use of libevent for better performance under high load
 -- For more information see: https://prosody.im/doc/libevent
@@ -30,7 +30,7 @@ admins = { "{{ prosody_adminmail }}" }
 -- Prosody will always look in its source directory for modules, but
 -- this option allows you to specify additional locations where Prosody
 -- will look for modules first. For community modules, see https://modules.prosody.im/
-plugin_paths = { "{{ prosody_communityplugins_folder }}" }
+plugin_paths = { "{{ prosody_communityplugins_dir }}" }
 
 -- This is the list of modules Prosody will load on startup.
 -- It looks for mod_modulename.lua in the plugins folder, so make sure that exists too.
@@ -196,7 +196,7 @@ storage = {
 --sql = { driver = "PostgreSQL", database = "prosody", username = "prosody", password = "secret", host = "localhost" }
 
 -- Location of the Prosody data storage directory
-data_path = "{{ prosody_src_dir }}/data";
+data_path = "{{ prosody_main_dir }}/data";
 
 -- Archiving configuration
 -- If mod_mam is enabled, Prosody will store a copy of every message. This
@@ -210,7 +210,7 @@ archive_expires_after = "1w" -- Remove archived messages after 1 week
 -- archiving options, see https://prosody.im/doc/modules/mod_mam
 
 -- POSIX configuration
-pidfile = "{{ prosody_src_dir }}/prosody.pid";
+pidfile = "{{ prosody_main_dir }}/prosody.pid";
 -- IMPORTANT for daemontools! DO NOT EDIT!
 daemonize = false;
 
@@ -218,7 +218,7 @@ daemonize = false;
 -- For advanced logging see https://prosody.im/doc/logging
 log = {
 	-- info = "*console"
-	info = "{{ prosody_src_dir }}/prosody.log"; -- Change 'info' to 'debug' for verbose logging
+	info = "{{ prosody_main_dir }}/prosody.log"; -- Change 'info' to 'debug' for verbose logging
 	--error = "prosody.err";
 	-- "*syslog"; -- Uncomment this for logging to syslog
 	-- "*console"; -- Log to the console, useful for debugging with daemonize=false
@@ -294,8 +294,8 @@ VirtualHost "{{ prosody_host }}"
 -- like multi-user conferences, and transports.
 -- For more information on components, see https://prosody.im/doc/components
 
----Set up a MUC (multi-user chat) room server on conference.example.com:
-Component "conference.{{ prosody_host }}" "muc"
+---Set up a MUC (multi-user chat) room server on {{ prosody_fulldomain_muc }}:
+Component "{{ prosody_fulldomain_muc }}" "muc"
 	name = "{{ prosody_host }} Groups/Chatrooms/Multi-User"
 	restrict_room_creation = false --- user dürfen Räume selbst erstellen
   max_history_messages = 100
@@ -307,7 +307,7 @@ Component "conference.{{ prosody_host }}" "muc"
 	}
 
 -- Set up a SOCKS5 bytestream proxy for server-proxied file transfers:
-Component "proxy.{{ prosody_host }}" "proxy65"
+Component "{{ prosody_fulldomain_proxy }}" "proxy65"
 --	proxy65_address = "{{ prosody_host }}"
 	proxy65_acl = { "{{ prosody_host }}" }
 
@@ -321,7 +321,7 @@ Component "proxy.{{ prosody_host }}" "proxy65"
 --	component_secret = "password"
 
 -- Set up a http file upload because proxy65 is not working in muc
-Component "upload.{{ prosody_host }}" "http_upload"
+Component "{{ prosody_fulldomain_upload }}" "http_upload"
 http_upload_file_size_limit = 52428800; -- bytes 50M
 
 --
@@ -349,5 +349,5 @@ http_paths = {
 
 -- Multi-User-Chat (MUC) soll als verfügbarer XMPP Dienst aufgeführt werden
 disco_items = {
-    { "conference.{{ prosody_host }}", "The {{ prosody_host }} MUC" };
+    { "{{ prosody_fulldomain_muc }}", "The {{ prosody_host }} MUC" };
 }

@@ -1,37 +1,43 @@
 prosody_downloadurl: https://prosody.im/downloads/source/prosody-0.11.5.tar.gz
 prosody_version: "{{ prosody_downloadurl | basename | splitext | first | splitext | first }}"
-prosody_configile: "prosody.cfg.lua"
+prosody_configfile: "prosody.cfg.lua"
 prosody_dhparam_size: 2048
-prosody_curversion_dir: "{{ prosody_src_dir }}/{{ prosody_version }}"
+prosody_curversion_dir: "{{ prosody_main_dir }}/{{ prosody_version }}"
 prosody_upload_secret: "{{ lookup('password', 'credentials/' + 'prosody_upload_secret') }}"
-prosody_upload_folder: "{{ prosody_dest_dir }}/var/lib/prosody/http_upload"
-prosody_communityplugins_folder: "{{ prosody_dest_dir }}/var/lib/prosody/community-plugins"
-prosody_dhparam_path: "{{ prosody_src_dir }}/ssl/{{ prosody_host }}.prosody.dhparams.pem"
+prosody_upload_dir: "{{ prosody_install_dir }}/var/lib/prosody/http_upload"
+prosody_communityplugins_dir: "{{ prosody_install_dir }}/var/lib/prosody/community-plugins"
+prosody_dhparam_path: "{{ prosody_main_dir }}/ssl/{{ prosody_host }}.prosody.dhparams.pem"
+
+prosody_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
 
 prosody_domain_muc: conference
 prosody_domain_proxy: proxy
 prosody_domain_upload: upload
+prosody_servicedomain_muc: "{{ prosody_domain_muc }}{{ (prosody_domain_muc != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
+prosody_servicedomain_proxy: "{{ prosody_domain_proxy }}{{ (prosody_domain_proxy != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
+prosody_servicedomain_upload: "{{ prosody_domain_upload }}{{ (prosody_domain_upload != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
 prosody_fulldomain_muc: "{{ prosody_domain_muc }}.{{ prosody_host }}"
 prosody_fulldomain_proxy: "{{ prosody_domain_proxy }}.{{ prosody_host }}"
 prosody_fulldomain_upload: "{{ prosody_domain_upload }}.{{ prosody_host }}"
 
-prosody_dest_dir: "{{ uberspace_spacedir }}"
+prosody_install_dir: "{{ uberspace_spacedir }}"
 prosody_certificates_dir: "{{ uberspace_certificates_dir }}"
+prosody_adminaccount: "" 
 prosody_adminmail: "{{ uberspace_mail }}"
 prosody_secret: "{{ lookup('password', 'credentials/' + 'prosody_secret') }}"
-prosody_db_user: prosody
-prosody_db_pw: "{{ lookup('password', 'credentials/' + 'prosody_dbuser_pw') }}"
-prosody_db_name: prosody_dev
-prosody_db_host: /home/friklout/tmp/
+# prosody_db_user: prosody
+# prosody_db_pw: "{{ lookup('password', 'credentials/' + 'prosody_dbuser_pw') }}"
+# prosody_db_name: prosody_dev
+# prosody_db_host: localhost
 
 prosody_interface_ipv4: "{{ uberspace_ip_private_v4 }}"
 prosody_interface_ipv6: "{{ uberspace_ip_private_v6 }}"
 
 uberspace_domains:
-  - "{{ prosody_host }}"
-  - "{{ prosody_fulldomain_muc }}"
-  - "{{ prosody_fulldomain_proxy }}"
-  - "{{ prosody_fulldomain_upload }}"
+- "{{ prosody_host }}"
+- "{{ prosody_fulldomain_muc }}"
+- "{{ prosody_fulldomain_proxy }}"
+- "{{ prosody_fulldomain_upload }}"
 uberspace_ports_goal:
 # - "{{ prosody_port_http }}"
 # - "{{ prosody_port_https }}"
@@ -43,16 +49,16 @@ uberspace_ports_goal:
 # - "{{ prosody_port_transfer }}"
 inwx_records_a:
 - ""
-- "{{ prosody_domain_proxy }}"
-- "{{ prosody_domain_upload }}"
-- "{{ prosody_domain_muc }}"
+- "{{ prosody_servicedomain_muc }}"
+- "{{ prosody_servicedomain_proxy }}"
+- "{{ prosody_servicedomain_upload }}"
 inwx_records_srv:
   xmpp-client:
     port: "{{ prosody_port_client }}"
-    domains: ['']
+    domains: [""]
   xmpps-client:
     port: "{{ prosody_port_client_tls }}"
-    domains: ['']
+    domains: [""]
   xmpp-server:
     port: "{{ prosody_port_server }}"
     domains: "{{ inwx_records_a }}"

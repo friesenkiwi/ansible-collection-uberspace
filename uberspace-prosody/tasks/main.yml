@@ -54,24 +54,24 @@
     name: "{{ uberspace_loginname }}_prosody"
 - name: Create prosody file path
   file:
-    path: "{{ prosody_src_dir }}"
+    path: "{{ prosody_main_dir }}"
     state: directory
 
 - name: "Download and unpack {{ prosody_version }}"
   unarchive:
     remote_src: yes
     src: "{{ prosody_downloadurl }}"
-    dest: "{{ prosody_src_dir }}"
+    dest: "{{ prosody_main_dir }}"
 
 - name: Configure prosody build
   command:
     chdir: "{{ prosody_curversion_dir }}"
-    cmd: "./configure --ostype=linux --prefix={{ prosody_dest_dir }} --with-lua-include=/usr/include"
+    cmd: "./configure --ostype=linux --prefix={{ prosody_install_dir }} --with-lua-include=/usr/include"
     creates: "{{ prosody_curversion_dir }}/config.unix"
 
 - name: Check if build necessary
   stat:
-    path: "{{ prosody_curversion_dir }}/prosody.cfg.lua.install"
+    path: "{{ prosody_curversion_dir }}/{{ prosody_configfile }}.install"
   register: stat_result
 - name: Build prosody
   when: not stat_result.stat.exists
@@ -80,7 +80,7 @@
 
 - name: Check if install necessary
   stat:
-    path: "{{ prosody_dest_dir }}/share/man/man1/prosodyctl.1"
+    path: "{{ prosody_install_dir }}/share/man/man1/prosodyctl.1"
   register: stat_result
 - name: Install prosody
   when: not stat_result.stat.exists
@@ -91,29 +91,16 @@
 
 - name: Create prosody folders
   loop:
-  - "{{ prosody_upload_folder }}"
+  - "{{ prosody_upload_dir }}"
   - "{{ prosody_dhparam_path | dirname }}"
   file:
     path: "{{ item }}"
     state: directory
 
-- name: Add domains to uberspace config
-  tags: domains
-  loop: "{{ uberspace_domains }}"
-  when: item not in uberspace_domains
-  command: "uberspace web domain add {{ item }}"
-
-- name: Touch web URL to trigger certificate generation
-  tags: domains
-  loop: "{{ uberspace_domains }}"
-  uri:
-    url: "https://{{ item }}"
-  failed_when: false
-
 - name: Download the community plugins
   hg:
     repo: https://hg.prosody.im/prosody-modules
-    dest: "{{ prosody_communityplugins_folder }}"
+    dest: "{{ prosody_communityplugins_dir }}"
   notify: Restart prosody
 
 - name: Generate strong DHE parameter
@@ -124,8 +111,8 @@
 - name: Deploy config file
   tags: config
   template:
-    src: prosody.cfg.lua.j2
-    dest: "{{ prosody_dest_dir }}/etc/prosody/prosody.cfg.lua"
+    src: "{{ prosody_configfile }}.j2"
+    dest: "{{ prosody_install_dir }}/etc/prosody/{{ prosody_configfile }}"
   notify: Restart prosody
 
 - name: Deploy service
