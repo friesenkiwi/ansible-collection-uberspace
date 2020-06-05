@@ -26,3 +26,6 @@
     ttl: "{{ inwx_ttl }}"
     username: "{{ inwx_user }}"
     password: "{{ inwx_pw }}"
+- name: Run certificates task
+  tags: domains
+  import_tasks: certificates.yml

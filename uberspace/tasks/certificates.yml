@@ -1,0 +1,11 @@
+- name: Touch web URL to trigger certificate generation
+  tags: domains
+  loop: "{{ uberspace_domains_goal | default([]) }}"
+  uri:
+    url: "https://{{ item }}"
+  register: certificates
+  failed_when: false
+  changed_when: certificates.elapsed > 10
+- name: Show certificates
+  debug:
+    var: certificates

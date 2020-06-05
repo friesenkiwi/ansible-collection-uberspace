@@ -7,6 +7,15 @@ This role depends on my `uberspace` Account Setup role, which needs to be run be
 
 ### Role Variables
 
+#### Inputs
+There are some variables necessary to be set in order for this role to function properly, and some more available for fine-grained control, please check [`defaults/main.yml`](defaults/main.yml) and [`vars/main.yml`](vars/main.yml). Also there are a couple of files written and read from by default which are security relevant because they contain credentials. Make sure to only use it on encrypted filessystems and put them into your `.gitignore`.
+
+* `prosody_name` - The name of the Prosody server.
+* `prosody_adminaccount` - The admin XMPP account (only local part in front of the @).
+* `prosody_main_dir` - The main directory used for the source, log, pid, DH parameter, data files.
+* `prosody_port_*` (`http`,`https`,`client`,`client_tls`,`server`,`proxy65`,`turn`) - The ports for the respective services. Need to be correctly updated to the opened ports after the first run.
+* `prosody_turnsecret` - The secret for TURN/STUN (e.g. coturn) via the `turncredentials` module.
+
 ### Example Playbook
 
 Using an inventory `account-inventory` like this
@@ -64,6 +73,8 @@ you can execute `ansible-playbook -i account-inventory example.yml`. It will reg
 [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
 ### Sources
+
+This role is largely based on the following prior work:
 * https://github.com/fapsi/lab/blob/guide_prosody/source/guide_prosody.rst
 * https://plaintext.blog/hosting/Uberspace/prosody.html
 * https://www.dictvm.org/de-de/prosody-auf-dem-uberspace/

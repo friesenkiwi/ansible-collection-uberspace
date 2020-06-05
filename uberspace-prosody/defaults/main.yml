@@ -20,9 +20,11 @@ prosody_fulldomain_muc: "{{ prosody_domain_muc }}.{{ prosody_host }}"
 prosody_fulldomain_proxy: "{{ prosody_domain_proxy }}.{{ prosody_host }}"
 prosody_fulldomain_upload: "{{ prosody_domain_upload }}.{{ prosody_host }}"
 
+uberspace_domains_goal: [ "{{ prosody_host }}", "{{ prosody_fulldomain_muc }}", "{{ prosody_fulldomain_proxy }}", "{{ prosody_fulldomain_upload }}" ]
+
 prosody_install_dir: "{{ uberspace_spacedir }}"
 prosody_certificates_dir: "{{ uberspace_certificates_dir }}"
-prosody_adminaccount: "" 
+prosody_adminaccount: ""
 prosody_adminmail: "{{ uberspace_mail }}"
 prosody_secret: "{{ lookup('password', 'credentials/' + 'prosody_secret') }}"
 # prosody_db_user: prosody
@@ -48,17 +50,17 @@ uberspace_ports_goal:
 # - "{{ prosody_port_upload }}"
 # - "{{ prosody_port_transfer }}"
 inwx_records_a:
-- ""
+- "{{ uberspace_servicedomain }}"
 - "{{ prosody_servicedomain_muc }}"
 - "{{ prosody_servicedomain_proxy }}"
 - "{{ prosody_servicedomain_upload }}"
 inwx_records_srv:
   xmpp-client:
     port: "{{ prosody_port_client }}"
-    domains: [""]
+    domains: ["{{ uberspace_servicedomain }}"]
   xmpps-client:
     port: "{{ prosody_port_client_tls }}"
-    domains: [""]
+    domains: ["{{ uberspace_servicedomain }}"]
   xmpp-server:
     port: "{{ prosody_port_server }}"
     domains: "{{ inwx_records_a }}"

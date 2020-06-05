@@ -1,4 +1,5 @@
 - name: Get deletion page
+  tags: delete
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.delete }}"
@@ -7,6 +8,7 @@
   register: formresult
 
 - name: Delete uberspace
+  tags: delete
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.deletequeue }}"

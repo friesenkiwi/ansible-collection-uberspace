@@ -14,9 +14,6 @@
   # - name: show addeddomains
   #   debug:
   #     var: addeddomains
-- name: Touch web URL to trigger certificate generation
+- name: Run certificates task
   tags: domains
-  loop: "{{ uberspace_domains_goal | default([]) }}"
-  uri:
-    url: "https://{{ item }}"
-  failed_when: false
+  import_tasks: certificates.yml

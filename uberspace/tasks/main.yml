@@ -1,4 +1,5 @@
 - name: Check loginname availability
+  tags: session
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.register }}"
@@ -51,5 +52,6 @@
   when: not uberspace_action_delete
   import_tasks: ports.yml
 - name: Do delete
+  tags: delete
   when: uberspace_action_delete
   include_tasks: delete.yml
