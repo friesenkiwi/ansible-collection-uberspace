@@ -1,6 +1,6 @@
 # Uberspace Administration Ansible role
 
-This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) helps with the administration of accounts at the german exceptional intenet hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is acting through the user frontend via HTTPS and content parsing, but since there is no official API, things can break easily as soon as Uberspace changes anything in the frontend, specifically does a frontend relaunch etc.
+This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) helps with the administration of accounts at the German exceptional intenet hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is acting through the user frontend via HTTPS and content parsing, but since there is no official API, things can break easily as soon as Uberspace changes anything in the frontend, specifically does a frontend relaunch etc.
 
 When using this role, make sure that you understand, respect and cherish the [philosophy](https://wiki.uberspace.de/philosophy) and share the values of Uberspace. Specifically: Don't abuse the provided priviledges and don't overburden the technical infrastructure!
 
@@ -19,7 +19,7 @@ This role is tailored to run from a Linux controller only for Uberspace v7, not 
   * Hostname and other common variables (E-Mail etc.)
 * Register/open new ports
 * Connect domains to the uberspace
-* Set A(AAA) and SRV DNS records at the facultative/complementary separate german Domain/DNS hoster [INWX](https://www.inwx.de/de/)  (separate tasks file, use `tasks_from: inwx_domains` on the `import_role:` module)
+* Set A(AAA) and SRV DNS records at the facultative/complementary separate German Domain/DNS hoster [INWX](https://www.inwx.de/de/)  (separate tasks file, use `tasks_from: inwx_domains` on the `import_role:` module)
 
 for now. More features may be added in the future, Merge/Pull Requests are much appreciated!
 
@@ -83,7 +83,6 @@ The names, locations or lookup methods (e.g. to switch to [Ansible Vault](https:
 ### Example Playbook
 
 Using an inventory `account-inventory` like this
-
 ```ini
 [g_uberspace_isabell]
 isabell.uber.space ansible_user=isabell ansible_ssh_private_key_file="{{ uberspace_loginkey_path }}"

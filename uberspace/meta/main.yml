@@ -1,6 +1,6 @@
 galaxy_info:
   author: friesenkiwi
-  description: Administration of accounts at the german exceptional hoster "Uberspace". Not official. Acting through user frontend via HTTPS and content parsing.
+  description: Administration of accounts at the German exceptional hoster "Uberspace". Not official. Acting through user frontend via HTTPS and content parsing.
   license: BSD-3-Clause
   min_ansible_version: 2.9
   platforms:
