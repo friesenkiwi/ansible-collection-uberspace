@@ -56,7 +56,7 @@ and a playbook `example.yml` like this
   roles:
   - role: uberspace
     uberspace_action_setup: true
-  - role: uberspace-prosody
+  - role: uberspace_prosody
 
   tasks:
   - name: Run INWX domain tasks of uberspace role
