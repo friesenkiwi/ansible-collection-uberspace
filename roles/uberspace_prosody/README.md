@@ -54,7 +54,7 @@ and a playbook `example.yml` like this
     prosody_turnsecret: "{{ coturn_secret }}"
 
   roles:
-  - role: uberspace
+  - role: uberspace_account
     uberspace_action_setup: true
   - role: uberspace_prosody
 

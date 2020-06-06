@@ -106,7 +106,7 @@ and a playbook `example.yml` like this
         port: "{{ service_port }}"
         domains: "{{ inwx_records_a }}"
   roles:
-  - role: uberspace
+  - role: uberspace_account
     uberspace_action_setup: true
 
   tasks:

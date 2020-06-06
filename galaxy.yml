@@ -1,0 +1,11 @@
+namespace: "friesenkiwi"
+name: "uberspace"
+version: "1.0.0"
+readme: "README.md"
+authors:
+- "Friesenkiwi"
+tags:
+- uberspace
+- webhosting
+- hosting
+repository: "https://github.com/friesenkiwi/ansible-collection-uberspace"
