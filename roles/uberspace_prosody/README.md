@@ -36,20 +36,18 @@ and a playbook `example.yml` like this
     uberspace_basedomain: example.com
     uberspace_servicedomain: "im"
 
-    coturn_secret: "{{ lookup('password', 'credentials/' + 'coturn_secret') }}"
-
     prosody_name: IsabellJabber
     prosody_adminaccount: isabell
 
     prosody_main_dir: "{{ uberspace_projectsdir | realpath }}/xmpp/prosody"
 
-    prosody_port_http: 61739
-    prosody_port_https: 64654
-    prosody_port_client: 43680
-    prosody_port_client_tls: 43681
-    prosody_port_server: 43682
-    prosody_port_proxy65: 63893
-    prosody_port_turn: 65000
+    prosody_port_http: 40132
+    prosody_port_https: 40133
+    prosody_port_client: 40134
+    prosody_port_client_tls: 40135
+    prosody_port_server: 40136
+    prosody_port_proxy65: 40137
+    prosody_port_turn: 40138
 
     prosody_turnsecret: "{{ coturn_secret }}"
 

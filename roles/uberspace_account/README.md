@@ -112,7 +112,7 @@ and a playbook `example.yml` like this
   tasks:
   - name: Setup INWX domains/DNS
     import_role:
-      name: uberspace
+      name: uberspace_account
       tasks_from: inwx_domains
   - name: Setup application
     debug:
@@ -122,7 +122,7 @@ and a playbook `example.yml` like this
     vars:
       uberspace_action_delete: yes
     include_role:
-      name: uberspace
+      name: uberspace_account
 ```
 you can execute `ansible-playbook -i account-inventory example.yml`. It will register a new account `isabell`, gather and display the facts, setup ports and domains including DNS over at INWX and afterwards delete the account again.
 
