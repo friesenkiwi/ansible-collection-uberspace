@@ -210,7 +210,7 @@ archive_expires_after = "1w" -- Remove archived messages after 1 week
 -- archiving options, see https://prosody.im/doc/modules/mod_mam
 
 -- POSIX configuration
-pidfile = "{{ prosody_main_dir }}/prosody.pid";
+pidfile = "{{ prosody_pidfile }}";
 -- IMPORTANT for daemontools! DO NOT EDIT!
 daemonize = false;
 
@@ -260,7 +260,12 @@ contact_info = {
 certificates = "{{ prosody_certificates_dir }}"
 
 -- HTTPS currently only supports a single certificate, specify it here:
---https_certificate = "certs/localhost.crt"
+https_certificate = "{{ prosody_certificates_dir }}/{{ prosody_fulldomain_upload }}.crt"
+
+legacy_ssl_ssl = {
+		key = "{{ prosody_certificates_dir }}/{{ prosody_host }}.key";
+		certificate = "{{ prosody_certificates_dir }}/{{ prosody_host }}.crt";
+}
 
 --
 -- HTTP Config
@@ -301,7 +306,7 @@ Component "{{ prosody_fulldomain_muc }}" "muc"
   max_history_messages = 100
 --- Store MUC messages in an archive and allow users to access it
 	modules_enabled = {
-		"mam_muc",
+--		"mam_muc",
 		"muc_mam",
     "vcard_muc"
 	}
