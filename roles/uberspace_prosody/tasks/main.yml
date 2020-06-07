@@ -119,4 +119,4 @@
   template:
     src: prosody.ini.j2
     dest: "{{ uberspace_services_dir }}/prosody.ini"
-  notify: Reload supervisord config
+  notify: Reread supervisord config
