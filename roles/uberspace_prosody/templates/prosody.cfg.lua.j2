@@ -165,34 +165,20 @@ authentication = "internal_hashed"
 -- additional dependencies. See https://prosody.im/doc/storage for more info.
 
 -- MANUAL EDIT from https://github.com/siacs/Conversations/issues/2071#issuecomment-266162519
-
 default_storage = "internal" -- Default is "internal"
-sql = { driver = "SQLite3", database = "prosody.sqlite" } -- 'database' is the filename.
-
--- sql = {
---   driver = "MySQL",
---   database = "isabell_prosody",
---   username = "isabell",
---   password = "<Your Password>",
---   host = "localhost"
--- }
-
--- storage = "sql"
-
 storage = {
         -- This makes mod_mam_muc use the sql storage backend (others will use internal)
         -- which at the time of this writing is the only one supporting stanza archives
         muc_log = "sql";
         archive2 = "sql";
 }
-
 -- END MANUAL EDIT
 
 --storage = "sql" -- Default is "internal"
 
 -- For the "sql" backend, you can uncomment *one* of the below to configure:
---sql = { driver = "SQLite3", database = "prosody.sqlite" } -- Default. 'database' is the filename.
---sql = { driver = "MySQL", database = "prosody", username = "prosody", password = "secret", host = "localhost" }
+sql = { driver = "SQLite3", database = "prosody.sqlite" } -- Default. 'database' is the filename.
+--sql = { driver = "MySQL", database = "{{ uberspace_loginname }}_prosody", username = "{{ uberspace_loginname }}", password = "{{ uberspace_mysqlpassword }}", host = "localhost" }
 --sql = { driver = "PostgreSQL", database = "prosody", username = "prosody", password = "secret", host = "localhost" }
 
 -- Location of the Prosody data storage directory

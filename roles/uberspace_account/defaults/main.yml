@@ -6,6 +6,7 @@ uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_desti
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
 uberspace_loginkey_path: "~/.ssh/id_uberspace_{{ uberspace_loginname }}"
 uberspace_loginkey: "{{ lookup('file', uberspace_loginkey_path + '.pub', errors='ignore') }}"
+uberspace_mycnffetch_destination: "credentials/uberspace_mycnf_{{ uberspace_loginname }}"
 uberspace_action_delete: false
 uberspace_action_setup: false
 

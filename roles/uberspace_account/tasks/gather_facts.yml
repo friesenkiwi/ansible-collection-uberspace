@@ -56,3 +56,16 @@
   tags: domains
   set_fact:
     uberspace_domains: "{{ uberspace_domains.stdout_lines }}"
+
+- name: Get MySQL my.cnf file
+  tags: mysql
+  fetch:
+    flat: yes
+    src: ".my.cnf"
+    dest: "{{ uberspace_mycnffetch_destination }}"
+
+- name: Store MySQL passwords as fact
+  tags: mysql
+  set_fact:
+    uberspace_mysqlpassword: "{{ lookup('ini', 'password section=client file=' + uberspace_mycnffetch_destination) }}"
+    uberspace_mysqlpassword_readonly: "{{ lookup('ini', 'password section=clientreadonly file=' + uberspace_mycnffetch_destination) }}"
