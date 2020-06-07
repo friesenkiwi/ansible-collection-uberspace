@@ -7,7 +7,8 @@ prosody_pidfile: "{{ prosody_main_dir }}/prosody.pid"
 prosody_dhparam_size: 2048
 prosody_curversion_dir: "{{ prosody_main_dir }}/{{ prosody_version }}"
 prosody_upload_secret: "{{ lookup('password', 'credentials/' + 'prosody_upload_secret') }}"
-prosody_upload_dir: "{{ prosody_install_dir }}/var/lib/prosody/http_upload"
+#prosody_upload_dir: "{{ prosody_install_dir }}/var/lib/prosody/http_upload"
+prosody_upload_dir: "{{ prosody_main_dir }}/data/http_upload"
 prosody_communityplugins_dir: "{{ prosody_install_dir }}/var/lib/prosody/community-plugins"
 prosody_dhparam_path: "{{ prosody_main_dir }}/ssl/{{ prosody_host }}.prosody.dhparams.pem"
 

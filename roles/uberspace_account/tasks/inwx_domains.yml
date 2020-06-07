@@ -17,7 +17,7 @@
   loop: "{{ inwx_records_srv | dict2items | subelements('value.domains') }}"
   inwx.collection.dns:
     domain: "{{ uberspace_basedomain }}"
-    record: "{{ item.0.key }}._{{ inwx_records_srv_protocol }}{{ (item.1 != '') | ternary('.','') }}{{ item.1 }}"
+    record: "_{{ item.0.key }}._{{ inwx_records_srv_protocol }}{{ (item.1 != '') | ternary('.','') }}{{ item.1 }}"
     type: "SRV"
     value: "{{ uberspace_servicedomain }}{{ (uberspace_servicedomain != '') | ternary('.','') }}{{ uberspace_basedomain }}"
     port: "{{ item.0.value.port }}"

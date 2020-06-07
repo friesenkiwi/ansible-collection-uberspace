@@ -32,6 +32,7 @@
   loop:
   - luabitop
   - luaevent
+  - luadbi-sqlite3
   command:
     cmd: "luarocks install {{ item }} --local"
     creates: "~/.luarocks/lib64/luarocks/rocks/{{ item }}"
