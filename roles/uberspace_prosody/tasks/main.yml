@@ -120,3 +120,7 @@
     src: prosody.ini.j2
     dest: "{{ uberspace_services_dir }}/prosody.ini"
   notify: Reread supervisord config
+
+- name: Add prosody ports to the uberspace requested ones
+  set_fact:
+    uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + prosody_ports }}"
