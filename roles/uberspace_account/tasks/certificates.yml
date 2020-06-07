@@ -6,6 +6,6 @@
   register: certificates
   failed_when: false
   changed_when: certificates.elapsed > 10
-- name: Show certificates
-  debug:
-    var: certificates
+# - name: Show certificates
+#   debug:
+#     var: certificates

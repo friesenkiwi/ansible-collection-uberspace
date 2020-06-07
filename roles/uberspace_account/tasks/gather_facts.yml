@@ -33,8 +33,8 @@
 
 - name: Set uberspace facts from ansible facts
   set_fact:
-    uberspace_ip_private_v4: "{{ ansible_default_ipv4 }}"
-    uberspace_ip_private_v6: "{{ ansible_default_ipv6 }}"
+    uberspace_ip_private_v4: "{{ ansible_default_ipv4.address }}"
+    uberspace_ip_private_v6: "{{ ansible_default_ipv6.address }}"
     uberspace_host: "{{ ansible_hostname }}"
 
 - name: List ports

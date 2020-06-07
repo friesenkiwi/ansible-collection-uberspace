@@ -11,6 +11,8 @@
 #     var: addedports
 - name: Show added ports
   loop: "{{ addedports.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item }}"
   when: item.stdout is defined
   debug:
     msg: "{{ item.stdout.split(' ')[1] }}"
