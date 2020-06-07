@@ -1,0 +1,56 @@
+- name: Create coturn file path
+  loop:
+  - "{{ coturn_main_dir }}"
+  - "{{ coturn_configfile | dirname }}"
+  - "{{ coturn_pidfile | dirname }}"
+  file:
+    state: directory
+    path: "{{ item }}"
+- name: "Download and unpack {{ coturn_version }}"
+  unarchive:
+    remote_src: yes
+    src: "{{ coturn_download_url }}"
+    dest: "{{ coturn_main_dir }}"
+
+- name: Configure coturn build
+  command:
+    chdir: "{{ coturn_curversion_dir }}"
+    cmd: "./configure --prefix={{ coturn_install_dir }}"
+    creates: "{{ coturn_curversion_dir }}/Makefile"
+
+- name: Check if build necessary
+  stat:
+    path: "{{ coturn_curversion_dir }}/bin"
+  register: stat_result
+- name: Build coturn
+  when: not stat_result.stat.exists
+  make:
+    chdir: "{{ coturn_curversion_dir }}"
+
+- name: Check if install necessary
+  stat:
+    path: "{{ coturn_install_dir }}/bin/turnserver"
+  register: stat_result
+
+- name: Deploy config file
+  tags: config
+  template:
+    src: "{{ coturn_configfile_name }}.j2"
+    dest: "{{ coturn_configfile }}"
+  notify: Restart coturn
+
+- name: Deploy service
+  template:
+    src: coturn.ini.j2
+    dest: "{{ uberspace_services_dir }}/coturn.ini"
+  notify: Reread supervisord config
+- name: Install coturn
+  when: not stat_result.stat.exists
+  make:
+    chdir: "{{ coturn_curversion_dir }}"
+    target: install
+  notify: Restart coturn
+
+- name: Add coturn ports to the uberspace requested ones
+  set_fact:
+    uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + coturn_ports }}"

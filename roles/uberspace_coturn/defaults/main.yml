@@ -1,0 +1,26 @@
+coturn_dir_name: turn
+coturn_main_dir: "{{ uberspace_projectsdir | realpath }}/{{ coturn_dir_name }}"
+#   coturn_install_dir: "{{ uberspace_projectsdir | realpath }}/{{ coturn_dir_name }}"
+#   coturn_install_dir: "{{ uberspace_spacedir }}/opt/turnserver/"
+coturn_install_dir: "{{ uberspace_spacedir }}"
+coturn_configfile_name: "turnserver.conf"
+coturn_configfile: "{{ coturn_install_dir }}/etc/coturn/{{ coturn_configfile_name }}"
+#coturn_pidfile: "{{ coturn_main_dir }}/turnserver.pid"
+coturn_pidfile: "{{ coturn_install_dir }}/var/run/turnserver.pid"
+
+coturn_curversion_dir: "{{ coturn_main_dir }}/{{ coturn_version }}"
+coturn_interface_ipv4: "{{ uberspace_ip_private_v4 }}"
+coturn_interface_ipv6: "{{ uberspace_ip_private_v6 }}"
+coturn_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+coturn_secret: "{{ lookup('password','credentials/coturn_secret') }}"
+
+uberspace_domains_goal:
+- "{{ coturn_host }}"
+
+coturn_ports:
+- "{{ coturn_port }}"
+- "{{ coturn_port_alt }}"
+- "{{ coturn_port_udp_min }}"
+- "{{ coturn_port_udp_max }}"
+#uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + coturn_ports }}"
+#uberspace_ports_goal: "{{ coturn_ports }}"

@@ -1,0 +1,11 @@
+- name: Reread supervisord config
+  command:
+    cmd: supervisorctl reread
+  notify: Update supervisord groups
+- name: Update supervisord groups
+  command:
+    cmd: supervisorctl update coturn
+  notify: Restart coturn
+- name: Restart coturn
+  command:
+    cmd: supervisorctl restart coturn
