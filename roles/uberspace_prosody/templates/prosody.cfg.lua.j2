@@ -66,7 +66,7 @@ modules_enabled = {
 		--"admin_telnet"; -- Opens telnet console interface on localhost port 5582
 
 	-- HTTP modules
-		--"bosh"; -- Enable BOSH clients, aka "Jabber over HTTP"
+		"bosh"; -- Enable BOSH clients, aka "Jabber over HTTP"
 		--"websocket"; -- XMPP over WebSockets
 		"http"; -- Built-In http Server, needed for http_upload
 		"http_files"; -- Serve static files from a directory over HTTP
@@ -98,6 +98,8 @@ modules_enabled = {
 		--"http_altconnect";
 		"turncredentials";
 }
+
+consider_bosh_secure = true
 
 turncredentials_host = "{{ prosody_host }}"
 turncredentials_secret = "{{ prosody_turnsecret }}"
@@ -221,7 +223,7 @@ proxy65_ports = { {{ prosody_port_proxy65 }} }
 
 -- Build-in http Server
 http_ports = { {{ prosody_port_http }} }
-https_ports = { {{ prosody_port_https }} }
+--https_ports = { {{ prosody_port_https }} }
 
 -- Server to Server
 s2s_ports = { {{ prosody_port_server }} }
@@ -246,7 +248,7 @@ contact_info = {
 certificates = "{{ prosody_certificates_dir }}"
 
 -- HTTPS currently only supports a single certificate, specify it here:
-https_certificate = "{{ prosody_certificates_dir }}/{{ prosody_fulldomain_upload }}.crt"
+--https_certificate = "{{ prosody_certificates_dir }}/{{ prosody_fulldomain_upload }}.crt"
 
 legacy_ssl_ssl = {
 		key = "{{ prosody_certificates_dir }}/{{ prosody_host }}.key";

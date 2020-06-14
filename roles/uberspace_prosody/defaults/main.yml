@@ -77,3 +77,9 @@ prosody_webbackends:
   port: 5050
 - path: "/prosody"
   port: "{{ prosody_port_http }}"
+- path: "/http-bind"
+  port: "{{ prosody_port_http }}"
+# - path: "/.well-known/host-meta"
+#   port: "{{ prosody_port_http }}"
+# - path: "/.well-known/host-meta.json"
+#   port: "{{ prosody_port_http }}"

@@ -102,6 +102,7 @@
   loop:
   - "{{ prosody_upload_dir }}"
   - "{{ prosody_dhparam_path | dirname }}"
+  - "{{ uberspace_webroot }}/.well-known"
   file:
     path: "{{ item }}"
     state: directory
@@ -158,3 +159,10 @@
   tags: filer
   include_tasks: filer.yml
 
+- name: Deploy host-meta
+  loop:
+  -
+  - .json
+  template:
+    src: "host-meta{{ item }}.j2"
+    dest: "{{ uberspace_webroot }}/.well-known/host-meta{{ item }}"
