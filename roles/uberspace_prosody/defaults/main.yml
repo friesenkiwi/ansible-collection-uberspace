@@ -72,3 +72,8 @@ inwx_records_srv:
   xmpp-server:
     port: "{{ prosody_port_server }}"
     domains: "{{ inwx_records_a }}"
+prosody_webbackends:
+- path: "/upload"
+  port: 5050
+- path: "/prosody"
+  port: "{{ prosody_port_http }}"

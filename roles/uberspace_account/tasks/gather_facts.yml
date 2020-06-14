@@ -57,6 +57,16 @@
   set_fact:
     uberspace_domains: "{{ uberspace_domains.stdout_lines }}"
 
+- name: List web backends
+  tags: backends
+  command: "uberspace web backend list"
+  changed_when: false
+  register: uberspace_webbackends
+- name: Store web backends as fact
+  tags: backends
+  set_fact:
+    uberspace_webbackends: "{{ uberspace_webbackends.stdout_lines }}"
+
 - name: Get MySQL my.cnf file
   tags: mysql
   fetch:

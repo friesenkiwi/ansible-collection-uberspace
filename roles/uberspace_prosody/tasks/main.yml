@@ -134,6 +134,11 @@
   set_fact:
     uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + prosody_ports }}"
 
+- name: Add prosody web backends to the uberspace requested ones
+  tags: backends
+  set_fact:
+    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + prosody_webbackends }}"
+
 - name: install pexpect as a dependency
   pip:
     name: pexpect

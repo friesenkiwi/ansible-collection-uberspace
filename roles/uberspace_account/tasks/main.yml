@@ -51,6 +51,10 @@
   tags: ports
   when: not uberspace_action_delete
   import_tasks: ports.yml
+- name: Do web backend setup
+  tags: backends
+  when: not uberspace_action_delete
+  import_tasks: webbackends.yml
 - name: Do delete
   tags: delete
   when: uberspace_action_delete
