@@ -179,8 +179,8 @@ storage = {
 --storage = "sql" -- Default is "internal"
 
 -- For the "sql" backend, you can uncomment *one* of the below to configure:
-sql = { driver = "SQLite3", database = "prosody.sqlite" } -- Default. 'database' is the filename.
---sql = { driver = "MySQL", database = "{{ uberspace_loginname }}_prosody", username = "{{ uberspace_loginname }}", password = "{{ uberspace_mysqlpassword }}", host = "localhost" }
+--sql = { driver = "SQLite3", database = "prosody.sqlite" } -- Default. 'database' is the filename.
+sql = { driver = "MySQL", database = "{{ uberspace_loginname }}_prosody", username = "{{ uberspace_loginname }}", password = "{{ uberspace_mysqlpassword }}", host = "localhost" }
 --sql = { driver = "PostgreSQL", database = "prosody", username = "prosody", password = "secret", host = "localhost" }
 
 -- Location of the Prosody data storage directory
@@ -223,7 +223,8 @@ proxy65_ports = { {{ prosody_port_proxy65 }} }
 
 -- Build-in http Server
 http_ports = { {{ prosody_port_http }} }
---https_ports = { {{ prosody_port_https }} }
+https_ports = { }
+--https_ports = { {{ prosody_port_https | default('') }} }
 
 -- Server to Server
 s2s_ports = { {{ prosody_port_server }} }

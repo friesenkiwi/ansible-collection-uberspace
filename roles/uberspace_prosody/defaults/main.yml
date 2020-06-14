@@ -17,13 +17,14 @@ prosody_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
 
 prosody_domain_muc: conference
 prosody_domain_proxy: proxy
-prosody_domain_upload: upload
+#prosody_domain_upload: upload
 prosody_servicedomain_muc: "{{ prosody_domain_muc }}{{ (prosody_domain_muc != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
 prosody_servicedomain_proxy: "{{ prosody_domain_proxy }}{{ (prosody_domain_proxy != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
-prosody_servicedomain_upload: "{{ prosody_domain_upload }}{{ (prosody_domain_upload != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
+#prosody_servicedomain_upload: "{{ prosody_domain_upload }}{{ (prosody_domain_upload != '') | ternary('.','') }}{{ uberspace_servicedomain }}"
 prosody_fulldomain_muc: "{{ prosody_domain_muc }}.{{ prosody_host }}"
 prosody_fulldomain_proxy: "{{ prosody_domain_proxy }}.{{ prosody_host }}"
-prosody_fulldomain_upload: "{{ prosody_domain_upload }}.{{ prosody_host }}"
+# prosody_fulldomain_upload: "{{ prosody_domain_upload }}.{{ prosody_host }}"
+prosody_fulldomain_upload: ""
 
 prosody_install_dir: "{{ uberspace_spacedir }}"
 prosody_certificates_dir: "{{ uberspace_certificates_dir }}"
@@ -46,7 +47,7 @@ uberspace_domains_goal:
 - "{{ prosody_host }}"
 - "{{ prosody_fulldomain_muc }}"
 - "{{ prosody_fulldomain_proxy }}"
-- "{{ prosody_fulldomain_upload }}"
+# - "{{ prosody_fulldomain_upload }}"
 prosody_ports:
 # - "{{ prosody_port_http }}"
 # - "{{ prosody_port_https }}"
@@ -61,7 +62,7 @@ inwx_records_a:
 - "{{ uberspace_servicedomain }}"
 - "{{ prosody_servicedomain_muc }}"
 - "{{ prosody_servicedomain_proxy }}"
-- "{{ prosody_servicedomain_upload }}"
+# - "{{ prosody_servicedomain_upload }}"
 inwx_records_srv:
   xmpp-client:
     port: "{{ prosody_port_client }}"
