@@ -1,11 +1,20 @@
 - name: Reread supervisord config
   command:
     cmd: supervisorctl reread
-  notify: Update supervisord groups
-- name: Update supervisord groups
+  notify:
+  - Update supervisord prosody groups
+  - Update supervisord prosody_filer groups
+- name: Update supervisord prosody groups
   command:
     cmd: supervisorctl update prosody
   notify: Restart prosody
+- name: Update supervisord prosody_filer groups
+  command:
+    cmd: supervisorctl update prosody_filer
+  notify: Restart prosody_filer
 - name: Restart prosody
   command:
     cmd: supervisorctl restart prosody
+- name: Restart prosody_filer
+  command:
+    cmd: supervisorctl restart prosody_filer

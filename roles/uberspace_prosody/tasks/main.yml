@@ -19,12 +19,20 @@
 - name: Install runtime lua-dependencies
   loop:
   - luasocket
-  - luaexpat
   - luafilesystem
   - luasec
   command:
     cmd: "luarocks install {{ item }} --local"
     creates: "~/.luarocks/lib64/luarocks/rocks/{{ item }}"
+  register: luarocks_path
+  changed_when: "'is now built and installed in' in luarocks_path.stdout"
+
+- name: Install luaexpat to avoid the stanza size limits message
+  loop:
+  - luaexpat 1.3.0-3
+  command:
+    cmd: "luarocks install --server=https://luarocks.org/manifests/zash {{ item }} --local"
+    creates: "~/.luarocks/lib64/luarocks/rocks/{{ item.split(' ')[0] }}"
   register: luarocks_path
   changed_when: "'is now built and installed in' in luarocks_path.stdout"
 
@@ -125,3 +133,23 @@
 - name: Add prosody ports to the uberspace requested ones
   set_fact:
     uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + prosody_ports }}"
+
+- name: install pexpect as a dependency
+  pip:
+    name: pexpect
+    extra_args: --user
+
+- name: Add users
+  loop: "{{ prosody_users_complete }}"
+  expect:
+    command: "{{ uberspace_spacedir }}/bin/prosodyctl adduser {{ item }}"
+    responses:
+       password: "{{ lookup('password', 'credentials/' + 'prosody_users/' + item) }}"
+  register: prosodyctlresult
+  changed_when: prosodyctlresult.rc == 0
+  failed_when: prosodyctlresult.rc > 1
+
+- name: Install filer
+  tags: filer
+  include_tasks: filer.yml
+

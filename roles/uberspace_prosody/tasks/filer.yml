@@ -1,0 +1,28 @@
+- name: Get filer
+  tags: filer
+  command:
+    chdir: "{{ prosody_main_dir }}"
+    cmd: go get "{{ prosody_filer_downloadurl }}"
+  args:
+     creates: "{{ prosody_filer_dir }}"
+- name: Build filer
+  tags: filer
+  command:
+    chdir: "{{ prosody_filer_dir }}"
+    cmd: ./build.sh
+  args:
+     creates: "{{ prosody_filer_dir }}/prosody-filer"
+- name: Deploy config file
+  tags:
+  - config
+  - filer
+  template:
+    src: "config.toml.j2"
+    dest: "{{ prosody_filer_dir }}/config.toml"
+  notify: Restart prosody_filer
+- name: Deploy service
+  tags: filer
+  template:
+    src: prosody_filer.ini.j2
+    dest: "{{ uberspace_services_dir }}/prosody_filer.ini"
+  notify: Reread supervisord config

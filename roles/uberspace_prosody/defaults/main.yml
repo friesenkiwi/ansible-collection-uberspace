@@ -1,4 +1,5 @@
 prosody_downloadurl: https://prosody.im/downloads/source/prosody-0.11.5.tar.gz
+prosody_filer_downloadurl: github.com/ThomasLeister/prosody-filer
 prosody_version: "{{ prosody_downloadurl | basename | splitext | first | splitext | first }}"
 prosody_configfile_name: "prosody.cfg.lua"
 prosody_configfile: "{{ prosody_install_dir }}/etc/prosody/{{ prosody_configfile_name }}"
@@ -6,11 +7,11 @@ prosody_pidfile: "{{ prosody_main_dir }}/prosody.pid"
 
 prosody_dhparam_size: 2048
 prosody_curversion_dir: "{{ prosody_main_dir }}/{{ prosody_version }}"
-prosody_upload_secret: "{{ lookup('password', 'credentials/' + 'prosody_upload_secret') }}"
 #prosody_upload_dir: "{{ prosody_install_dir }}/var/lib/prosody/http_upload"
 prosody_upload_dir: "{{ prosody_main_dir }}/data/http_upload"
 prosody_communityplugins_dir: "{{ prosody_install_dir }}/var/lib/prosody/community-plugins"
 prosody_dhparam_path: "{{ prosody_main_dir }}/ssl/{{ prosody_host }}.prosody.dhparams.pem"
+prosody_filer_dir: "{{ uberspace_spacedir }}/go/src/{{ prosody_filer_downloadurl }}"
 
 prosody_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
 
@@ -27,8 +28,12 @@ prosody_fulldomain_upload: "{{ prosody_domain_upload }}.{{ prosody_host }}"
 prosody_install_dir: "{{ uberspace_spacedir }}"
 prosody_certificates_dir: "{{ uberspace_certificates_dir }}"
 prosody_adminaccount: ""
+prosody_admins: ["{{ prosody_adminaccount }}@{{ prosody_host }}"]
+prosody_users: []
+prosody_users_complete: "{{ prosody_admins + prosody_users }}"
 prosody_adminmail: "{{ uberspace_mail }}"
 prosody_secret: "{{ lookup('password', 'credentials/' + 'prosody_secret') }}"
+prosody_upload_secret: "{{ lookup('password', 'credentials/' + 'prosody_upload_secret') }}"
 # prosody_db_user: prosody
 # prosody_db_pw: "{{ lookup('password', 'credentials/' + 'prosody_dbuser_pw') }}"
 # prosody_db_name: prosody_dev

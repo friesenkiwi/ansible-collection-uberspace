@@ -1,5 +1,5 @@
 [program:prosody]
-command=/bin/bash -c "source /home/{{ uberspace_loginname }}/.bash_profile && prosody"
+command=/bin/bash -c "source {{ uberspace_spacedir }}/.bash_profile && prosody"
 autostart=yes
 autorestart=yes
 startretries=1

@@ -1,0 +1,15 @@
+###
+### Server configuration
+### (rename this file to "config.toml"!)
+
+### IP address and port to listen to, e.g. "[::]:5050" to listen to ipv6 and ipv4 addresses
+listenport      = "[::]:5050"
+
+### Secret (must match the one in prosody.conf.lua!)
+secret          = "{{ prosody_upload_secret }}"
+
+### Where to store the uploaded files
+storeDir        = "./uploads/"
+
+### Subdirectory for HTTP upload / download requests (usually "upload/")
+uploadSubDir    = "upload/"

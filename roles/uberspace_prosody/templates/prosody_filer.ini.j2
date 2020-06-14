@@ -1,0 +1,9 @@
+[program:prosody_filer]
+directory={{ prosody_filer_dir }}
+command={{ prosody_filer_dir }}/prosody-filer
+autostart=yes
+autorestart=yes
+startretries=1
+stopasgroup=true
+killasgroup=true
+stopsignal=INT
