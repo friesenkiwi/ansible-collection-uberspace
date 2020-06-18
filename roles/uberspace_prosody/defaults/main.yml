@@ -35,10 +35,10 @@ prosody_users_complete: "{{ prosody_admins + prosody_users }}"
 prosody_adminmail: "{{ uberspace_mail }}"
 prosody_secret: "{{ lookup('password', 'credentials/' + 'prosody_secret') }}"
 prosody_upload_secret: "{{ lookup('password', 'credentials/' + 'prosody_upload_secret') }}"
-# prosody_db_user: prosody
-# prosody_db_pw: "{{ lookup('password', 'credentials/' + 'prosody_dbuser_pw') }}"
-# prosody_db_name: prosody_dev
-# prosody_db_host: localhost
+prosody_db_user: "{{ uberspace_loginname }}"
+prosody_db_pw: "{{ uberspace_mysqlpassword }}"
+prosody_db_name: "{{ uberspace_loginname }}_prosody"
+prosody_db_host: localhost
 
 prosody_interface_ipv4: "{{ uberspace_ip_private_v4 }}"
 prosody_interface_ipv6: "{{ uberspace_ip_private_v6 }}"
@@ -54,10 +54,8 @@ prosody_ports:
 - "{{ prosody_port_client }}"
 - "{{ prosody_port_client_tls }}"
 - "{{ prosody_port_server }}"
-# - "{{ prosody_port_proxy65 }}"
+- "{{ prosody_port_proxy65 }}"
 # - "{{ prosody_port_upload }}"
-# - "{{ prosody_port_transfer }}"
-#uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + prosody_ports }}"
 inwx_records_a:
 - "{{ uberspace_servicedomain }}"
 - "{{ prosody_servicedomain_muc }}"
