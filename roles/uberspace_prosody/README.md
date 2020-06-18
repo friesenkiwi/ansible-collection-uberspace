@@ -1,9 +1,9 @@
-# Uberspace Prosody installation Ansible role
+# Uberspace Prosody setup Ansible role
 
-This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) sets up the [Prosody](https://prosody.im/) XMPP/Jabber server at the German exceptional hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers.
+This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) sets up the [Prosody](https://prosody.im/) XMPP/Jabber server at the German exceptional hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is largely based on the guide https://github.com/fapsi/lab/blob/guide_prosody/source/guide_prosody.rst with some small additions and tweaks.
 
 ### Requirements / Dependencies
-This role depends on my `uberspace` Account Setup role, which needs to be run before to provide some facts.
+This role depends on my `uberspace_account` Account Setup role, which needs to be run before to provide some facts.
 
 ### Role Variables
 

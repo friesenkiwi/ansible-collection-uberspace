@@ -1,4 +1,4 @@
-# Uberspace Administration Ansible role
+# Uberspace account administration Ansible role
 
 This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) helps with the administration of accounts at the German exceptional intenet hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is acting through the user frontend via HTTPS and content parsing, but since there is no official API, things can break easily as soon as Uberspace changes anything in the frontend, specifically does a frontend relaunch etc.
 
@@ -18,6 +18,7 @@ This role is tailored to run from a Linux controller only for Uberspace v7, not 
   * public/private IPv4/v6 addresses
   * Hostname and other common variables (E-Mail etc.)
 * Register/open new ports
+* Set up web backends
 * Connect domains to the uberspace
 * Set A(AAA) and SRV DNS records at the facultative/complementary separate German Domain/DNS hoster [INWX](https://www.inwx.de/de/)  (separate tasks file, use `tasks_from: inwx_domains` on the `import_role:` module)
 
