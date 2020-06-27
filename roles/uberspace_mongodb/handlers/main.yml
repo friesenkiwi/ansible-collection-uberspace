@@ -1,0 +1,20 @@
+- name: Reread supervisord config
+  command:
+    cmd: supervisorctl reread
+  notify:
+  - Update supervisord mongodb groups
+  - Update supervisord mongodb_filer groups
+- name: Update supervisord mongodb groups
+  command:
+    cmd: supervisorctl update mongodb
+  notify: Restart mongodb
+- name: Update supervisord mongodb_filer groups
+  command:
+    cmd: supervisorctl update mongodb_filer
+  notify: Restart mongodb_filer
+- name: Restart mongodb
+  command:
+    cmd: supervisorctl restart mongodb
+- name: Restart mongodb_filer
+  command:
+    cmd: supervisorctl restart mongodb_filer
