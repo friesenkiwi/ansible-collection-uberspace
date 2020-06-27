@@ -1,0 +1,32 @@
+- name: Unarchive a file with extra options
+  tags: test
+  unarchive:
+    src: "{{ mongodb_downloadurl }}"
+    dest: ~/
+    remote_src: yes
+    extra_opts:
+    - --strip-components=1
+
+
+
+
+- name: setup mongodb
+#  tags: test
+  command: uberspace-setup-mongodb
+  args:
+    creates: "~/mongodb"
+  register: TEMPMDB
+- name: derive port and password
+#  tags: test
+  when: mongodb_port is not defined or mongodb_password is not defined
+  set_fact:
+    mongodb_port: "{{ TEMPMDB.stdout | regex_search('Portnum#:(\\s[0-9]{5})')  }}"
+    mongodb_password: "{{ TEMPMDB.stdout | regex_search('Password:(\\s.+)\\n')   }}"
+- name: output
+#  tags: test
+  debug:
+    msg: "mongodb_port: {{mongodb_port.split(' ')[1]}} ; mongodb_password: {{mongodb_password.split(' ')[1].split('\n')[0]}}"
+- name: derive mongo url
+#  tags: test
+  set_fact:
+    wekan_mongo_url: "mongodb://{{wekan_mongo_user}}:{{mongodb_password}}@127.0.0.1:{{mongodb_port}}/wekan?authSource=admin"

@@ -1,0 +1,8 @@
+[program:mongodb]
+command=mongod
+  --dbpath %(ENV_HOME)s/mongodb
+  --bind_ip 127.0.0.1
+  --auth
+  --unixSocketPrefix %(ENV_HOME)s/mongodb
+autostart=yes
+autorestart=yes

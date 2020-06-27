@@ -1,0 +1,4 @@
+mongodb_downloadurl: https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.8.tgz
+mongodb_targetdir:
+mongodb_admin_user: "{{ uberspace_loginname }}_mongoroot"
+mongodb_admin_pwd: "{{ lookup('password', 'credentials/' + 'pleroma_secret') }}"

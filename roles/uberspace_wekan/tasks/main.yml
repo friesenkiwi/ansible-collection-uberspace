@@ -1,0 +1,41 @@
+- name: request new port
+  when: wekan_port is not defined
+  command: uberspace-add-port --protocol tcp --firewall
+  register: add_port_result
+- name: find port number in output
+  when: add_port_result.stdout is defined
+  set_fact:
+    wekan_port: "{{ add_port_result.stdout | regex_search('([0-9]{5})') }}"
+
+- name: set ROOT_URL
+  set_fact:
+    ROOT_URL: "http://{{ ansible_user_id }}.{{ ansible_nodename }}:{{ wekan_port }}/"
+    MAIL_URL: "smtp://{{ ansible_user_id }}:{{ smtp_password }}@{{ ansible_nodename }}:587/"
+    MAIL_FROM: "{{ ansible_user_id }}@{{ ansible_nodename }}"
+
+- name: create target folder
+  file:
+    path: "{{ wekan_main_dir }}"
+    state: directory
+- name: download and extract
+  unarchive:
+    src: "{{wekan_url}}"
+    dest: "{{ wekan_main_dir }}"
+    remote_src: yes
+
+- name: install
+  command: npm install
+  args:
+    chdir: "{{ wekan_main_dir }}"
+
+- name: install
+  template:
+    src: templates/wekan-setup.j2
+    dest: ~/wekan-setup
+    mode: "u+x"
+
+- name: install
+  template:
+    src: templates/wekan-start.j2
+    dest: ~/wekan-start
+    mode: "a+x"
