@@ -11,6 +11,19 @@
     uberspace_ip_public_v4: "{{ parsed_ipv4address }}"
     uberspace_ip_public_v6: "{{ parsed_ipv6address }}"
 
+- name: Get accounting page
+  delegate_to: localhost
+  uri:
+    url: "{{ uberspace_urls.accounting }}"
+    headers: "{{ uberspace_headers }}"
+    return_content: yes
+  register: accountingresult
+
+- name: Set uberspace facts from accounting
+  set_fact:
+    uberspace_balance: "{{ parsed_balance }}"
+    uberspace_currentprice: "{{ parsed_currentprice }}"
+
 - name: Put host keys into local known_hosts
   delegate_to: localhost
   vars:
