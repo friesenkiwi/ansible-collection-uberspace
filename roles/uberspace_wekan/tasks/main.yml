@@ -1,3 +1,9 @@
+# - name: derive mongo url
+# #  tags: test
+#   set_fact:
+#     wekan_mongo_url: "mongodb://{{ wekan_mongo_user }}:{{ mongodb_admin_password }}@127.0.0.1:{{ mongodb_port }}/wekan?authSource=admin"
+
+
 - name: request new port
   when: wekan_port is not defined
   command: uberspace-add-port --protocol tcp --firewall
