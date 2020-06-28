@@ -1,1 +1,1 @@
-db = connect("mongodb://{{ mongodb_admin_user }}:{{ mongodb_admin_password }}@{{ mongodb_bind_ip }}:27017/admin")
+db = connect("mongodb://{{ mongodb_admin_user }}:{{ mongodb_admin_password | urlencode }}@{{ mongodb_bind_ip }}:27017/admin")
