@@ -92,3 +92,11 @@
   set_fact:
     uberspace_mysqlpassword: "{{ lookup('ini', 'password section=client file=' + uberspace_mycnffetch_destination) }}"
     uberspace_mysqlpassword_readonly: "{{ lookup('ini', 'password section=clientreadonly file=' + uberspace_mycnffetch_destination) }}"
+
+- name: Record some facts as custom stat (set show_custom_stats = yes in ansible.cfg or ANSIBLE_SHOW_CUSTOM_STATS=yes in env)
+  tags: test
+  set_stats:
+    per_host: yes
+    data:
+      balance: "{{ uberspace_balance }}"
+      currentprice: "{{ uberspace_currentprice }}"

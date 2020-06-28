@@ -5,9 +5,9 @@ uberspace_html_ipv4address: '<th>IPv4-Adresse</th>\s*<td>\s*<code>(.*)</code>'
 uberspace_html_ipv6address: '<th>IPv6-Adresse</th>\s*<td>\s*<code>(.*)</code>'
 uberspace_html_hostkeyfingerprint: "<th>{{ item.upper() }}</th>\\s*<td><code>(.*)</code>"
 uberspace_html_hostname: '<th>Hostname</th>\s*<td>\s*<code>(.*)</code>'
-uberspace_html_balance: '<h2><a name="balance"></a>Dein Kontostand</h2>\s*<p>\s*… beträgt derzeit <strong>(.*)&nbsp;€</strong>'
-uberspace_html_currentprice: '<input type="text" name="price" value="(.*)" size="3" style="text-align: center;" id="accounting_price">'
+uberspace_html_balance: '<h2><a name=\"balance\"></a>Dein Kontostand</h2>\s*<p>\s*&hellip; beträgt derzeit <strong>(.*)&nbsp;€</strong>'
 
+uberspace_html_currentprice: '<input type=\"text\" name=\"price\" value=\"(.*)\" size=\"3\" style=\"text-align: center;\" id=\"accounting_price\" />'
 uberspace_url_main: "https://dashboard.uberspace.de/"
 uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
 
