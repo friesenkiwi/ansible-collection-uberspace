@@ -1,7 +1,7 @@
 [program:mongodb]
-command={{ mongodb_main_dir }}/bin/mongod
+command={{ mongodb_bin_dir }}/mongod
   --dbpath {{ mongodb_main_dir }}
-  --bind_ip {{ uberspace_ip_private_v4 }}
+  --bind_ip {{ mongodb_bind_ip }}
   --auth
   --unixSocketPrefix {{ mongodb_main_dir }}
 autostart=yes

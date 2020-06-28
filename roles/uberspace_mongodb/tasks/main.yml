@@ -1,4 +1,4 @@
-- name: Download and extract MongoDB binaries
+- name: Create target dir
   tags: test
   file:
     path: "{{ mongodb_main_dir }}"
@@ -11,6 +11,7 @@
     remote_src: yes
     extra_opts:
     - --strip-components=1
+  notify: Restart mongodb
 
 - name: Deploy service
   template:

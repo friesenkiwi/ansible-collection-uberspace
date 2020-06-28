@@ -1,5 +1,3 @@
-mongodb_downloadurl: https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.8.tgz
-#mongodb_downloadurl: https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.0.5.tgz
-mongodb_targetdir:
+mongodb_downloadurl: https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.8.tgz
 mongodb_admin_user: "{{ uberspace_loginname }}_mongoroot"
 mongodb_admin_password: "{{ lookup('password', 'credentials/' + 'mongodb_admin_password') }}"
