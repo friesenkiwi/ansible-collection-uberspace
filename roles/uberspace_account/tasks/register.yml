@@ -21,6 +21,7 @@
       mail: ""
       login: "{{ uberspace_loginname }}"
       u7: 1
+      houserules: 1
     return_content: yes
     status_code: 302
   register: registerresult
