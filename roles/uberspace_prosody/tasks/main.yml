@@ -6,6 +6,7 @@
     insertbefore: export PATH
 
 - name: Configure luarocks - Get luarocks env variables
+  check_mode: no
   shell: 'echo "$(luarocks path)"'
   register: luarocks_path
   changed_when: false

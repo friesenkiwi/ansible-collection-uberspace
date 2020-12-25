@@ -1,5 +1,6 @@
 - name: Get datasheet page
   delegate_to: localhost
+  check_mode: no
   uri:
     url: "{{ uberspace_urls.datasheet }}"
     headers: "{{ uberspace_headers }}"
@@ -13,6 +14,7 @@
 
 - name: Get accounting page
   delegate_to: localhost
+  check_mode: no
   uri:
     url: "{{ uberspace_urls.accounting }}"
     headers: "{{ uberspace_headers }}"
@@ -52,6 +54,7 @@
 
 - name: List ports
   tags: ports
+  check_mode: no
   command: "uberspace port list"
   changed_when: false
   register: uberspace_ports
@@ -62,6 +65,7 @@
 
 - name: List domains
   tags: domains
+  check_mode: no
   command: "uberspace web domain list"
   changed_when: false
   register: uberspace_domains
@@ -72,6 +76,7 @@
 
 - name: List web backends
   tags: backends
+  check_mode: no
   command: "uberspace web backend list"
   changed_when: false
   register: uberspace_webbackends
@@ -94,7 +99,6 @@
     uberspace_mysqlpassword_readonly: "{{ lookup('ini', 'password section=clientreadonly file=' + uberspace_mycnffetch_destination) }}"
 
 - name: Record some facts as custom stat (set show_custom_stats = yes in ansible.cfg or ANSIBLE_SHOW_CUSTOM_STATS=yes in env)
-  tags: test
   set_stats:
     per_host: yes
     data:
