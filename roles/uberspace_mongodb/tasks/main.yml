@@ -47,6 +47,8 @@
     roles: root
 
 - name: Deploy mongorc
+  vars:
+    mongodb_credentials: "{{ mongodb_admin_credentials }}"
   template:
     src: .mongorc.js.j2
     dest: "{{ uberspace_spacedir }}/.mongorc.js"
