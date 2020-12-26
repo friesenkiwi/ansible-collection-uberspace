@@ -18,16 +18,15 @@
     ROOT_URL: "http://{{ ansible_user_id }}.{{ ansible_nodename }}:{{ wekan_port }}/"
     MAIL_URL: "smtp://{{ ansible_user_id }}:{{ smtp_password }}@{{ ansible_nodename }}:587/"
     MAIL_FROM: "{{ ansible_user_id }}@{{ ansible_nodename }}"
-
-- name: create target folder
+- name: Create target folder
   file:
     path: "{{ wekan_main_dir }}"
     state: directory
-- name: download and extract
+- name: Download and extract
   unarchive:
-    src: "{{wekan_url}}"
-    dest: "{{ wekan_main_dir }}"
     remote_src: yes
+    src: "{{ wekan_download_url }}"
+    dest: "{{ wekan_main_dir }}"
 
 - name: install
   command: npm install

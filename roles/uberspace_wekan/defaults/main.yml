@@ -1,6 +1,9 @@
+wekan_version: 4.16
+wekan_port:
 wekan_secret: "{{ lookup('password', 'credentials/' + 'wekan_secret') }}"
 wekan_db_user: wekan
 wekan_db_pw: "{{ lookup('password', 'credentials/' + 'wekan_postgresql_user_pw') }}"
-wekan_db_name: wekan_dev
+wekan_db_name: wekan
 wekan_db_host: "{{ uberspace_spacedir }}/tmp/"
-wekan_mongo_user: "{{ uberspace_loginname }}_mongoadmin"
+mongodb_application_user: "{{ wekan_db_user }}"
+mongodb_application_password: "{{ wekan_db_pw }}"
