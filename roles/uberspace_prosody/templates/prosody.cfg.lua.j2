@@ -263,7 +263,7 @@ legacy_ssl_ssl = {
 http_default_host = "{{ prosody_host }}"
 http_max_content_size = 52428800; -- bytes 50M
 
-http_upload_external_base_url = "https://{{ prosody_host }}/upload/"
+http_upload_external_base_url = "https://{{ prosody_fulldomain_upload }}/upload/"
 http_upload_external_secret = "{{ prosody_upload_secret }}"
 http_upload_external_file_size_limit = 52428800; -- bytes 50M
 
