@@ -68,31 +68,37 @@
     state: directory
 
 - name: "Download and unpack {{ prosody_version }}"
+  tags: build
   unarchive:
     remote_src: yes
     src: "{{ prosody_downloadurl }}"
     dest: "{{ prosody_main_dir }}"
 
 - name: Configure prosody build
+  tags: build
   command:
     chdir: "{{ prosody_curversion_dir }}"
     cmd: "./configure --ostype=linux --prefix={{ prosody_install_dir }} --with-lua-include=/usr/include"
     creates: "{{ prosody_curversion_dir }}/config.unix"
 
 - name: Check if build necessary
+  tags: build
   stat:
     path: "{{ prosody_curversion_dir }}/{{ prosody_configfile_name }}.install"
   register: stat_result
 - name: Build prosody
+  tags: build
   when: not stat_result.stat.exists
   make:
     chdir: "{{ prosody_curversion_dir }}"
 
 - name: Check if install necessary
+  tags: build
   stat:
     path: "{{ prosody_install_dir }}/share/man/man1/prosodyctl.1"
   register: stat_result
 - name: Install prosody
+  tags: build
   when: not stat_result.stat.exists
   make:
     chdir: "{{ prosody_curversion_dir }}"
