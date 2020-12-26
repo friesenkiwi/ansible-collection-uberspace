@@ -12,6 +12,10 @@ uberspace_url_main: "https://dashboard.uberspace.de/"
 uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
 
 uberspace_domain_short_official: uber.space
+uberspace_domain_official: "{{ uberspace_loginname }}.{{ uberspace_domain_short_official }}"
+uberspace_mail: "{{ uberspace_loginname }}@{{ uberspace_domain_short_official }}"
+uberspace_services_dir: "{{ uberspace_spacedir }}/etc/services.d"
+uberspace_certificates_dir: "{{ uberspace_spacedir }}/etc/certificates"
 
 uberspace_urls:
 #  dashboard: "{{ uberspace_url_main }}dashboard/"

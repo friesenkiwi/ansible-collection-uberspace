@@ -1,4 +1,4 @@
-prosody_downloadurl: https://prosody.im/downloads/source/prosody-0.11.5.tar.gz
+prosody_downloadurl: https://prosody.im/downloads/source/prosody-0.11.7.tar.gz
 prosody_filer_downloadurl: github.com/ThomasLeister/prosody-filer
 prosody_version: "{{ prosody_downloadurl | basename | splitext | first | splitext | first }}"
 prosody_configfile_name: "prosody.cfg.lua"
