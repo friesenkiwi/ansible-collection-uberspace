@@ -1,0 +1,41 @@
+- name:
+  loop:
+#  - bootstrap4
+  - jquery
+  - popper.js
+  file:
+    state: directory
+    path: "{{ prosody_libjs_path }}/{{ item }}"
+
+- name: Download and unpack bootstrap
+  unarchive:
+    remote_src: yes
+    src: "{{ prosody_bootstrap_downloadurl }}"
+    dest: "{{ prosody_libjs_path }}"
+
+- name: Link bootstrap
+  file:
+    state: link
+    src: "{{ prosody_libjs_path }}{{ (prosody_bootstrap_downloadurl | basename | splitext)[:-1] | join('.') }}/"
+    dest: "{{ prosody_libjs_path }}bootstrap4"
+
+- name: Download jquery
+  get_url:
+    url: "{{ prosody_jquery_downloadurl }}"
+    dest: "{{ prosody_libjs_path }}jquery/"
+
+- name: Link jquery
+  file:
+    state: link
+    src: "{{ prosody_libjs_path }}jquery/{{ (prosody_jquery_downloadurl | basename) }}"
+    dest: "{{ prosody_libjs_path }}jquery/jquery.min.js"
+
+- name: Download popper
+  get_url:
+    url: "{{ prosody_popper_downloadurl }}"
+    dest: "{{ prosody_libjs_path }}popper.js/"
+
+- name: Add invite prosody web backends to the uberspace requested ones
+  tags: backends
+  set_fact:
+    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + prosody_webbackends_invite }}"

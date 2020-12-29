@@ -99,6 +99,14 @@ modules_enabled = {
 {% if prosody_turnsecret is defined %}
 		"turncredentials";
 {% endif %}
+
+		"invites";
+		"invites_adhoc";
+		"invites_page";
+		"invites_register";
+		"invites_register_web";
+
+--		"http_libjs";
 }
 
 consider_bosh_secure = true
@@ -107,9 +115,26 @@ turncredentials_host = "{{ prosody_host }}"
 turncredentials_secret = "{{ prosody_turnsecret }}"
 turncredentials_port = {{ prosody_port_turn }}
 {% endif %}
+--libjs_path =
+
+invites_page = "https://{{ prosody_host }}/invite?{invite.token}"
+allow_user_invites = true
 http_external_url = "https://{{ prosody_host }}/"
 
 --http_files_dir =
+
+http_paths = {
+		invites_page = "/invite";
+		invites_register_web = "/register";
+}
+
+-- site_name =
+-- webchat_url =
+
+-- TODO: mod_conversejs,
+
+-- Configure the number of seconds a token is valid for (default 7 days)
+invite_expiry = 86400 * 7
 
 -- These modules are auto-loaded, but should you want
 -- to disable them then uncomment them here:
@@ -280,6 +305,7 @@ VirtualHost "{{ prosody_host }}"
   min_seconds_between_registrations = 60
 
 	allow_registration = true
+	registration_invite_only = false
 
 	registration_blacklist 	= { "83.218.198.9", "109.185.243.100", "83.218.212.134" }
 

@@ -173,3 +173,10 @@
   template:
     src: "host-meta{{ item }}.j2"
     dest: "{{ uberspace_webroot }}/.well-known/host-meta{{ item }}"
+
+- name: Run tasks for invites
+  tags: invite
+  include_tasks:
+    file: invite.yml
+    apply:
+      tags: invite
