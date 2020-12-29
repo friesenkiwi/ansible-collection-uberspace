@@ -1,5 +1,12 @@
 prosody_downloadurl: https://prosody.im/downloads/source/prosody-0.11.7.tar.gz
 prosody_filer_downloadurl: github.com/ThomasLeister/prosody-filer
+
+prosody_bootstrap_downloadurl: https://github.com/twbs/bootstrap/releases/download/v4.5.3/bootstrap-4.5.3-dist.zip
+prosody_jquery_downloadurl: https://code.jquery.com/jquery-3.5.1.min.js
+prosody_popper_downloadurl: https://unpkg.com/@popperjs/core@2.6.0/dist/umd/popper.min.js
+
+prosody_libjs_path: "{{ uberspace_webroot }}/share/"
+
 prosody_version: "{{ prosody_downloadurl | basename | splitext | first | splitext | first }}"
 prosody_configfile_name: "prosody.cfg.lua"
 prosody_configfile: "{{ prosody_install_dir }}/etc/prosody/{{ prosody_configfile_name }}"
@@ -73,11 +80,21 @@ inwx_records_srv:
 prosody_webbackends:
 - path: "/upload"
   port: 5050
-- path: "/prosody"
-  port: "{{ prosody_port_http }}"
+#- path: "/files"
+#  port: "{{ prosody_port_http }}"
 - path: "/http-bind"
   port: "{{ prosody_port_http }}"
 # - path: "/.well-known/host-meta"
 #   port: "{{ prosody_port_http }}"
 # - path: "/.well-known/host-meta.json"
 #   port: "{{ prosody_port_http }}"
+prosody_webbackends_invite:
+
+- path: "/register_apps"
+  port: "{{ prosody_port_http }}"
+- path: "/invite"
+  port: "{{ prosody_port_http }}"
+- path: "/register"
+  port: "{{ prosody_port_http }}"
+- path: "/register_web"
+  port: "{{ prosody_port_http }}"

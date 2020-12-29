@@ -292,6 +292,10 @@ legacy_ssl_ssl = {
 http_default_host = "{{ prosody_host }}"
 http_max_content_size = 52428800; -- bytes 50M
 
+{% if prosody_site_apps is defined %}
+site_apps = {{ prosody_site_apps }}
+{% endif %}
+
 ----------- Virtual hosts -----------
 -- You need to add a VirtualHost entry for each domain you wish Prosody to serve.
 -- Settings under each VirtualHost entry apply *only* to that host.
