@@ -69,7 +69,7 @@ modules_enabled = {
 		"bosh"; -- Enable BOSH clients, aka "Jabber over HTTP"
 		--"websocket"; -- XMPP over WebSockets
 		"http"; -- Built-In http Server, needed for http_upload
-		"http_files"; -- Serve static files from a directory over HTTP
+		--"http_files"; -- Serve static files from a directory over HTTP
 		--"http_upload"; -- Implements XEP-0363, which lets clients upload files over HTTP
     --"http_upload_external";
 	-- Other specific functionality
@@ -96,14 +96,20 @@ modules_enabled = {
 		"compat_dialback";
 		"bookmarks";
 		--"http_altconnect";
+{% if prosody_turnsecret is defined %}
 		"turncredentials";
+{% endif %}
 }
 
 consider_bosh_secure = true
-
+{% if prosody_turnsecret is defined %}
 turncredentials_host = "{{ prosody_host }}"
 turncredentials_secret = "{{ prosody_turnsecret }}"
 turncredentials_port = {{ prosody_port_turn }}
+{% endif %}
+http_external_url = "https://{{ prosody_host }}/"
+
+--http_files_dir =
 
 -- These modules are auto-loaded, but should you want
 -- to disable them then uncomment them here:
@@ -199,8 +205,6 @@ archive_expires_after = "1w" -- Remove archived messages after 1 week
 
 -- POSIX configuration
 pidfile = "{{ prosody_pidfile }}";
--- IMPORTANT for daemontools! DO NOT EDIT!
-daemonize = false;
 
 -- Logging configuration
 -- For advanced logging see https://prosody.im/doc/logging
