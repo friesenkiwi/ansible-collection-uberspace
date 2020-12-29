@@ -71,7 +71,7 @@ modules_enabled = {
 		"http"; -- Built-In http Server, needed for http_upload
 		"http_files"; -- Serve static files from a directory over HTTP
 		--"http_upload"; -- Implements XEP-0363, which lets clients upload files over HTTP
-    "http_upload_external";
+    --"http_upload_external";
 	-- Other specific functionality
 		--"limits"; -- Enable bandwidth limiting for XMPP connections
 		--"groups"; -- Shared roster support
@@ -263,10 +263,6 @@ legacy_ssl_ssl = {
 http_default_host = "{{ prosody_host }}"
 http_max_content_size = 52428800; -- bytes 50M
 
-http_upload_external_base_url = "https://{{ prosody_fulldomain_upload }}/upload/"
-http_upload_external_secret = "{{ prosody_upload_secret }}"
-http_upload_external_file_size_limit = 52428800; -- bytes 50M
-
 ----------- Virtual hosts -----------
 -- You need to add a VirtualHost entry for each domain you wish Prosody to serve.
 -- Settings under each VirtualHost entry apply *only* to that host.
@@ -318,10 +314,11 @@ Component "{{ prosody_fulldomain_proxy }}" "proxy65"
 --Component "gateway.example.com"
 --	component_secret = "password"
 
--- Set up a http file upload because proxy65 is not working in muc
---Component "{{ prosody_fulldomain_upload }}" "http_upload"
---http_upload_file_size_limit = 52428800; -- bytes 50M
-
+-- Set up a http file upload because proxy65 is not working in MUC, also for Siskin
+Component "{{ prosody_fulldomain_upload }}" "http_upload_external"
+	http_upload_external_base_url = "https://{{ prosody_fulldomain_upload }}/upload/"
+	http_upload_external_secret = "{{ prosody_upload_secret }}"
+	http_upload_external_file_size_limit = 52428800; -- bytes 50M
 --
 -- MAM settings
 -- (Chats nicht standardmäßig loggen, nach einem Monat vom Server löschen)
