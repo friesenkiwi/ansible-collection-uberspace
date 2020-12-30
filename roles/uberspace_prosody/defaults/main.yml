@@ -7,6 +7,8 @@ prosody_popper_downloadurl: https://unpkg.com/@popperjs/core@2.6.0/dist/umd/popp
 
 prosody_libjs_path: "{{ uberspace_webroot }}/share/"
 
+prosody_rebuild: false
+
 prosody_version: "{{ prosody_downloadurl | basename | splitext | first | splitext | first }}"
 prosody_configfile_name: "prosody.cfg.lua"
 prosody_configfile: "{{ prosody_install_dir }}/etc/prosody/{{ prosody_configfile_name }}"

@@ -74,6 +74,13 @@
     src: "{{ prosody_downloadurl }}"
     dest: "{{ prosody_main_dir }}"
 
+- name: Remove prosody config
+  tags: build
+  when: prosody_rebuild | bool
+  file:
+    state: absent
+    path: "{{ prosody_curversion_dir }}/config.unix"
+
 - name: Configure prosody build
   tags: build
   command:
@@ -88,7 +95,7 @@
   register: stat_result
 - name: Build prosody
   tags: build
-  when: not stat_result.stat.exists
+  when: not stat_result.stat.exists or prosody_rebuild | bool
   make:
     chdir: "{{ prosody_curversion_dir }}"
 
@@ -99,7 +106,7 @@
   register: stat_result
 - name: Install prosody
   tags: build
-  when: not stat_result.stat.exists
+  when: not stat_result.stat.exists or prosody_rebuild | bool
   make:
     chdir: "{{ prosody_curversion_dir }}"
     target: install
