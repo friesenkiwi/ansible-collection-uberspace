@@ -187,3 +187,10 @@
     file: invite.yml
     apply:
       tags: invite
+
+# TODO
+# XEP-0156: Discovering Alternative XMPP Connection Methods (HTTP)
+# see https://github.com/iNPUTmice/caas/blob/master/caas-web/src/main/resources/help/prosody/xep0156.md
+# uberspace web header set /.well-known Access-Control-Allow-Origin "*"
+# uberspace web header set /http-bind Access-Control-Allow-Origin "*"
+# functionality is there for Gajim
