@@ -1,11 +1,11 @@
-- name:
+- name: Create target directories
   loop:
 #  - bootstrap4
   - jquery
   - popper.js
   file:
     state: directory
-    path: "{{ prosody_libjs_path }}/{{ item }}"
+    path: "{{ prosody_libjs_path }}{{ item }}"
 
 - name: Download and unpack bootstrap
   unarchive:
