@@ -1,4 +1,5 @@
 - name: Get authentication page
+  check_mode: no
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.authentication }}"

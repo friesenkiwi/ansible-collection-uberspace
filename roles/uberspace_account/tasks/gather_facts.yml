@@ -11,6 +11,7 @@
   set_fact:
     uberspace_ip_public_v4: "{{ parsed_ipv4address }}"
     uberspace_ip_public_v6: "{{ parsed_ipv6address }}"
+    uberspace_hostname: "{{ parsed_hostname }}"
 
 - name: Get accounting page
   delegate_to: localhost
