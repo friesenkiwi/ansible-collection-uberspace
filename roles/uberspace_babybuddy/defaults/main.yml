@@ -1,0 +1,21 @@
+# babybuddy_main_dir:
+babybuddy_repo_url: https://github.com/cdubz/babybuddy.git
+babybuddy_settingfile_name: "production.py"
+babybuddy_install_dir: "{{ babybuddy_main_dir }}/public"
+babybuddy_settingfile: "{{ babybuddy_install_dir }}/babybuddy/settings/{{ babybuddy_settingfile_name }}"
+babybuddy_appfile_name: "babybuddy.ini"
+babybuddy_appfilefile: "~/uwsgi/apps-enabled/{{ babybuddy_appfile_name }}"
+
+babybuddy_db_name: "{{ uberspace_loginname }}_babybuddy"
+babybuddy_db_user: "{{ uberspace_loginname }}"
+babybuddy_db_pw: "{{ uberspace_mysqlpassword }}"
+
+babybuddy_secret: "{{ lookup('password', 'credentials/' + 'babybuddy_secret') }}"
+babybuddy_host: "{{ uberspace_domain_official }}"
+babybuddy_ip: "{{ uberspace_ip_private_v4 }}"
+babybuddy_port: 8000
+babybuddy_servepath: "babybuddy"
+babybuddy_webbackends:
+- path: "/{{ babybuddy_servepath }}"
+  port: "{{ babybuddy_port }}"
+  extra: "--remove-prefix"

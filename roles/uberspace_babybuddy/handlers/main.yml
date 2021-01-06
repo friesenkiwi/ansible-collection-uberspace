@@ -1,0 +1,12 @@
+- name: Reread supervisord config
+  command:
+    cmd: supervisorctl reread
+  notify:
+  - Update supervisord uwsgi groups
+- name: Update supervisord uwsgi groups
+  command:
+    cmd: supervisorctl update uwsgi
+  notify: Restart uwsgi
+- name: Restart uwsgi
+  command:
+    cmd: supervisorctl restart uwsgi

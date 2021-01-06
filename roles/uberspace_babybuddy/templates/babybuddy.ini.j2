@@ -1,0 +1,22 @@
+[uwsgi]
+project = babybuddy
+base_dir = {{ babybuddy_main_dir }}
+
+virtualenv = {{ pipenv_venv_check_result.stdout }}
+chdir = {{ babybuddy_install_dir }}
+module =  %(project).wsgi:application
+env = DJANGO_SETTINGS_MODULE=%(project).settings.production
+master = True
+vacuum = True
+
+http = {{ babybuddy_ip }}:{{ babybuddy_port }}
+
+wsgi-file = {{ babybuddy_install_dir }}/babybuddy/wsgi.py
+touch-reload = %(wsgi-file)
+
+app = wsgi
+
+plugin = python
+
+uid = $(USER)
+gid = $(USER)

@@ -1,0 +1,34 @@
+from .base import *
+
+# Production settings
+# See babybuddy.settings.base for additional settings information.
+
+SECRET_KEY = '{{ babybuddy_secret }}'
+
+ALLOWED_HOSTS = ['{{ babybuddy_host }}']
+
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+
+DATABASES = {
+   'default': {
+     'ENGINE': 'django.db.backends.mysql',
+     'NAME': '{{ babybuddy_db_name }}',
+     'USER': '{{ babybuddy_db_user }}',
+     'PASSWORD': '{{ babybuddy_db_pw }}',
+     'HOST': '127.0.0.1',
+     'PORT': '3306',
+   }
+}
+
+# Static files
+
+MEDIA_ROOT = os.path.join(BASE_DIR, '../data/media')
+
+USE_X_FORWARDED_HOST = True
+
+{% if babybuddy_servepath !="" %}
+FORCE_SCRIPT_NAME = '/{{ babybuddy_servepath }}'
+STATIC_URL = '{{ babybuddy_servepath }}/static/'
+WHITENOISE_STATIC_PREFIX = 'static/'
+{% endif %}

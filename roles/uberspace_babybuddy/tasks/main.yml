@@ -1,0 +1,102 @@
+- name: Install pipenv and uwsgi into user home, using Python/pip 3.7
+  pip:
+    executable: pip3.7
+    extra_args: --user
+    name:
+    - pipenv
+    - uwsgi
+
+- name: Create babybuddy MySQL db
+  mysql_db:
+    name: "{{ uberspace_loginname }}_babybuddy"
+    collation: utf8_general_ci
+    encoding: utf8
+
+- name: Create needed folders for uwsgi and babybuddy
+  loop:
+  - ~/uwsgi/apps-enabled
+  - "{{ babybuddy_install_dir }}"
+  - "{{ babybuddy_main_dir}}/data/media"
+  file:
+    path: "{{ item }}"
+    state: directory
+- name: Create needed logfiles for uwsgi
+  loop:
+  - err
+  - out
+  copy:
+    content: ""
+    force: no
+    dest: "~/uwsgi/{{ item }}.log"
+- name: Deploy uwsgi service
+  template:
+    src: uwsgi.ini.j2
+    dest: "{{ uberspace_services_dir }}/uwsgi.ini"
+  notify: Reread supervisord config
+
+- name: Clone the Baby Buddy source code from Github
+  git:
+    repo: "{{ babybuddy_repo_url }}"
+    dest: "{{ babybuddy_install_dir }}"
+    force: yes
+
+- name: Check if a virtualenv is already created
+  check_mode: no
+  ignore_errors: true
+  args:
+    chdir: "{{ babybuddy_install_dir }}"
+  command: "~/.local/bin/pipenv --venv"
+  register: pipenv_venv_check_result
+  changed_when: false
+
+- name: Run a pipenv install
+  when: ('No virtualenv' in pipenv_venv_check_result.stderr)
+  args:
+    chdir: "{{ babybuddy_install_dir }}"
+  command: "~/.local/bin/pipenv install --three"
+
+- name: Check virtualenv
+  check_mode: no
+  args:
+    chdir: "{{ babybuddy_install_dir }}"
+  command: "~/.local/bin/pipenv --venv"
+  register: pipenv_venv_check_result
+  changed_when: false
+
+- name: Install MySQL client via pipenv
+  args:
+    chdir: "{{ babybuddy_install_dir }}"
+  command:
+    creates: "{{ pipenv_venv_check_result.stdout }}/lib64/python3.7/site-packages/mysqlclient-2.0.3.dist-info"
+    cmd: "~/.local/bin/pipenv install mysqlclient --python /usr/bin/python3.7"
+
+- name: Deploy settings file
+  template:
+    src: "{{ babybuddy_settingfile_name }}.j2"
+    dest: "{{ babybuddy_settingfile }}"
+  notify: Restart uwsgi
+
+- name: Initialize the database tables
+  environment:
+    DJANGO_SETTINGS_MODULE: babybuddy.settings.production
+  args:
+    chdir: "{{ babybuddy_install_dir }}"
+  loop:
+  - command: migrate
+    check: "No migrations to apply."
+  - command: createcachetable
+    check: "already exists."
+  command: "~/.local/bin/pipenv run python manage.py {{ item.command }}"
+  register: dbinit_result
+  changed_when: item.check not in dbinit_result.stdout
+
+- name: Add babybuddy web backends to the uberspace requested ones
+  tags: backends
+  set_fact:
+    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + babybuddy_webbackends }}"
+
+- name: Deploy uswgi application service description file
+  template:
+    src: "{{ babybuddy_appfile_name }}.j2"
+    dest: "{{ babybuddy_appfilefile }}"
+  notify: Restart uwsgi
