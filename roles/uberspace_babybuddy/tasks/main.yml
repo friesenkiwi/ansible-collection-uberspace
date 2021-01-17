@@ -50,7 +50,7 @@
   changed_when: false
 
 - name: Run a pipenv install
-  when: ('No virtualenv' in pipenv_venv_check_result.stderr)
+  when: ('No virtualenv' in pipenv_venv_check_result.stderr | default(''))
   args:
     chdir: "{{ babybuddy_install_dir }}"
   command: "~/.local/bin/pipenv install --three"

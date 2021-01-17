@@ -11,11 +11,16 @@ babybuddy_db_user: "{{ uberspace_loginname }}"
 babybuddy_db_pw: "{{ uberspace_mysqlpassword }}"
 
 babybuddy_secret: "{{ lookup('password', 'credentials/' + 'babybuddy_secret') }}"
-babybuddy_host: "{{ uberspace_domain_official }}"
+babybuddy_host: "{{ babybuddy_domain | default(uberspace_domain_official) }}"
 babybuddy_ip: "{{ uberspace_ip_private_v4 }}"
 babybuddy_port: 8000
 babybuddy_servepath: "babybuddy"
+babybuddy_domain: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
 babybuddy_webbackends:
-- path: "/{{ babybuddy_servepath }}"
+- path: "{{ babybuddy_domain }}/{{ babybuddy_servepath }}"
   port: "{{ babybuddy_port }}"
   extra: "--remove-prefix"
+uberspace_domains_goal:
+- "{{ babybuddy_domain }}"
+inwx_records_a:
+- "{{ uberspace_servicedomain }}"
