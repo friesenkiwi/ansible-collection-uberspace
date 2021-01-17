@@ -31,4 +31,7 @@ USE_X_FORWARDED_HOST = True
 FORCE_SCRIPT_NAME = '/{{ babybuddy_servepath }}'
 STATIC_URL = '{{ babybuddy_servepath }}/static/'
 WHITENOISE_STATIC_PREFIX = 'static/'
+LOGIN_REDIRECT_URL = '/{{ babybuddy_servepath }}/'
+LOGIN_URL = '/{{ babybuddy_servepath }}/login/'
+LOGOUT_REDIRECT_URL = '/{{ babybuddy_servepath }}/login/'
 {% endif %}
