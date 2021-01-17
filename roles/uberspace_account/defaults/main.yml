@@ -17,4 +17,5 @@ uberspace_webroot: "{{ '/var/www/virtual/' + uberspace_loginname + '/html'}}"
 
 inwx_pw: "{{ lookup('file', 'credentials/' + 'inwx-' + inwx_user + '-pw') }}"
 inwx_ttl: 3600
+inwx_records_srv: {}
 inwx_records_srv_protocol: "tcp"

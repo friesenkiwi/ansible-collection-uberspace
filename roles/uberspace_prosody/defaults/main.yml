@@ -91,7 +91,6 @@ prosody_webbackends:
 # - path: "/.well-known/host-meta.json"
 #   port: "{{ prosody_port_http }}"
 prosody_webbackends_invite:
-
 - path: "/register_apps"
   port: "{{ prosody_port_http }}"
 - path: "/invite"
