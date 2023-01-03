@@ -1,3 +1,12 @@
+- name: Set PostgreSQL version
+  debug:
+    msg: "Set desired PostgreSQL version as uberspace_tools_goal.postgresql via uberspace_account role"
+- name: Run tools tasks of uberspace account role
+  tags: tools
+  import_role:
+    name: uberspace_account
+    tasks_from: tools
+
 # - name: Create postgres file path
 #   loop:
 #   - "{{ postgres_main_dir }}"
@@ -31,9 +40,3 @@
 #   stat:
 #     path: "{{ postgres_install_dir }}/bin/postgresql"
 #   register: stat_result
-#
-# - name: Configure luarocks - Add luarocks env variables
-#   blockinfile:
-#     path: ~/.bash_profile
-#     block: "{{ postgres_environment }}"
-#     insertbefore: export PATH

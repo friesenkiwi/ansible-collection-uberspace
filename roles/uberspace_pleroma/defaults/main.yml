@@ -11,4 +11,4 @@ pleroma_secret: "{{ lookup('password', 'credentials/' + 'pleroma_secret') }}"
 pleroma_db_user: pleroma
 pleroma_db_pw: "{{ lookup('password', 'credentials/' + 'pleroma_postgresql_user_pw') }}"
 pleroma_db_name: pleroma_dev
-pleroma_db_host: {{ uberspace_spacedir }}/tmp/
+pleroma_db_host: "{{ uberspace_spacedir }}/tmp/"

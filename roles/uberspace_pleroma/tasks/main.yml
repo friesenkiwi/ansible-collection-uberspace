@@ -1,3 +1,10 @@
+- name: Run uberspace postgresql role
+  tags: postgresql
+  vars:
+    uberspace_tools_goal: "{{ uberspace_tools_goal_pleroma }}"
+  import_role:
+    name: uberspace_postgresql
+
 # - name: test environment
 #   shell: "echo $PATH"
 #   register: envtest
@@ -14,6 +21,7 @@
     repo: "{{ pleroma_repo }}"
     dest: "{{ pleroma_main_dir }}"
     force: yes
+    depth: 1
 # - name: set erlang 25 in PATH
 #   lineinfile:
 #     dest: .bash_profile
@@ -83,7 +91,7 @@
   debug:
     var: migrateoutput
 
-- name: add domain to uberspace config
+# name: add domain to uberspace config
 
 #Run mix generate_config. This will ask you a few questions about your instance and generate a configuration file in config/generated_config.exs. Check that and copy it to either config/dev.secret.exs or config/prod.secret.exs. It will also create a config/setup_db.psql;
 #  you may want to double-check this file in case you wanted a different username, or database name than the default. Then you need to run the script as PostgreSQL superuser (i.e. sudo su postgres -c "psql -f #config/setup_db.psql"). It will create a pleroma db user, database and will setup needed extensions that need to be set up. Postgresql super-user privileges are only needed for this step.

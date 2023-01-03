@@ -96,25 +96,6 @@
   tags: tools
   set_fact:
     uberspace_tools: "{{ uberspace_tools.stdout_lines | map('regex_replace', '- ', '') | list }}"
-- name: Get versions of wanted tools
-  tags: tools
-  loop: "{{ uberspace_tools_goal | default({}) | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
-  command: "uberspace tools version show {{ item.key }}"
-  register: uberspace_tools_versions_result
-  changed_when: false
-- name: Store tools versions as fact
-  tags: tools
-  loop: "{{ uberspace_tools_versions_result.results }}"
-  loop_control:
-    label: "{{ item.item.key }}"
-  vars:
-    uberspace_regex_toolversion: "Using '(.*)' version: '(.*)'"
-    newkey: "{{ item.item.key }}"
-    newvalue: "{{ (item.stdout | regex_search(uberspace_regex_toolversion, '\\1', '\\2'))[1] }}"
-  set_fact:
-    uberspace_tools_versions: "{{ uberspace_tools_versions | default({}) | combine({ newkey: newvalue }) }}"
 
 - name: Get MySQL my.cnf file
   tags: mysql
