@@ -159,15 +159,16 @@
     name: pexpect
     extra_args: --user
 
-- name: Add users
-  loop: "{{ prosody_users_complete }}"
-  expect:
-    command: "{{ uberspace_spacedir }}/bin/prosodyctl adduser {{ item }}"
-    responses:
-       password: "{{ lookup('password', 'credentials/' + 'prosody_users/' + item) }}"
-  register: prosodyctlresult
-  changed_when: prosodyctlresult.rc == 0
-  failed_when: prosodyctlresult.rc > 1
+# - name: Add users
+#   loop: "{{ prosody_users_complete }}"
+#   when: #TODO only when users are given
+#   expect:
+#     command: "{{ uberspace_spacedir }}/bin/prosodyctl adduser {{ item }}"
+#     responses:
+#        password: "{{ lookup('password', 'credentials/' + 'prosody_users/' + item) }}"
+#   register: prosodyctlresult
+#   changed_when: prosodyctlresult.rc == 0
+#   failed_when: prosodyctlresult.rc > 1
 
 - name: Install filer
   tags: filer
@@ -194,3 +195,6 @@
 # uberspace web header set /.well-known Access-Control-Allow-Origin "*"
 # uberspace web header set /http-bind Access-Control-Allow-Origin "*"
 # functionality is there for Gajim
+
+# TODO
+# caas run from local
