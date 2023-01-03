@@ -1,10 +1,8 @@
 [program:mongodb]
-command={{ mongodb_bin_dir }}/mongod
-  --dbpath {{ mongodb_main_dir }}
-  --bind_ip {{ mongodb_bind_ip }}
+command=mongod
+  --dbpath %(ENV_HOME)s/mongodb
+  --bind_ip 127.0.0.1
   --auth
-  --unixSocketPrefix {{ mongodb_main_dir }}
+  --unixSocketPrefix %(ENV_HOME)s/mongodb
 autostart=yes
 autorestart=yes
-
-#--config {{ mongodb_main_dir }}/mongod.conf

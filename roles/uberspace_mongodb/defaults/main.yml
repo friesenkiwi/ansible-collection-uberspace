@@ -1,5 +1,4 @@
-mongodb_main_dir:
-mongodb_bin_dir: "{{ mongodb_main_dir }}/bin/"
-#mongodb_bind_ip: "{{ uberspace_ip_private_v4 }}"
-mongodb_bind_ip: "127.0.0.1"
+mongodb_storage_dir: "{{ uberspace_spacedir }}/mongodb"
+mongodb_version: 5.0
+mongodb_bind_ip: 127.0.0.1
 mongodb_port: 27017

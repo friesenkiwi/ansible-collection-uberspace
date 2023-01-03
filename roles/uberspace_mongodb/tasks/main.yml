@@ -1,27 +1,10 @@
+#- name: "Select MongoDB version {{ mongodb_version }}"
+#  command: "uberspace tools version use mongodb {{ mongodb_version }}"
+
 - name: Create target dir
   file:
-    path: "{{ mongodb_main_dir }}"
+    path: "{{ mongodb_storage_dir }}"
     state: directory
-- name: Download and extract MongoDB binaries
-  unarchive:
-    src: "{{ mongodb_downloadurl }}"
-    dest: "{{ mongodb_main_dir }}"
-    remote_src: yes
-    extra_opts:
-    - --strip-components=1
-  notify: Restart mongodb
-
-- name: Find MongoDB binaries
-  find:
-    paths: "{{ mongodb_bin_dir }}"
-  register: mongodb_binaries
-
-- name: Link binaries into ~/bin
-  loop: "{{ mongodb_binaries.files }}"
-  file:
-    state: link
-    src: "{{ item.path }}"
-    dest: "{{ uberspace_spacedir }}/bin/{{ item.path | basename }}"
 
 - name: Deploy service
   template:
@@ -29,22 +12,42 @@
     dest: "{{ uberspace_services_dir }}/mongodb.ini"
   notify: Reread supervisord config
 
-- name: install pymongo as a dependency for the following task
-  pip:
-    name: pymongo
-    extra_args: --user
-
-- name: Trigger update apt cache handler
+- name: Flush handlers to start mongodb
   meta: flush_handlers
 
-- mongodb_user:
-    login_user: "{{ mongodb_admin_user }}"
-    login_password: "{{ mongodb_admin_password }}"
-    database: admin
-    user: "{{ mongodb_admin_user }}"
-    password: "{{ mongodb_admin_password }}"
-    update_password: on_create
-    roles: root
+- name: Install pymongo as a dependency for the MongoDB user creation
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  pip:
+    executable: pip3
+    # see https://devops.stackexchange.com/questions/15220/ansible-playbook-error-collection-object-is-not-callable
+    name:
+    - pymongo<4
+    extra_args: --user
+
+- name: Ensure root user
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  block:
+  - name: Ensure root user
+    mongodb_user:
+      login_user: "{{ mongodb_admin_user }}"
+      login_password: "{{ mongodb_admin_password }}"
+      database: admin
+      user: "{{ mongodb_admin_user }}"
+      password: "{{ mongodb_admin_password }}"
+      update_password: on_create
+      roles: root
+  rescue:
+  - name: Create root user as first user
+    mongodb_user:
+      login_user: "{{ mongodb_admin_user }}"
+      login_password: "{{ mongodb_admin_password }}"
+      database: admin
+      user: "{{ mongodb_admin_user }}"
+      password: "{{ mongodb_admin_password }}"
+      update_password: always
+      roles: root
 
 - name: Deploy mongorc
   vars:
@@ -52,3 +55,16 @@
   template:
     src: .mongorc.js.j2
     dest: "{{ uberspace_spacedir }}/.mongorc.js"
+
+- name: Ensure application user
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  when: mongodb_application_db | default("") | length != 0
+  mongodb_user:
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    database: "{{ mongodb_application_db }}"
+    user: "{{ mongodb_application_user }}"
+    password: "{{ mongodb_application_password }}"
+    update_password: on_create
+    roles: readWrite
