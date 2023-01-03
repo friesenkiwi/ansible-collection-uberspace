@@ -1,6 +1,7 @@
 - name: Set PostgreSQL version
   debug:
     msg: "Set desired PostgreSQL version as uberspace_tools_goal.postgresql via uberspace_account role"
+# TODO only run for postgresql
 - name: Run tools tasks of uberspace account role
   tags: tools
   import_role:
@@ -28,22 +29,22 @@
 - name: Create .pgpass file
   template:
     src: pgpass.j2
-    dest: "{{ uberspace_spacedir }}/.pgpass"
+    dest: "{{ postgres_pgpassfile }}"
     mode: "0600"
+# TODO only if cluster isn't initialized yet
 - name: Store password into temp file
   lineinfile:
-    line: "{{ postgres_password }}"
-    path: "{{ uberspace_spacedir }}/.pgpass.tmp"
+    line: "{{ postgres_password_clusteruser }}"
+    path: "{{ postgres_pgpassfile }}.tmp"
     create: true
 - name: Initialize PostgreSQL cluster
-  environment:
-    PGPASSFILE: "{{ uberspace_spacedir }}/.pgpass"
-  shell: 'initdb --pwfile="{{ uberspace_spacedir }}/.pgpass.tmp" --auth=scram-sha-256 -E UTF8 -D {{ postgres_main_dir }}/data/'
+  environment: "{{ postgres_environment }}"
+  shell: 'initdb --pwfile="{{ postgres_pgpassfile }}.tmp" --auth=scram-sha-256 -E UTF8 -D {{ postgres_main_dir }}/data/'
   args:
     creates: "{{ postgres_main_dir }}/data/"
 - name: remove temp password file
   file:
-    dest: "{{ uberspace_spacedir }}/.pgpass.tmp"
+    dest: "{{ postgres_pgpassfile }}.tmp"
     state: absent
 
 - name: Change config file to set socket directory
@@ -52,12 +53,34 @@
     regexp: 'unix_socket_directories'
     line: "unix_socket_directories = '{{ uberspace_spacedir }}/tmp'"
 
+- name: Deploy supervisord service description ini
+  template:
+    src: postgresql.ini.j2
+    dest: "{{ uberspace_services_dir }}/postgresql.ini"
+  notify: Reread supervisord config
 
-# - name: Create postgres file path
-#   loop:
-#   - "{{ postgres_main_dir }}"
-#   - "{{ postgres_configfile | dirname }}"
-#   - "{{ postgres_pidfile | dirname }}"
-#   file:
-#     state: directory
-#     path: "{{ item }}"
+- name: Flush handlers to enact changes
+  meta: flush_handlers
+
+- name: Install ansible dependency psychopg2 (last python 2.7 compatible version) via pip into user
+  pip:
+    name: psycopg2<2.9
+    extra_args: --user
+
+- name: Create databases
+  loop: "{{ postgres_databases | default([]) }}"
+  environment: "{{ postgres_environment }}"
+  postgresql_db:
+    login_user: "{{ postgres_username_clusteruser }}"
+    encoding: UTF-8
+    name: "{{ item }}"
+
+- name: Create postgresql users
+  tags: test
+  loop: "{{ postgres_users | default([{'user': '', 'password': ''}]) }}"
+  environment: "{{ postgres_environment }}"
+  postgresql_user:
+    login_user: "{{ postgres_username_clusteruser }}"
+    db: "{{ postgres_databases[0] }}"
+    name: "{{ item.user }}"
+    password: "{{ item.password }}"

@@ -57,20 +57,7 @@
     src: templates/setup_db.psql.j2
     dest: "{{ pleroma_main_dir }}/config/setup_db.psql"
 
-- name: setup postgresql server
-  shell: uberspace-setup-postgresql
-  args:
-    creates: "{{ uberspace_spacedir }}/etc/postgresversion"
 
-- name: install psychopg2 via pip into user as an ansible dependency
-  pip:
-    name: psycopg2
-    extra_args: --user
-
-- name: Create default database
-  postgresql_db:
-    name: "{{ uberspace_loginname }}"
-    login_user: "{{ uberspace_loginname }}"
 
 # TODO add idempotency here
 - name: prepare postgresql for pleroma

@@ -1,0 +1,12 @@
+- name: Reread supervisord config
+  command:
+    cmd: supervisorctl reread
+  notify:
+  - Update supervisord groups
+- name: Update supervisord groups
+  command:
+    cmd: supervisorctl update
+  notify: Restart postgresql
+- name: Restart postgresql
+  command:
+    cmd: supervisorctl restart postgresql

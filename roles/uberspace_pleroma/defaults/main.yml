@@ -12,3 +12,8 @@ pleroma_db_user: pleroma
 pleroma_db_pw: "{{ lookup('password', 'credentials/' + 'pleroma_postgresql_user_pw') }}"
 pleroma_db_name: pleroma_dev
 pleroma_db_host: "{{ uberspace_spacedir }}/tmp/"
+postgres_users:
+- user: "{{ uberspace_loginname }}"
+  password: "{{ lookup('password','credentials/'+ uberspace_loginname + '/' + 'postgres_password_pleroma' + ' chars=ascii_letters,digits length=64') }}"
+postgres_databases:
+- "{{ uberspace_loginname }}"

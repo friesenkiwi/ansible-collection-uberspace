@@ -1,4 +1,5 @@
 [program:postgresql]
-command=%(ENV_HOME)s/opt/postgresql/bin/postgres -D %(ENV_HOME)s/opt/postgresql/data/
+command=postgres -D %(ENV_HOME)s/{{ postgres_projectsdir }}{{ postgres_dir_name }}/data/
 autostart=yes
-autorestart=yes 
+autorestart=yes
+startsecs=15
