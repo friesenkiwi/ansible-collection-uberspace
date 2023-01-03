@@ -1,0 +1,9 @@
+- name: Set tools versions
+  loop: "{{ uberspace_tools_goal | default({}) | dict2items }}"
+  when: uberspace_tools_versions[item.key] | int != item.value | int
+  command: "uberspace tools version use {{ item.key }} {{ item.value }}"
+  register: toolsversionresult
+  changed_when: toolsversionresult.rc == 0
+#- name: Output tools versions configuration results
+#  debug:
+#    msg: "{{ toolsversionresult }}"

@@ -60,6 +60,10 @@
   tags: backends
   when: not uberspace_action_delete
   import_tasks: webbackends.yml
+- name: Do web tools setup
+  tags: tools
+  when: not uberspace_action_delete
+  import_tasks: tools.yml
 - name: Do delete
   tags: delete
   when: uberspace_action_delete

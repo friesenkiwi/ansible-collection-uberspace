@@ -53,7 +53,7 @@
     uberspace_ip_private_v6: "{{ ansible_default_ipv6.address }}"
     uberspace_host: "{{ ansible_hostname }}"
 
-- name: List ports
+- name: Retrieve ports
   tags: ports
   check_mode: no
   command: "uberspace port list"
@@ -64,7 +64,7 @@
   set_fact:
     uberspace_ports: "{{ uberspace_ports.stdout_lines }}"
 
-- name: List domains
+- name: Retrieve domains
   tags: domains
   check_mode: no
   command: "uberspace web domain list"
@@ -75,7 +75,7 @@
   set_fact:
     uberspace_domains: "{{ uberspace_domains.stdout_lines }}"
 
-- name: List web backends
+- name: Retrieve web backends
   tags: backends
   check_mode: no
   command: "uberspace web backend list"
@@ -85,6 +85,36 @@
   tags: backends
   set_fact:
     uberspace_webbackends: "{{ uberspace_webbackends.stdout_lines }}"
+
+- name: Retrieve tools list
+  tags: tools
+  check_mode: no
+  command: "uberspace tools version list"
+  changed_when: false
+  register: uberspace_tools
+- name: Store tools as fact
+  tags: tools
+  set_fact:
+    uberspace_tools: "{{ uberspace_tools.stdout_lines | map('regex_replace', '- ', '') | list }}"
+- name: Get versions of wanted tools
+  tags: tools
+  loop: "{{ uberspace_tools_goal | default({}) | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  command: "uberspace tools version show {{ item.key }}"
+  register: uberspace_tools_versions_result
+  changed_when: false
+- name: Store tools versions as fact
+  tags: tools
+  loop: "{{ uberspace_tools_versions_result.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+  vars:
+    uberspace_regex_toolversion: "Using '(.*)' version: '(.*)'"
+    newkey: "{{ item.item.key }}"
+    newvalue: "{{ (item.stdout | regex_search(uberspace_regex_toolversion, '\\1', '\\2'))[1] }}"
+  set_fact:
+    uberspace_tools_versions: "{{ uberspace_tools_versions | default({}) | combine({ newkey: newvalue }) }}"
 
 - name: Get MySQL my.cnf file
   tags: mysql
