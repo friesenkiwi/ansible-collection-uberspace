@@ -1,4 +1,6 @@
-wekan_download_url: "https://github.com/wekan/wekan/archive/v{{ wekan_version }}.tar.gz"
+wekan_node_version: 12
+wekan_download_url: https://releases.wekan.team/wekan-latest-x64.zip
+#wekan_download_url: "https://github.com/wekan/wekan/archive/v{{ wekan_version }}.tar.gz"
 wekan_mongo_url: "{{ mongodb_url }}/wekan?authSource=admin"
 ROOT_URL: "https://{{ uberspace_domain_official }}/"
 MAIL_URL: "smtp://{{ ansible_user_id }}:{{ smtp_password }}@{{ ansible_nodename }}:587/"

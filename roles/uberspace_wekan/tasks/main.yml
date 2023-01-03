@@ -1,46 +1,72 @@
-# - name: derive mongo url
-# #  tags: test
-#   set_fact:
-#     wekan_mongo_url: "mongodb://{{ wekan_mongo_user }}:{{ mongodb_admin_password }}@127.0.0.1:{{ mongodb_port }}/wekan?authSource=admin"
+- name: Prepare Mongodb
+#  tags: wekan
+  vars:
+    mongodb_application_db: "{{ wekan_db_user }}"
+    mongodb_application_user: "{{ wekan_db_user }}"
+    mongodb_application_password: "{{ wekan_db_pw }}"
+  include_role:
+    name: uberspace_mongodb
+    apply:
+      tags: wekan
 
+- name: "Select Node version {{ node_version }}"
+  command: "uberspace tools version use node {{ node_version }}"
 
-- name: request new port
-  when: wekan_port is not defined
-  command: uberspace-add-port --protocol tcp --firewall
-  register: add_port_result
-- name: find port number in output
-  when: add_port_result.stdout is defined
-  set_fact:
-    wekan_port: "{{ add_port_result.stdout | regex_search('([0-9]{5})') }}"
-
-- name: set ROOT_URL
-  set_fact:
-    ROOT_URL: "http://{{ ansible_user_id }}.{{ ansible_nodename }}:{{ wekan_port }}/"
-    MAIL_URL: "smtp://{{ ansible_user_id }}:{{ smtp_password }}@{{ ansible_nodename }}:587/"
-    MAIL_FROM: "{{ ansible_user_id }}@{{ ansible_nodename }}"
 - name: Create target folder
+  tags: wekan
   file:
     path: "{{ wekan_main_dir }}"
     state: directory
-- name: Download and extract
-  unarchive:
-    remote_src: yes
-    src: "{{ wekan_download_url }}"
+
+- name: "Download from {{ wekan_download_url }} to {{ wekan_main_dir }}"
+  tags: wekan
+  get_url:
+    url: "{{ wekan_download_url }}"
     dest: "{{ wekan_main_dir }}"
 
-- name: install
-  command: npm install
-  args:
-    chdir: "{{ wekan_main_dir }}"
+- name: "Extract to {{ wekan_main_dir }}"
+  # Direct URL extract runs infinitively
+#  tags: wekan
+  unarchive:
+    remote_src: yes
+    unsafe_writes: yes
+    src: "{{ wekan_main_dir }}/{{ wekan_download_url | urlsplit('path') | basename }}"
+    dest: "{{ wekan_main_dir }}"
 
-- name: install
-  template:
-    src: templates/wekan-setup.j2
-    dest: ~/wekan-setup
-    mode: "u+x"
+- name: Delete two files
+  tags: wekan
+  loop:
+  - node-gyp
+  - node-pre-gyp
+  file:
+    path: "{{ wekan_main_dir }}/bundle/programs/server/node_modules/.bin/{{ item }}"
+    state: absent
 
-- name: install
-  template:
-    src: templates/wekan-start.j2
-    dest: ~/wekan-start
-    mode: "a+x"
+- name: Install wekan
+  tags: wekan
+  loop:
+  - node-gyp
+  - node-pre-gyp
+  - fibers
+  npm:
+    path: "{{ wekan_main_dir }}/bundle/programs/server"
+
+# - name: install
+#   template:
+#     src: templates/wekan-setup.j2
+#     dest: ~/wekan-setup
+#     mode: "u+x"
+
+
+
+# Problems:
+#* wget https://releases.wekan.team/wekan-4.22.zip
+#     https://github.com/wekan/wekan/archive/v4.22.zip
+#* unzip v4.22.zip
+#* cd bundle/programs/server
+#* npm install
+#  => npm ERR! bcrypt@3.0.8 install: `node-pre-gyp install --fallback-to-build`
+
+# https://install.meteor.com
+
+# in `/home/foobar/projekte/wekan/bundle/programs/server` - `npm_install`
