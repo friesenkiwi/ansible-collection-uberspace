@@ -7,7 +7,7 @@
     name: uberspace_account
     tasks_from: tools
 
-- name: Configure environment
+- name: Configure environment (bash_profile)
   # lineinfile:
   #   path: ~/.bash_profile
   #   line:
@@ -16,6 +16,14 @@
     path: ~/.bash_profile
     block: "{{ lookup('template', 'bash_profile.j2') }}"
     insertbefore: export PATH
+- name: Configure environment (bashrc)
+  # lineinfile:
+  #   path: ~/.bash_profile
+  #   line:
+  #   insertbefore: export PATH
+  blockinfile:
+    path: ~/.bashrc
+    block: "{{ lookup('template', 'bashrc.j2') }}"
 
 - name: Create .pgpass file
   template:
@@ -38,6 +46,11 @@
     dest: "{{ uberspace_spacedir }}/.pgpass.tmp"
     state: absent
 
+- name: Change config file to set socket directory
+  lineinfile:
+    dest: "{{ postgres_main_dir }}/data/postgresql.conf"
+    regexp: 'unix_socket_directories'
+    line: "unix_socket_directories = '{{ uberspace_spacedir }}/tmp'"
 
 
 # - name: Create postgres file path
