@@ -7,6 +7,39 @@
     name: uberspace_account
     tasks_from: tools
 
+- name: Configure environment
+  # lineinfile:
+  #   path: ~/.bash_profile
+  #   line:
+  #   insertbefore: export PATH
+  blockinfile:
+    path: ~/.bash_profile
+    block: "{{ lookup('template', 'bash_profile.j2') }}"
+    insertbefore: export PATH
+
+- name: Create .pgpass file
+  template:
+    src: pgpass.j2
+    dest: "{{ uberspace_spacedir }}/.pgpass"
+    mode: "0600"
+- name: Store password into temp file
+  lineinfile:
+    line: "{{ postgres_password }}"
+    path: "{{ uberspace_spacedir }}/.pgpass.tmp"
+    create: true
+- name: Initialize PostgreSQL cluster
+  environment:
+    PGPASSFILE: "{{ uberspace_spacedir }}/.pgpass"
+  shell: 'initdb --pwfile="{{ uberspace_spacedir }}/.pgpass.tmp" --auth=scram-sha-256 -E UTF8 -D {{ postgres_main_dir }}/data/'
+  args:
+    creates: "{{ postgres_main_dir }}/data/"
+- name: remove temp password file
+  file:
+    dest: "{{ uberspace_spacedir }}/.pgpass.tmp"
+    state: absent
+
+
+
 # - name: Create postgres file path
 #   loop:
 #   - "{{ postgres_main_dir }}"
@@ -15,28 +48,3 @@
 #   file:
 #     state: directory
 #     path: "{{ item }}"
-# - name: "Download and unpack {{ postgres_version }}"
-#   unarchive:
-#     remote_src: yes
-#     src: "{{ postgres_download_url }}"
-#     dest: "{{ postgres_main_dir }}"
-#
-# - name: Configure postgres build
-#   command:
-#     chdir: "{{ postgres_curversion_dir }}"
-#     cmd: "./configure --prefix={{ postgres_install_dir }}"
-#     creates: "{{ postgres_curversion_dir }}/Makefile"
-#
-# - name: Check if build necessary
-#   stat:
-#     path: "{{ postgres_curversion_dir }}/bin"
-#   register: stat_result
-# - name: Build postgres
-#   when: not stat_result.stat.exists
-#   make:
-#     chdir: "{{ postgres_curversion_dir }}"
-#
-# - name: Check if install necessary
-#   stat:
-#     path: "{{ postgres_install_dir }}/bin/postgresql"
-#   register: stat_result
