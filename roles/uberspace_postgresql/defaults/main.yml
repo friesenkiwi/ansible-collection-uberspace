@@ -1,0 +1,12 @@
+#postgres_dir_name: postgres
+#postgres_main_dir: "{{ uberspace_projectsdir | realpath }}/{{ postgres_dir_name }}"
+#postgres_install_dir: "{{ uberspace_spacedir }}/opt/postgres/"
+#postgres_configfile_name: "postgresql.conf"
+#postgres_configfile: "{{ postgres_install_dir }}data/{{ postgres_configfile_name }}"
+#postgres_pidfile: "{{ postgres_main_dir }}/postgresql.pid"
+postgres_pidfile: "{{ postgres_install_dir }}/var/run/postgresql.pid"
+
+postgres_curversion_dir: "{{ postgres_main_dir }}/{{ postgres_version }}"
+
+postgres_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+postgres_secret: "{{ lookup('password','credentials/postgres_secret') }}"

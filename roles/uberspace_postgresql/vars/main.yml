@@ -1,0 +1,2 @@
+postgres_download_url: https://download.postgresql.org/pub/source/v12.4/postgresql-12.4.tar.gz
+postgres_version: "{{ postgres_download_url | basename | splitext | first | splitext | first }}"

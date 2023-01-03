@@ -1,0 +1,2 @@
+export PGHOST=localhost
+export PGPORT=5432

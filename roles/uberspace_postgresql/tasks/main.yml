@@ -1,0 +1,39 @@
+# - name: Create postgres file path
+#   loop:
+#   - "{{ postgres_main_dir }}"
+#   - "{{ postgres_configfile | dirname }}"
+#   - "{{ postgres_pidfile | dirname }}"
+#   file:
+#     state: directory
+#     path: "{{ item }}"
+# - name: "Download and unpack {{ postgres_version }}"
+#   unarchive:
+#     remote_src: yes
+#     src: "{{ postgres_download_url }}"
+#     dest: "{{ postgres_main_dir }}"
+#
+# - name: Configure postgres build
+#   command:
+#     chdir: "{{ postgres_curversion_dir }}"
+#     cmd: "./configure --prefix={{ postgres_install_dir }}"
+#     creates: "{{ postgres_curversion_dir }}/Makefile"
+#
+# - name: Check if build necessary
+#   stat:
+#     path: "{{ postgres_curversion_dir }}/bin"
+#   register: stat_result
+# - name: Build postgres
+#   when: not stat_result.stat.exists
+#   make:
+#     chdir: "{{ postgres_curversion_dir }}"
+#
+# - name: Check if install necessary
+#   stat:
+#     path: "{{ postgres_install_dir }}/bin/postgresql"
+#   register: stat_result
+#
+# - name: Configure luarocks - Add luarocks env variables
+#   blockinfile:
+#     path: ~/.bash_profile
+#     block: "{{ postgres_environment }}"
+#     insertbefore: export PATH
