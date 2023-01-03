@@ -34,12 +34,14 @@ There are some variables necessary to be set in order for this role to function 
 
 #### Inputs
 * `uberspace_loginname` - by default `{{ ansible_user }}` from the inventory
+* `uberspace_registeradminnmailaddress` - external admin email address, needs to be provided
 * `uberspace_loginpassword` - by default read from `credentials/uberspace_loginpassword_{{ uberspace_loginname }}`
 * `uberspace_loginkey` - by default read from `~/.ssh/id_uberspace_{{ uberspace_loginname }}`
 * `uberspace_action_setup` - whether to register a new account, set the password or deploy the loginkey - by default `false`
 * `uberspace_action_delete` - whether to delete an account - by default `false`
 * `uberspace_ports_goal` - list of ports used by running services. Since Uberspace can only open ports on an availability base, users cannot request a *specific* port to be opened. Rather, the length of this list is compared to the actual open ports and the missing number of ports requested. This variable should afterwards be adjusted manually in the code accordingly.
 * `uberspace_domains_goal` - list of domains to be registered to the uberspace via `uberspace web domain add`
+* `uberspace_tools_goal` - dict of web tools and their versions to configure 
 * `uberspace_basedomain` - base domain for services, e.g. `example.com`
 * `uberspace_servicedomain` - subdomain under which services should be available, e.g. `foo.bar` would result in `foo.bar.example.com`
 * `inwx_user` - username at INWX
