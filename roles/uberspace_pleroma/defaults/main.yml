@@ -1,0 +1,14 @@
+pleroma_port:
+pleroma_name:
+pleroma_adminmail:
+
+pleroma_main_dir: "pleroma"
+pleroma_dest_dir: "{{ uberspace_projectsdir }}{{ pleroma_main_dir }}"
+
+pleroma_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+# password generation/encryption not yet working correctly, pre-set
+pleroma_secret: "{{ lookup('password', 'credentials/' + 'pleroma_secret') }}"
+pleroma_db_user: pleroma
+pleroma_db_pw: "{{ lookup('password', 'credentials/' + 'pleroma_postgresql_user_pw') }}"
+pleroma_db_name: pleroma_dev
+pleroma_db_host: {{ uberspace_spacedir }}/tmp/

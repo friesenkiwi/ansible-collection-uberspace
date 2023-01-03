@@ -1,0 +1,95 @@
+# - name: test environment
+#   shell: "echo $PATH"
+#   register: envtest
+#   changed_when: false
+# - name: output envtest
+#   debug:
+#     var: envtest.stdout_lines
+- name: create target dir
+  file:
+    dest: "{{ pleroma_main_dir }}"
+    state: directory
+- name: clone pleroma
+  git:
+    repo: "{{ pleroma_repo }}"
+    dest: "{{ pleroma_main_dir }}"
+    force: yes
+# - name: set erlang 25 in PATH
+#   lineinfile:
+#     dest: .bash_profile
+#     line: 'export PATH=/package/host/localhost/erlang-25/bin:$PATH'
+# - name: set mix environment to prod
+#   lineinfile:
+#     dest: .bash_profile
+#     line: 'export MIX_ENV=prod'
+#  - name: install Hex
+#    command: mix local.hex --force
+#    args:
+#      chdir: "{{ pleroma_main_dir }}"
+
+- name: Run mix deps.get to install elixir dependencies
+  command: mix deps.get
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+    creates: "{{ pleroma_main_dir }}/deps"
+
+- name: deploy config
+  template:
+    src: templates/prod.secret.exs.j2
+    dest: "{{ pleroma_main_dir }}/config/prod.secret.exs"
+
+- name: change port
+  lineinfile:
+    dest: "{{ pleroma_main_dir }}/config/prod.exs"
+    line: '  http: [port: {{ pleroma_port }}],'
+    regexp: '^  http'
+
+- name: deploy postgresql script
+  template:
+    src: templates/setup_db.psql.j2
+    dest: "{{ pleroma_main_dir }}/config/setup_db.psql"
+
+- name: setup postgresql server
+  shell: uberspace-setup-postgresql
+  args:
+    creates: "{{ uberspace_spacedir }}/etc/postgresversion"
+
+- name: install psychopg2 via pip into user as an ansible dependency
+  pip:
+    name: psycopg2
+    extra_args: --user
+
+- name: Create default database
+  postgresql_db:
+    name: "{{ uberspace_loginname }}"
+    login_user: "{{ uberspace_loginname }}"
+
+# TODO add idempotency here
+- name: prepare postgresql for pleroma
+  tags: sql
+  shell: "psql -f config/setup_db.psql"
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+
+- name: mix ecto.migrate to run the database migrations #FIXME doesn't find the "mix" command?!
+  tags: test
+  command: "mix ecto.migrate"
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+#      creates: "{{ pleroma_main_dir}}/deps"
+  register: migrateoutput
+- name: output migrateoutput
+  tags: test
+  debug:
+    var: migrateoutput
+
+- name: add domain to uberspace config
+
+#Run mix generate_config. This will ask you a few questions about your instance and generate a configuration file in config/generated_config.exs. Check that and copy it to either config/dev.secret.exs or config/prod.secret.exs. It will also create a config/setup_db.psql;
+#  you may want to double-check this file in case you wanted a different username, or database name than the default. Then you need to run the script as PostgreSQL superuser (i.e. sudo su postgres -c "psql -f #config/setup_db.psql"). It will create a pleroma db user, database and will setup needed extensions that need to be set up. Postgresql super-user privileges are only needed for this step.
+#For these next steps, the default will be to run pleroma using the dev configuration file, config/dev.secret.exs. To run them using the prod config file, prefix each command at the shell with MIX_ENV=prod. For example: MIX_ENV=prod mix phx.server.
+#Run mix ecto.migrate to run the database migrations. You will have to do this again after certain updates.
+#You can check if your instance is configured correctly by running it with mix phx.server and checking the instance info endpoint at /api/v1/instance. If it shows your uri, name and email correctly, you are configured correctly. If it shows something like localhost:4000, your configuration is probably wrong, unless you are running a local development setup.
+#The common and convenient way for adding HTTPS is by using Nginx as a reverse proxy. You can look at example Nginx configuration in installation/pleroma.nginx. If you need TLS/SSL certificates for HTTPS, you can look get some for free with letsencrypt: https://letsencrypt.org/
+#The simplest way to obtain and install a certificate is to use Certbot. Depending on your specific setup, certbot may be able to get a certificate and configure your web server automatically.
+#[Not tested with system reboot yet!] You'll also want to set up Pleroma to be run as a systemd service. Example .service file can be found in installation/pleroma.service you can put it in /etc/systemd/system/.
