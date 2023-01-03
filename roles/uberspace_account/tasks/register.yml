@@ -18,10 +18,10 @@
     body_format: form-urlencoded
     body:
       _csrf_token: "{{ csrftoken }}"
-      mail: ""
+      mailaddr: "{{ uberspace_registeradminnmailaddress }}"
       login: "{{ uberspace_loginname }}"
-      u7: 1
       houserules: 1
+      password: "{{ uberspace_newloginpassword }}"
     return_content: yes
     status_code: 302
   register: registerresult

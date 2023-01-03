@@ -6,8 +6,11 @@
     url: "{{ uberspace_urls.register }}"
   register: checkresult
   failed_when: checkresult.status!=200 and checkresult.status!=403
+# - name: Setup application
+#   debug:
+#     msg: "{{checkresult}}"
 - name: Do registration
-  when: uberspace_action_setup and checkresult.status==200 and checkresult.msg == "OK (2 bytes)"
+  when: uberspace_action_setup and checkresult.status==200 and checkresult.msg == "OK (16 bytes)"
   include_tasks: register.yml
 - name: Lookup session
   tags: session
