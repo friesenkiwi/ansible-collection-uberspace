@@ -76,7 +76,6 @@
     name: "{{ item }}"
 
 - name: Create postgresql users
-  tags: test
   loop: "{{ postgres_users | default([{'user': '', 'password': ''}]) }}"
   environment: "{{ postgres_environment }}"
   postgresql_user:

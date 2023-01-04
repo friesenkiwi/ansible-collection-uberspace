@@ -53,6 +53,8 @@
     uberspace_ip_private_v6: "{{ ansible_default_ipv6.address }}"
     uberspace_host: "{{ ansible_hostname }}"
 
+# TODO replace with using default collected facts from /etc/ansible/facts.d into ansible_local.
+
 - name: Retrieve ports
   tags: ports
   check_mode: no

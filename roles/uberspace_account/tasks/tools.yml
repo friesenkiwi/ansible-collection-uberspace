@@ -1,3 +1,4 @@
+# TODO replace with using default collected facts from /etc/ansible/facts.d and /home/foobar2/etc/userfacts into ansible_local.users.foobar2.versions.
 - name: Get versions of desired tools
   tags: tools
   loop: "{{ uberspace_tools_goal | default({}) | dict2items }}"
