@@ -22,37 +22,65 @@
     dest: "{{ pleroma_main_dir }}"
     force: yes
     depth: 1
-# - name: set erlang 25 in PATH
-#   lineinfile:
-#     dest: .bash_profile
-#     line: 'export PATH=/package/host/localhost/erlang-25/bin:$PATH'
 # - name: set mix environment to prod
 #   lineinfile:
 #     dest: .bash_profile
 #     line: 'export MIX_ENV=prod'
-#  - name: install Hex
-#    command: mix local.hex --force
-#    args:
-#      chdir: "{{ pleroma_main_dir }}"
 
-- name: Run mix deps.get to install elixir dependencies
-  command: mix deps.get
-  args:
+# - name: Install Hex
+#   tags: test
+#   command: mix local.hex --force
+#   args:
+#     chdir: "{{ pleroma_main_dir }}"
+#     creates: "{{ uberspace_spacedir }}/.mix/archives/hex-2.0.0/"
+# - name: Run mix deps.get to install Elixir dependencies
+#   tags: test
+#   command: mix deps.get
+#   args:
+#     chdir: "{{ pleroma_main_dir }}"
+#     creates: "{{ pleroma_main_dir }}/deps"
+
+- name: Install ansible dependency pexpect via pip into user
+  tags: test2
+  pip:
+    name: pexpect>=3.3
+    extra_args: --user
+
+- name: Run mix deps.get with choices to install Elixir dependencies
+  tags: test
+  expect:
+    command: mix deps.get
     chdir: "{{ pleroma_main_dir }}"
     creates: "{{ pleroma_main_dir }}/deps"
+    timeout: 300
+    responses:
+      'Shall I install Hex': 'Y'
+
+- name: Run  mix pleroma.instance gen with choices to compile files and generate a configuration file
+  tags: test
+  expect:
+    command: mix pleroma.instance gen
+    chdir: "{{ pleroma_main_dir }}"
+    creates: "{{ pleroma_main_dir }}/config/generated_config.exs"
+    timeout: 300
+    # responses:
+    #   'Shall I install Hex': 'Y'
 
 - name: deploy config
+  tags: test2
   template:
     src: templates/prod.secret.exs.j2
     dest: "{{ pleroma_main_dir }}/config/prod.secret.exs"
 
 - name: change port
+  tags: test2
   lineinfile:
     dest: "{{ pleroma_main_dir }}/config/prod.exs"
     line: '  http: [port: {{ pleroma_port }}],'
     regexp: '^  http'
 
 - name: deploy postgresql script
+  tags: test2
   template:
     src: templates/setup_db.psql.j2
     dest: "{{ pleroma_main_dir }}/config/setup_db.psql"
@@ -67,14 +95,14 @@
     chdir: "{{ pleroma_main_dir }}"
 
 - name: mix ecto.migrate to run the database migrations #FIXME doesn't find the "mix" command?!
-  tags: test
+  tags: test2
   command: "mix ecto.migrate"
   args:
     chdir: "{{ pleroma_main_dir }}"
 #      creates: "{{ pleroma_main_dir}}/deps"
   register: migrateoutput
 - name: output migrateoutput
-  tags: test
+  tags: test2
   debug:
     var: migrateoutput
 
