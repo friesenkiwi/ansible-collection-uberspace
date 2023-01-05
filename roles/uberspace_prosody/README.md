@@ -30,7 +30,7 @@ and a playbook `example.yml` like this
   hosts: g_uberspace_isabell
   gather_facts: no
   vars:
-    uberspace_projectsdir: "{{ uberspace_spacedir + '/projekte/' }}"
+    uberspace_projectsdir: "{{ uberspace_spacedir }}/projekte/"
     inwx_user: isabell
 
     uberspace_basedomain: example.com

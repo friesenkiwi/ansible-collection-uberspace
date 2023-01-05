@@ -25,6 +25,10 @@
   blockinfile:
     path: ~/.bashrc
     block: "{{ lookup('template', 'bashrc.j2') }}"
+- name: Store PostgreSQL environment as fact for later use
+  tags: environment
+  set_fact:
+    postgres_environment: "{{ postgres_environment }}"
 
 - name: Create .pgpass file
   template:

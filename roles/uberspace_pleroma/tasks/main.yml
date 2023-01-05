@@ -27,12 +27,24 @@
 #     dest: .bash_profile
 #     line: 'export MIX_ENV=prod'
 
-# - name: Install Hex
-#   tags: test
-#   command: mix local.hex --force
-#   args:
-#     chdir: "{{ pleroma_main_dir }}"
-#     creates: "{{ uberspace_spacedir }}/.mix/archives/hex-2.0.0/"
+- name: Install ansible dependency pexpect via pip into user
+  tags: test2
+  pip:
+    name: pexpect>=3.3
+    extra_args: --user
+
+- name: Install Hex
+  tags: test
+  command: mix local.hex --force
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+    creates: "{{ uberspace_spacedir }}/.mix/archives/hex-2.0.0/"
+- name: Install rebar
+  tags: test
+  command: mix local.rebar --force
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+    creates: "{{ uberspace_spacedir }}/.mix/elixir/1-14/rebar3"
 # - name: Run mix deps.get to install Elixir dependencies
 #   tags: test
 #   command: mix deps.get
@@ -40,12 +52,7 @@
 #     chdir: "{{ pleroma_main_dir }}"
 #     creates: "{{ pleroma_main_dir }}/deps"
 
-- name: Install ansible dependency pexpect via pip into user
-  tags: test2
-  pip:
-    name: pexpect>=3.3
-    extra_args: --user
-
+# responses should be redundant because of earlier explicit --force installation
 - name: Run mix deps.get with choices to install Elixir dependencies
   tags: test
   expect:
@@ -61,38 +68,71 @@
   expect:
     command: mix pleroma.instance gen
     chdir: "{{ pleroma_main_dir }}"
-    creates: "{{ pleroma_main_dir }}/config/generated_config.exs"
+    creates: "{{ pleroma_main_dir }}/_build"
+#    creates: "{{ pleroma_main_dir }}/config/generated_config.exs"
     timeout: 300
-    # responses:
-    #   'Shall I install Hex': 'Y'
-
-- name: deploy config
-  tags: test2
-  template:
-    src: templates/prod.secret.exs.j2
+    responses:
+      'Shall I install rebar3': 'Y'
+      'What domain will your instance use': ''
+      'What is the name of your instance': 'DNMF'
+      'What is your admin email address': ''
+      'What email address do you want to use for sending email notifications': ''
+      'Do you want search engines to index your site': 'n'
+      'Do you want to store the configuration in the database': 'n'
+      'What is the hostname of your database': 'localhost'
+      'What is the name of your database': 'foobar2_pleroma'
+      'What is the user used to connect to your database': 'foobar2_pleroma'
+      'What is the password used to connect to your database': ''
+      'Would you like to use RUM indices': 'y'
+      'What port will the app listen to': '4000'
+      'What ip will the app listen to': '127.0.0.1' # '0.0.0.0'
+      'What directory should media uploads go in': 'uploads'
+      'What directory should custom public files be read from': ''
+      'Do you want to strip location (GPS) data from uploaded images': 'y'
+      'Do you want to read data from uploaded files so clients can use it to prefill fields like image description': 'n'
+      'Do you want to anonymize the filenames of uploads': 'y'
+      'Do you want to deduplicate uploaded files': 'y'
+- name: Copy generated config file
+  copy:
+    remote_src: true
+    src: "{{ pleroma_main_dir }}/config/generated_config.exs"
     dest: "{{ pleroma_main_dir }}/config/prod.secret.exs"
+# - name: Change specific settings in config file
+#   tags: test2
+#   lineinfile:
+#     dest: "{{ pleroma_main_dir }}/config/prod.exs"
+#     line: '  http: [port: {{ pleroma_port }}],'
+#     regexp: '^  http'
 
-- name: change port
-  tags: test2
-  lineinfile:
-    dest: "{{ pleroma_main_dir }}/config/prod.exs"
-    line: '  http: [port: {{ pleroma_port }}],'
-    regexp: '^  http'
+# TODO not right now, because of the multitude of secrets in the file, instead use the expect/command/responses + lineinfile
+# - name: Deploy own config
+#   template:
+#     src: templates/prod.secret.exs.j2
+#     dest: "{{ pleroma_main_dir }}/config/prod.secret.exs"
+# - name: Deploy own PostgreSQL script
+#   template:
+#     src: templates/setup_db.psql.j2
+#     dest: "{{ pleroma_main_dir }}/config/setup_db.psql"
 
-- name: deploy postgresql script
-  tags: test2
-  template:
-    src: templates/setup_db.psql.j2
-    dest: "{{ pleroma_main_dir }}/config/setup_db.psql"
-
-
-
-# TODO add idempotency here
-- name: prepare postgresql for pleroma
+- name: Check PostgreSQL databases
   tags: sql
-  shell: "psql -f config/setup_db.psql"
-  args:
-    chdir: "{{ pleroma_main_dir }}"
+  environment: "{{ postgres_environment }}"
+  postgresql_info:
+    login_user: "{{ postgres_username_clusteruser }}"
+    filter: databases
+  register: pleroma_postgresql_databases
+# TODO add idempotency: only run, when
+- name: Show PostgreSQL databases
+  tags: sql
+  debug:
+    msg: "{{ pleroma_postgresql_databases }}"
+- name: Prepare PostgreSQL for Pleroma - Run generated script
+  tags: sql
+  environment: "{{ postgres_environment }}"
+  when: not pleroma_db_name in pleroma_postgresql_databases
+  community.postgresql.postgresql_script:
+    login_user: "{{ postgres_username_clusteruser }}"
+    path: "{{ pleroma_main_dir }}/config/setup_db.psql"
 
 - name: mix ecto.migrate to run the database migrations #FIXME doesn't find the "mix" command?!
   tags: test2

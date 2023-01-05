@@ -28,6 +28,8 @@ for now. More features may be added in the future, Merge/Pull Requests are much 
 
 For the INWX part of the role (setting the DNS records), you need to have the [`inwx.collection`](https://github.com/inwx/ansible-collection) installed, e.g. by running `ansible-galaxy collection install inwx.collection`. Also, you need to already have an account over at INWX and register a domain there, under which the records can be managed. If you don't have one, you can still use the rest of the role.
 
+For some PostgreSQL parts, you need to have `ansible-galaxy collection install community.postgresql`.
+
 ### Role Variables
 
 There are some variables necessary to be set in order for this role to function properly, and some more available to control it's behaviour. Also there are some facts gathered which can be used in tasks/role executions afterwards, e.g. to install/configure applications running on the uberspace. Also there are a couple of files written and read from by default which are security relevant because they contain credentials. Make sure to only use it on encrypted filessystems and put them into your `.gitignore`.
@@ -41,7 +43,7 @@ There are some variables necessary to be set in order for this role to function 
 * `uberspace_action_delete` - whether to delete an account - by default `false`
 * `uberspace_ports_goal` - list of ports used by running services. Since Uberspace can only open ports on an availability base, users cannot request a *specific* port to be opened. Rather, the length of this list is compared to the actual open ports and the missing number of ports requested. This variable should afterwards be adjusted manually in the code accordingly.
 * `uberspace_domains_goal` - list of domains to be registered to the uberspace via `uberspace web domain add`
-* `uberspace_tools_goal` - dict of web tools and their versions to configure 
+* `uberspace_tools_goal` - dict of web tools and their versions to configure
 * `uberspace_basedomain` - base domain for services, e.g. `example.com`
 * `uberspace_servicedomain` - subdomain under which services should be available, e.g. `foo.bar` would result in `foo.bar.example.com`
 * `inwx_user` - username at INWX
