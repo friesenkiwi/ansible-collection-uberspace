@@ -46,7 +46,7 @@
   shell: 'initdb --pwfile="{{ postgres_pgpassfile }}.tmp" --auth=scram-sha-256 -E UTF8 -D {{ postgres_main_dir }}/data/'
   args:
     creates: "{{ postgres_main_dir }}/data/"
-- name: remove temp password file
+- name: Remove temp password file
   file:
     dest: "{{ postgres_pgpassfile }}.tmp"
     state: absent
@@ -72,7 +72,7 @@
     extra_args: --user
 
 - name: Create databases
-  loop: "{{ postgres_databases | default([]) }}"
+  loop: "{{ postgres_databases }}"
   environment: "{{ postgres_environment }}"
   postgresql_db:
     login_user: "{{ postgres_username_clusteruser }}"
@@ -80,7 +80,7 @@
     name: "{{ item }}"
 
 - name: Create postgresql users
-  loop: "{{ postgres_users | default([{'user': '', 'password': ''}]) }}"
+  loop: "{{ postgres_users }}"
   environment: "{{ postgres_environment }}"
   postgresql_user:
     login_user: "{{ postgres_username_clusteruser }}"

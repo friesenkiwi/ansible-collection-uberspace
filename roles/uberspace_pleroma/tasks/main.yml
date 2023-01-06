@@ -34,13 +34,15 @@
     extra_args: --user
 
 - name: Install Hex
-  tags: test
+  tags: test0
+  environment: "{{ pleroma_environment }}"
   command: mix local.hex --force
   args:
     chdir: "{{ pleroma_main_dir }}"
     creates: "{{ uberspace_spacedir }}/.mix/archives/hex-2.0.0/"
 - name: Install rebar
-  tags: test
+  tags: test0
+  environment: "{{ pleroma_environment }}"
   command: mix local.rebar --force
   args:
     chdir: "{{ pleroma_main_dir }}"
@@ -54,7 +56,8 @@
 
 # responses should be redundant because of earlier explicit --force installation
 - name: Run mix deps.get with choices to install Elixir dependencies
-  tags: test
+  tags: test0
+  environment: "{{ pleroma_environment }}"
   expect:
     command: mix deps.get
     chdir: "{{ pleroma_main_dir }}"
@@ -65,38 +68,50 @@
 
 - name: Run  mix pleroma.instance gen with choices to compile files and generate a configuration file
   tags: test
+#  ignore_errors: true
+  vars:
+    forceswich: "{{ pleroma_reconfigure | default(false) | bool | ternary(' --force','') }}"
+  environment: "{{ pleroma_environment }}"
   expect:
-    command: mix pleroma.instance gen
+    # --force to overwrite setup_db.psql
+    command: mix pleroma.instance gen{{ forceswich }}
     chdir: "{{ pleroma_main_dir }}"
-    creates: "{{ pleroma_main_dir }}/_build"
+#    creates: "{{ pleroma_main_dir }}/_build/{{ pleroma_mix_environment }}"
 #    creates: "{{ pleroma_main_dir }}/config/generated_config.exs"
-    timeout: 300
+    creates: "{{ pleroma_main_dir }}/config/setup_db.psql"
+    timeout: 1000
     responses:
       'Shall I install rebar3': 'Y'
-      'What domain will your instance use': ''
-      'What is the name of your instance': 'DNMF'
-      'What is your admin email address': ''
-      'What email address do you want to use for sending email notifications': ''
+      'What domain will your instance use': "{{ pleroma_host }}"
+      'What is the name of your instance': "{{ pleroma_instancename }}"
+      'What is your admin email address': "{{ pleroma_adminmail }}"
+      'What email address do you want to use for sending email notifications': "{{ pleroma_adminmail }}"
       'Do you want search engines to index your site': 'n'
       'Do you want to store the configuration in the database': 'n'
       'What is the hostname of your database': 'localhost'
-      'What is the name of your database': 'foobar2_pleroma'
-      'What is the user used to connect to your database': 'foobar2_pleroma'
-      'What is the password used to connect to your database': ''
+      'What is the name of your database': "{{ pleroma_db_name }}"
+      'What is the user used to connect to your database': "{{ pleroma_db_user }}"
+      'What is the password used to connect to your database': "{{ pleroma_db_pw }}"
       'Would you like to use RUM indices': 'y'
-      'What port will the app listen to': '4000'
-      'What ip will the app listen to': '127.0.0.1' # '0.0.0.0'
+      'What port will the app listen to': "{{ pleroma_port }}"
+      'What ip will the app listen to': '127.0.0.1'
       'What directory should media uploads go in': 'uploads'
-      'What directory should custom public files be read from': ''
-      'Do you want to strip location (GPS) data from uploaded images': 'y'
+      'What directory should custom public files be read from': 'instance/static/'
+      'Do you want to strip location \(GPS\) data from uploaded images': 'y'
       'Do you want to read data from uploaded files so clients can use it to prefill fields like image description': 'n'
       'Do you want to anonymize the filenames of uploads': 'y'
       'Do you want to deduplicate uploaded files': 'y'
+#  register: genresult
+# - name: Show genresult
+#   debug:
+#     msg: "{{ genresult }}"
+
 - name: Copy generated config file
+  tags: test
   copy:
     remote_src: true
     src: "{{ pleroma_main_dir }}/config/generated_config.exs"
-    dest: "{{ pleroma_main_dir }}/config/prod.secret.exs"
+    dest: "{{ pleroma_main_dir }}/config/{{ pleroma_mix_environment }}.secret.exs"
 # - name: Change specific settings in config file
 #   tags: test2
 #   lineinfile:
@@ -116,35 +131,67 @@
 
 - name: Check PostgreSQL databases
   tags: sql
-  environment: "{{ postgres_environment }}"
+#  environment: "{{ postgres_environment }}"
   postgresql_info:
     login_user: "{{ postgres_username_clusteruser }}"
     filter: databases
+    login_db: ""
   register: pleroma_postgresql_databases
 # TODO add idempotency: only run, when
 - name: Show PostgreSQL databases
   tags: sql
   debug:
     msg: "{{ pleroma_postgresql_databases }}"
-- name: Prepare PostgreSQL for Pleroma - Run generated script
+
+- name: Prepare PostgreSQL for Pleroma - Run generated script via command module
   tags: sql
-  environment: "{{ postgres_environment }}"
-  when: not pleroma_db_name in pleroma_postgresql_databases
-  community.postgresql.postgresql_script:
-    login_user: "{{ postgres_username_clusteruser }}"
-    path: "{{ pleroma_main_dir }}/config/setup_db.psql"
+#   when: not pleroma_db_name in pleroma_postgresql_databases
+  command: "psql -f {{ pleroma_main_dir }}/config/setup_db.psql"
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+  register: sqlscriptresult
+
+# - name: Prepare PostgreSQL for Pleroma - Run generated script
+#   tags: sql
+# #  environment: "{{ postgres_environment }}"
+#   when: not pleroma_db_name in pleroma_postgresql_databases
+#   community.postgresql.postgresql_script:
+#     login_user: "{{ postgres_username_clusteruser }}"
+#     path: "{{ pleroma_main_dir }}/config/setup_db.psql"
+#     encoding: UTF-8
+
+# - name: Prepare PostgreSQL for Pleroma - Run generated script via postgresql_query
+#   tags: sql
+# #  environment: "{{ postgres_environment }}"
+#   when: not pleroma_db_name in pleroma_postgresql_databases
+#   community.postgresql.postgresql_query:
+#     login_user: "{{ postgres_username_clusteruser }}"
+#     path_to_script: "{{ pleroma_main_dir }}/config/setup_db.psql"
+#     encoding: UTF-8
 
 - name: mix ecto.migrate to run the database migrations #FIXME doesn't find the "mix" command?!
   tags: test2
+  environment: "{{ pleroma_environment }}"
   command: "mix ecto.migrate"
   args:
     chdir: "{{ pleroma_main_dir }}"
-#      creates: "{{ pleroma_main_dir}}/deps"
   register: migrateoutput
+#  changed_when: not "[info] Migrations already up"
 - name: output migrateoutput
   tags: test2
   debug:
     var: migrateoutput
+
+- name: Get ExifTool
+  tags: test5
+  unarchive:
+    remote_src: yes
+    src: "{{ pleroma_exiftool_url }}"
+    extra_opts:
+    - "--strip-components=1"
+    - "{{ pleroma_exiftool_name }}/exiftool"
+    - "{{ pleroma_exiftool_name }}/lib/"
+    dest:  "{{ uberspace_spacedir }}/bin"
 
 # name: add domain to uberspace config
 

@@ -2,7 +2,7 @@ pleroma_project_name: "pleroma"
 pleroma_main_dir: "{{ uberspace_projectsdir | realpath }}/{{ pleroma_project_name }}"
 
 pleroma_port: 4000
-pleroma_name: Pleroma
+pleroma_instancename: Pleroma
 pleroma_adminmail: admin@example.com
 
 pleroma_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
@@ -10,6 +10,15 @@ pleroma_db_user: "{{ uberspace_loginname }}_{{ pleroma_project_name }}"
 pleroma_db_pw: "{{ lookup('password', 'credentials/' + uberspace_loginname + '/' + 'pleroma_postgresql_user_pw') }}"
 pleroma_db_name: "{{ pleroma_db_user }}"
 pleroma_db_host: "{{ uberspace_spacedir }}/tmp/"
+
+pleroma_mix_environment: prod
+pleroma_environment:
+  MIX_ENV: "{{ pleroma_mix_environment }}"
+
+pleroma_exiftool_version: "12.53"
+pleroma_exiftool_name: "Image-ExifTool-{{ pleroma_exiftool_version }}"
+pleroma_exiftool_url: "https://exiftool.org/Image-ExifTool-{{ pleroma_exiftool_version }}.tar.gz"
+
 
 # password generation/encryption not yet working correctly, pre-set
 #pleroma_secret: "{{ lookup('password', 'credentials/' + uberspace_loginname + '/' + 'pleroma_secret') }}"
