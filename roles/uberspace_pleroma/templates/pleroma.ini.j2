@@ -1,0 +1,8 @@
+[program:pleroma]
+command=/usr/bin/mix phx.server
+directory={{ uberspace_projectsdir }}{{ pleroma_project_name }}
+autostart=true
+autorestart=true
+startsecs=60
+environment =
+  MIX_ENV={{ pleroma_mix_environment }}

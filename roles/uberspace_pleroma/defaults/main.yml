@@ -19,6 +19,17 @@ pleroma_exiftool_version: "12.53"
 pleroma_exiftool_name: "Image-ExifTool-{{ pleroma_exiftool_version }}"
 pleroma_exiftool_url: "https://exiftool.org/Image-ExifTool-{{ pleroma_exiftool_version }}.tar.gz"
 
+pleroma_interface_ipv4: "{{ uberspace_ip_private_v4 }}"
+
+uberspace_domains_goal:
+- "{{ pleroma_host }}"
+
+inwx_records_a:
+- "{{ uberspace_servicedomain }}"
+
+pleroma_webbackends:
+- path: "{{ pleroma_host }}"
+  port: "{{ pleroma_port }}"
 
 # password generation/encryption not yet working correctly, pre-set
 #pleroma_secret: "{{ lookup('password', 'credentials/' + uberspace_loginname + '/' + 'pleroma_secret') }}"

@@ -1,5 +1,8 @@
+# TODO will only work after DNS has been set up
 - name: Touch web URL to trigger certificate generation
-  tags: domains
+  tags:
+  - domains
+  - certificates
   loop: "{{ uberspace_domains_goal | default([]) }}"
   uri:
     url: "https://{{ item }}"
