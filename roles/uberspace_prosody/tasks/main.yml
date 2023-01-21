@@ -154,7 +154,7 @@
   set_fact:
     uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + prosody_webbackends }}"
 
-- name: install pexpect as a dependency
+- name: Install pexpect as an ansible dependency
   pip:
     name: pexpect
     extra_args: --user
@@ -189,12 +189,12 @@
     apply:
       tags: invite
 
-# TODO
+# TODO Additional optional features
 # XEP-0156: Discovering Alternative XMPP Connection Methods (HTTP)
 # see https://github.com/iNPUTmice/caas/blob/master/caas-web/src/main/resources/help/prosody/xep0156.md
 # uberspace web header set /.well-known Access-Control-Allow-Origin "*"
 # uberspace web header set /http-bind Access-Control-Allow-Origin "*"
 # functionality is there for Gajim
 
-# TODO
+# TODO Local tasks for testing
 # caas run from local

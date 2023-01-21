@@ -1,8 +1,9 @@
 postgres_dir_name: postgresql
 postgres_projectsdir: "opt/"
 postgres_main_dir: "{{ (uberspace_spacedir + '/' + postgres_projectsdir) | default(uberspace_projectsdir) | realpath }}/{{ postgres_dir_name }}"
+postgres_data_dir: "{{ postgres_main_dir }}/data/"
 #postgres_configfile_name: "postgresql.conf"
-#postgres_configfile: "{{ postgres_main_dir }}/data/{{ postgres_configfile_name }}"
+#postgres_configfile: "{{ postgres_data_dir }}{{ postgres_configfile_name }}"
 #postgres_pidfile: "{{ postgres_main_dir }}/postgresql.pid"
 postgres_pidfile: "{{ postgres_main_dir }}/var/run/postgresql.pid"
 

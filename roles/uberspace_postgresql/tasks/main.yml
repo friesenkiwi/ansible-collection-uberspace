@@ -17,6 +17,7 @@
     path: ~/.bash_profile
     block: "{{ lookup('template', 'bash_profile.j2') }}"
     insertbefore: export PATH
+    marker: "# {mark} ANSIBLE MANAGED BLOCK PostgreSQL"
 - name: Configure environment (bashrc)
   # lineinfile:
   #   path: ~/.bash_profile
@@ -25,6 +26,7 @@
   blockinfile:
     path: ~/.bashrc
     block: "{{ lookup('template', 'bashrc.j2') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK PostgreSQL"
 - name: Store PostgreSQL environment as fact for later use
   tags: environment
   set_fact:
@@ -35,17 +37,21 @@
     src: pgpass.j2
     dest: "{{ postgres_pgpassfile }}"
     mode: "0600"
-# TODO only if cluster isn't initialized yet
+- name: "Check PostgreSQL cluster is already initialized"
+  stat:
+    path: "{{ postgres_data_dir }}"
+  register: postgresqlinitialized
 - name: Store password into temp file
+  when: not postgresqlinitialized.stat.exists
   lineinfile:
     line: "{{ postgres_password_clusteruser }}"
     path: "{{ postgres_pgpassfile }}.tmp"
     create: true
 - name: Initialize PostgreSQL cluster
   environment: "{{ postgres_environment }}"
-  shell: 'initdb --pwfile="{{ postgres_pgpassfile }}.tmp" --auth=scram-sha-256 -E UTF8 -D {{ postgres_main_dir }}/data/'
+  shell: 'initdb --pwfile="{{ postgres_pgpassfile }}.tmp" --auth=scram-sha-256 -E UTF8 -D {{ postgres_data_dir }}'
   args:
-    creates: "{{ postgres_main_dir }}/data/"
+    creates: "{{ postgres_data_dir }}"
 - name: Remove temp password file
   file:
     dest: "{{ postgres_pgpassfile }}.tmp"
@@ -53,7 +59,7 @@
 
 - name: Change config file to set socket directory
   lineinfile:
-    dest: "{{ postgres_main_dir }}/data/postgresql.conf"
+    dest: "{{ postgres_data_dir }}/postgresql.conf"
     regexp: 'unix_socket_directories'
     line: "unix_socket_directories = '{{ uberspace_spacedir }}/tmp'"
 

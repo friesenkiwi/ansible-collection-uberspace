@@ -14,6 +14,6 @@
   # - name: show addeddomains
   #   debug:
   #     var: addeddomains
-- name: Run certificates task
-  tags: domains
-  import_tasks: certificates.yml
+# - name: Run certificates task
+#   tags: domains
+#   import_tasks: certificates.yml

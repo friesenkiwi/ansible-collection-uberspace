@@ -48,6 +48,10 @@
   tags: gatherfacts
   when: not uberspace_action_delete
   import_tasks: gather_facts.yml
+- name: Do basic space setup
+  tags: basics
+  when: not uberspace_action_delete
+  import_tasks: basics.yml
 - name: Do domain setup
   tags: domains
   when: not uberspace_action_delete

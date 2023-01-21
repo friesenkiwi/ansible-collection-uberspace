@@ -1,0 +1,6 @@
+- name: Ensure shell aliases are present
+  blockinfile:
+    dest: ~/.bashrc
+    create: true
+    marker: "# {mark} ANSIBLE MANAGED BLOCK shell aliases"
+    block: "{{ uberspace_shellaliases_block }}"
