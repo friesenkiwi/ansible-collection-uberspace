@@ -8,25 +8,13 @@
     name: uberspace_account
     tasks_from: tools
 
-- name: Configure environment (bash_profile)
-  # lineinfile:
-  #   path: ~/.bash_profile
-  #   line:
-  #   insertbefore: export PATH
+- name: Configure environment
   blockinfile:
     path: ~/.bash_profile
     block: "{{ lookup('template', 'bash_profile.j2') }}"
     insertbefore: export PATH
     marker: "# {mark} ANSIBLE MANAGED BLOCK PostgreSQL"
-- name: Configure environment (bashrc)
-  # lineinfile:
-  #   path: ~/.bash_profile
-  #   line:
-  #   insertbefore: export PATH
-  blockinfile:
-    path: ~/.bashrc
-    block: "{{ lookup('template', 'bashrc.j2') }}"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK PostgreSQL"
+
 - name: Store PostgreSQL environment as fact for later use
   tags: environment
   set_fact:

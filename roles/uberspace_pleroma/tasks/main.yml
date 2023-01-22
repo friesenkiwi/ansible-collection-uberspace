@@ -22,10 +22,11 @@
     dest: "{{ pleroma_main_dir }}"
     force: yes
     depth: 1
-# - name: Set mix environment to prod
-#   lineinfile:
-#     dest: .bash_profile
-#     line: 'export {{ pleroma_environment_string }}'
+- name: Set mix environment
+  lineinfile:
+    path: ~/.bash_profile
+    line: 'export {{ pleroma_environment_string }}'
+    insertbefore: export PATH
 
 - name: Install ansible dependency pexpect via pip into user
   pip:
@@ -56,7 +57,7 @@
     responses:
       'Shall I install Hex': 'Y'
 
-- name: Run  mix pleroma.instance gen with choices to compile files and generate a configuration file
+- name: Run mix pleroma.instance gen with choices to compile files and generate a configuration file
   tags: config
   vars:
     forceswitch: "{{ pleroma_reconfigure | default(false) | bool | ternary(' --force','') }}"
@@ -78,6 +79,10 @@
 #     msg: "{{ genresult }}"
 
 # TODO add config for separate domain https://docs-develop.pleroma.social/backend/configuration/how_to_serve_another_domain_for_webfinger/
+# RewriteRule ^\.well-known/host-meta https://{{ pleroma_host }}/.well-known/host-meta [R=301,L]
+# /var/www/virtual/{{ uberspace_masterspace_loginname }}/{{ pleroma_handle_host }}/.htaccess
+
+
 - name: Change specific settings in generated config file
   tags: config
   loop: "{{ pleroma_config_adjustments }}"
@@ -93,16 +98,6 @@
     src: "{{ pleroma_main_dir }}/config/generated_config.exs"
     dest: "{{ pleroma_main_dir }}/config/{{ pleroma_mix_environment }}.secret.exs"
   notify: Restart pleroma
-
-# Not right now, because of the multitude of secrets in the file, instead use the expect/command/responses + lineinfile
-# - name: Deploy own config
-#   template:
-#     src: templates/prod.secret.exs.j2
-#     dest: "{{ pleroma_main_dir }}/config/prod.secret.exs"
-# - name: Deploy own PostgreSQL script
-#   template:
-#     src: templates/setup_db.psql.j2
-#     dest: "{{ pleroma_main_dir }}/config/setup_db.psql"
 
 - name: Check PostgreSQL databases
   tags: sql

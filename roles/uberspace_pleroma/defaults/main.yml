@@ -6,6 +6,7 @@ pleroma_instancename: Pleroma
 pleroma_adminmail: admin@example.com
 
 pleroma_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+pleroma_handle_host: "{{ pleroma_host }}"
 pleroma_db_user: "{{ uberspace_loginname }}_{{ pleroma_project_name }}"
 pleroma_db_pw: "{{ lookup('password', 'credentials/' + uberspace_loginname + '/' + 'pleroma_postgresql_user_pw') }}"
 pleroma_db_name: "{{ pleroma_db_user }}"
@@ -49,6 +50,9 @@ pleroma_config_adjustments:
 - line: '  queue_target: 5000,'
   regexp: '^  queue_target:'
   insertafter: "^config :pleroma, Pleroma.Repo,$"
+- line: 'config :pleroma, Pleroma.Web.WebFinger, domain: "{{ pleroma_handle_host }}"'
+  regexp: '^config :pleroma, Pleroma.Web.WebFinger, domain:'
+  insertafter: "^   signing_salt:"
 
 pleroma_exiftool_version: "12.53"
 pleroma_exiftool_name: "Image-ExifTool-{{ pleroma_exiftool_version }}"
@@ -65,6 +69,3 @@ inwx_records_a:
 pleroma_webbackends:
 - path: "{{ pleroma_host }}"
   port: "{{ pleroma_port }}"
-
-# password generation/encryption not yet working correctly, pre-set
-#pleroma_secret: "{{ lookup('password', 'credentials/' + uberspace_loginname + '/' + 'pleroma_secret') }}"
