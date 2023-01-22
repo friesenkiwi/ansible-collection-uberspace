@@ -20,6 +20,7 @@
   git:
     repo: "{{ pleroma_repo }}"
     dest: "{{ pleroma_main_dir }}"
+    version: "{{ pleroma_version }}"
     force: yes
     depth: 1
 - name: Set mix environment
@@ -78,11 +79,6 @@
 #   debug:
 #     msg: "{{ genresult }}"
 
-# TODO add config for separate domain https://docs-develop.pleroma.social/backend/configuration/how_to_serve_another_domain_for_webfinger/
-# RewriteRule ^\.well-known/host-meta https://{{ pleroma_host }}/.well-known/host-meta [R=301,L]
-# /var/www/virtual/{{ uberspace_masterspace_loginname }}/{{ pleroma_handle_host }}/.htaccess
-
-
 - name: Change specific settings in generated config file
   tags: config
   loop: "{{ pleroma_config_adjustments }}"
@@ -99,8 +95,17 @@
     dest: "{{ pleroma_main_dir }}/config/{{ pleroma_mix_environment }}.secret.exs"
   notify: Restart pleroma
 
+- name: Add a redirect on the master domain/server to access pleroma's webfinger description
+  when: pleroma_host != pleroma_handle_host
+  delegate_to: "{{ uberspace_masterspace_inventoryname | default(inventory_hostname) }}"
+  lineinfile:
+    dest: "/var/www/virtual/{{ uberspace_masterspace_loginname | default(uberspace_loginname) }}/{{ pleroma_handle_host }}/.htaccess"
+    line: "RewriteRule ^\\.well-known/host-meta https://{{ pleroma_host }}/.well-known/host-meta [R=301,L]"
+    create: true
+
 - name: Check PostgreSQL databases
   tags: sql
+  environment: "{{ postgres_environment }}"
   postgresql_info:
     login_user: "{{ postgres_username_clusteruser }}"
     filter: databases

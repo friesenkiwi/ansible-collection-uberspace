@@ -1,11 +1,14 @@
 pleroma_project_name: "pleroma"
 pleroma_main_dir: "{{ uberspace_projectsdir | realpath }}/{{ pleroma_project_name }}"
 
+pleroma_version: "stable"
+
 pleroma_port: 4000
 pleroma_instancename: Pleroma
 pleroma_adminmail: admin@example.com
 
 pleroma_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+# see https://docs-develop.pleroma.social/backend/configuration/how_to_serve_another_domain_for_webfinger/
 pleroma_handle_host: "{{ pleroma_host }}"
 pleroma_db_user: "{{ uberspace_loginname }}_{{ pleroma_project_name }}"
 pleroma_db_pw: "{{ lookup('password', 'credentials/' + uberspace_loginname + '/' + 'pleroma_postgresql_user_pw') }}"
