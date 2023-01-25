@@ -37,7 +37,7 @@ There are some variables necessary to be set in order for this role to function 
 #### Inputs
 * `uberspace_loginname` - by default `{{ ansible_user }}` from the inventory
 * `uberspace_registeradminnmailaddress` - external admin email address, needs to be provided
-* `uberspace_loginpassword` - by default read from `credentials/uberspace_loginpassword_{{ uberspace_loginname }}`
+* `uberspace_loginpassword` - by default read from `credentials/uberspace/{{ uberspace_loginname }}/loginpassword`
 * `uberspace_loginkey` - by default read from `~/.ssh/id_uberspace_{{ uberspace_loginname }}`
 * `uberspace_action_setup` - whether to register a new account, set the password or deploy the loginkey - by default `false`
 * `uberspace_action_delete` - whether to delete an account - by default `false`
@@ -47,7 +47,7 @@ There are some variables necessary to be set in order for this role to function 
 * `uberspace_basedomain` - base domain for services, e.g. `example.com`
 * `uberspace_servicedomain` - subdomain under which services should be available, e.g. `foo.bar` would result in `foo.bar.example.com`
 * `inwx_user` - username at INWX
-* `inwx_pw` - password at INWX, by default read from `credentials/inwx-{{ inwx_user }}-pw`
+* `inwx_pw` - password at INWX, by default read from `credentials/inwx/{{ inwx_user }}-pw`
 * `inwx_records_a` - list of domains for A and AAAA records
 * `inwx_records_srv` - dictionary of domains, services and ports for SRV records. The expected structure is like this (`xmpp-client`/`xmpp-server` are the service names and need to be adjusted for your case, as you can see, the `inwx_records_a` list can be reused):
   ```yml

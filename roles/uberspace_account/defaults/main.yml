@@ -1,12 +1,14 @@
 uberspace_loginname: "{{ ansible_user }}"
 
-uberspace_sessionfile: "credentials/uberspace_session_{{ uberspace_loginname }}"
-uberspace_passwordfetch_destination: "credentials/uberspace_loginpassword_{{ uberspace_loginname }}"
+uberspace_credentialstore_location: "credentials/"
+uberspace_credential_destination: "{{ uberspace_credentialstore_location }}uberspace/{{ uberspace_loginname }}/"
+uberspace_sessionfile: "{{ uberspace_credential_destination }}session"
+uberspace_passwordfetch_destination: "{{ uberspace_credential_destination }}loginpassword"
 uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_destination) }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
 uberspace_loginkey_path: "~/.ssh/id_uberspace_{{ uberspace_loginname }}"
 uberspace_loginkey: "{{ lookup('file', uberspace_loginkey_path + '.pub', errors='ignore') }}"
-uberspace_mycnffetch_destination: "credentials/uberspace_mycnf_{{ uberspace_loginname }}"
+uberspace_mycnffetch_destination: "{{ uberspace_credential_destination }}mycnf"
 uberspace_action_delete: false
 uberspace_action_setup: false
 
@@ -15,7 +17,7 @@ uberspace_session: "{{ lookup('file', uberspace_sessionfile, errors='ignore') }}
 uberspace_spacedir: "{{ '/home/' + uberspace_loginname }}"
 uberspace_webroot: "{{ '/var/www/virtual/' + uberspace_loginname + '/html'}}"
 
-inwx_pw: "{{ lookup('file', 'credentials/' + 'inwx-' + inwx_user + '-pw') }}"
+inwx_pw: "{{ lookup('file', uberspace_credentialstore_location + 'inwx/' + inwx_user + '-pw') }}"
 inwx_ttl: 3600
 inwx_records_srv: {}
 inwx_records_srv_protocol: "tcp"

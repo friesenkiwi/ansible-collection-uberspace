@@ -14,7 +14,7 @@ postgres_hostname: "localhost"
 postgres_port: "5432"
 postgres_databasename: ""
 postgres_username_clusteruser: "{{ uberspace_loginname }}"
-postgres_password_clusteruser: "{{ lookup('password','credentials/'+ uberspace_loginname + '/' + 'postgres_password_clusteruser' + ' chars=ascii_letters,digits length=64') }}"
+postgres_password_clusteruser: "{{ lookup('password', uberspace_credential_destination + 'postgres_password_clusteruser' + ' chars=ascii_letters,digits length=64') }}"
 postgres_pgpassfile: "{{ uberspace_spacedir }}/.pgpass"
 postgres_databases: [ "{{ uberspace_loginname }}" ]
 postgres_users: []

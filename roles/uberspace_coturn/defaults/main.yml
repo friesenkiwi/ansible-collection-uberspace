@@ -12,7 +12,7 @@ coturn_curversion_dir: "{{ coturn_main_dir }}/{{ coturn_version }}"
 coturn_interface_ipv4: "{{ uberspace_ip_private_v4 }}"
 coturn_interface_ipv6: "{{ uberspace_ip_private_v6 }}"
 coturn_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
-coturn_secret: "{{ lookup('password','credentials/coturn_secret') }}"
+coturn_secret: "{{ lookup('password', uberspace_credential_destination + 'coturn_secret') }}"
 
 uberspace_domains_goal:
 - "{{ coturn_host }}"

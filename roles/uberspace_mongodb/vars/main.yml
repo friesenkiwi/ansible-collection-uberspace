@@ -1,6 +1,6 @@
 mongodb_downloadurl: https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.8.tgz
 mongodb_admin_user: "{{ uberspace_loginname }}_mongoroot"
-mongodb_admin_password: "{{ lookup('password', 'credentials/' + 'mongodb_admin_password') }}"
+mongodb_admin_password: "{{ lookup('password', uberspace_credential_destination + 'mongodb_admin_password') }}"
 mongodb_credentials: "{{ mongodb_application_user }}:{{ mongodb_application_password | urlencode }}"
 mongodb_admin_credentials: "{{ mongodb_admin_user }}:{{ mongodb_admin_password | urlencode }}"
 mongodb_host: "{{ mongodb_bind_ip }}:{{ mongodb_port }}"

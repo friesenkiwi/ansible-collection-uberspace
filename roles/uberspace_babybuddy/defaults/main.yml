@@ -10,7 +10,7 @@ babybuddy_db_name: "{{ uberspace_loginname }}_babybuddy"
 babybuddy_db_user: "{{ uberspace_loginname }}"
 babybuddy_db_pw: "{{ uberspace_mysqlpassword }}"
 
-babybuddy_secret: "{{ lookup('password', 'credentials/' + 'babybuddy_secret') }}"
+babybuddy_secret: "{{ lookup('password', uberspace_credential_destination + 'babybuddy_secret') }}"
 babybuddy_host: "{{ babybuddy_domain | default(uberspace_domain_official) }}"
 babybuddy_ip: "{{ uberspace_ip_private_v4 }}"
 babybuddy_port: 8000

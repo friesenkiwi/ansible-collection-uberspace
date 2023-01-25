@@ -165,7 +165,7 @@
 #   expect:
 #     command: "{{ uberspace_spacedir }}/bin/prosodyctl adduser {{ item }}"
 #     responses:
-#        password: "{{ lookup('password', 'credentials/' + 'prosody_users/' + item) }}"
+#        password: "{{ lookup('password', uberspace_credential_destination + 'prosody_users/' + item) }}"
 #   register: prosodyctlresult
 #   changed_when: prosodyctlresult.rc == 0
 #   failed_when: prosodyctlresult.rc > 1

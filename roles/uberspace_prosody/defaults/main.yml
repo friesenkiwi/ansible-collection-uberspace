@@ -41,8 +41,8 @@ prosody_admins: ["{{ prosody_adminaccount }}@{{ prosody_host }}"]
 prosody_users: []
 prosody_users_complete: "{{ prosody_admins + prosody_users }}"
 prosody_adminmail: "{{ uberspace_mail }}"
-prosody_secret: "{{ lookup('password', 'credentials/' + 'prosody_secret') }}"
-prosody_upload_secret: "{{ lookup('password', 'credentials/' + 'prosody_upload_secret') }}"
+prosody_secret: "{{ lookup('password', uberspace_credential_destination + 'prosody_secret') }}"
+prosody_upload_secret: "{{ lookup('password', uberspace_credential_destination + 'prosody_upload_secret') }}"
 prosody_db_user: "{{ uberspace_loginname }}"
 prosody_db_pw: "{{ uberspace_mysqlpassword }}"
 prosody_db_name: "{{ uberspace_loginname }}_prosody"
