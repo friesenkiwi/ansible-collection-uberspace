@@ -45,37 +45,30 @@
     key: "{{ ssh_hostnames | join(',') }} {{ hostkey }}"
 
 - name: Gather facts
+  tags: dev_gatherfacts
   gather_facts:
+
+# TODO replace with using default collected facts from /etc/ansible/facts.d , /opt/uberspace/userfacts/foobar2/ into ansible_local.
+# Only available if configured e.g. ports at refuger (prosody)
+- name: Show all facts
+  tags: dev_gatherfacts
+  debug:
+    msg: "{{ ansible_facts }}"
+- name: Show some facts
+  tags: dev_gatherfacts
+  debug:
+    msg: "{{ ansible_local }}"
 
 - name: Set uberspace facts from ansible facts
   set_fact:
     uberspace_ip_private_v4: "{{ ansible_default_ipv4.address }}"
     uberspace_ip_private_v6: "{{ ansible_default_ipv6.address }}"
     uberspace_host: "{{ ansible_hostname }}"
-
-# TODO replace with using default collected facts from /etc/ansible/facts.d into ansible_local.
-
-- name: Retrieve ports
-  tags: ports
-  check_mode: no
-  command: "uberspace port list"
-  changed_when: false
-  register: uberspace_ports
-- name: Store ports as fact
-  tags: ports
-  set_fact:
-    uberspace_ports: "{{ uberspace_ports.stdout_lines }}"
-
-- name: Retrieve domains
-  tags: domains
-  check_mode: no
-  command: "uberspace web domain list"
-  changed_when: false
-  register: uberspace_domains
-- name: Store domains as fact
-  tags: domains
-  set_fact:
-    uberspace_domains: "{{ uberspace_domains.stdout_lines }}"
+    uberspace_domains: "{{ ansible_local.users[uberspace_loginname].domains.keys() | list }}"
+    uberspace_ports: "{{ ansible_local.users[uberspace_loginname].public_ports }}"
+    uberspace_webbackends: "{{ ansible_local.users[uberspace_loginname].global_backends }}" # overwritten later
+    uberspace_webheaders: "{{ ansible_local.users[uberspace_loginname].global_headers }}"
+    uberspace_tools_versions: "{{ ansible_local.users[uberspace_loginname].versions }}" # overwritten later
 
 - name: Retrieve web backends
   tags: backends
@@ -84,9 +77,37 @@
   changed_when: false
   register: uberspace_webbackends
 - name: Store web backends as fact
-  tags: backends
+  tags: backends,dev_gatherfacts
   set_fact:
-    uberspace_webbackends: "{{ uberspace_webbackends.stdout_lines }}"
+    uberspace_webbackends: "{{ uberspace_webbackends.stdout_lines | default([]) }}"
+
+- name: Blow up web backends
+  tags: backends,dev_gatherfacts
+  loop: "{{ ansible_local.users[uberspace_loginname].domains | default({}) | dict2items }}"
+  vars:
+    backends_per_domain: "{{ [{'domain': item.key, 'backends': (item.value.web.backends | dict2items) } ] }}"
+    backends_per_domain_blownup: "{{ backends_per_domain | subelements('backends') }}"
+  set_fact:
+    all_backends_per_domain_blownup: "{{ all_backends_per_domain_blownup | default([]) + backends_per_domain_blownup }}"
+
+- name: Show blown-up web backends
+  tags: dev_gatherfacts
+  debug:
+    msg: "{{ all_backends_per_domain_blownup }}"
+
+- name: Structure web backends
+  tags: backends,dev_gatherfacts
+  loop: "{{ all_backends_per_domain_blownup }}"
+  vars:
+    backend_structured: "{{ {'domain': item[0].domain, 'path': item[1].key, 'port': item[1].value.port, 'remove_prefix': item[1].value.remove_prefix, 'transport': item[1].value.transport} }}"
+
+  set_fact:
+    all_backends_structured: "{{ all_backends_structured | default([]) + [backend_structured] }}"
+
+- name: Show structured web backends
+  tags: dev_gatherfacts
+  debug:
+    msg: "{{ all_backends_structured }}"
 
 - name: Retrieve tools list
   tags: tools
