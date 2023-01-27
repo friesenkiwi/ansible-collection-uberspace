@@ -179,3 +179,14 @@
 
 - name: Flush handlers to enact changes
   meta: flush_handlers
+
+- name: Create users
+  environment: "{{ pleroma_environment }}"
+  loop: "{{ pleroma_users }}"
+  command: "mix pleroma.user new {{ item.nickname }} {{ item.email }} --password {{ item.password | default(pleroma_users_passwordlookup) }} {{ item.admin | ternary('--admin','') }} --assume-yes"
+  args:
+    chdir: "{{ pleroma_main_dir }}"
+  register: useroutput
+- name: output useroutput
+  debug:
+    var: useroutput

@@ -5,7 +5,7 @@ pleroma_version: "stable"
 
 pleroma_port: 4000
 pleroma_instancename: Pleroma
-pleroma_adminmail: admin@example.com
+pleroma_adminmail: "{{ uberspace_mail }}"
 
 pleroma_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
 # see https://docs-develop.pleroma.social/backend/configuration/how_to_serve_another_domain_for_webfinger/
@@ -72,3 +72,12 @@ inwx_records_a:
 pleroma_webbackends:
 - path: "{{ pleroma_host }}"
   port: "{{ pleroma_port }}"
+
+pleroma_users_default:
+- nickname: "{{ uberspace_loginname }}"
+  email: "{{ pleroma_adminmail }}"
+  password: "{{ pleroma_users_passwordlookup }}"
+  admin: true
+pleroma_users_passwordlookup: "{{ lookup('password', uberspace_credential_destination + 'pleroma_users/' + item.nickname ) }}"
+
+pleroma_users: "{{ pleroma_users_default }}"
