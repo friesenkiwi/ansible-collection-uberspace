@@ -1,11 +1,10 @@
 - name: Reread supervisord config
   command:
     cmd: supervisorctl reread
-  notify:
-  - Update supervisord groups
-- name: Update supervisord groups
+  notify: Update supervisord group pleroma
+- name: Update supervisord group pleroma
   command:
-    cmd: supervisorctl update
+    cmd: supervisorctl update pleroma
   notify: Restart pleroma
 - name: Restart pleroma
   command:

@@ -2,13 +2,13 @@
   command:
     cmd: supervisorctl reread
   notify:
-  - Update supervisord prosody groups
-  - Update supervisord prosody_filer groups
-- name: Update supervisord prosody groups
+  - Update supervisord group prosody
+  - Update supervisord group prosody_filer
+- name: Update supervisord group prosody
   command:
     cmd: supervisorctl update prosody
   notify: Restart prosody
-- name: Update supervisord prosody_filer groups
+- name: Update supervisord group prosody_filer
   command:
     cmd: supervisorctl update prosody_filer
   notify: Restart prosody_filer

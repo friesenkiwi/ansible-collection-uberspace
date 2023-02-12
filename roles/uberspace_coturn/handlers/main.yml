@@ -1,8 +1,8 @@
 - name: Reread supervisord config
   command:
     cmd: supervisorctl reread
-  notify: Update supervisord groups
-- name: Update supervisord groups
+  notify: Update supervisord group coturn
+- name: Update supervisord group coturn
   command:
     cmd: supervisorctl update coturn
   notify: Restart coturn
