@@ -25,7 +25,7 @@
 - name: Set uberspace facts from accounting
   set_fact:
     uberspace_balance: "{{ parsed_balance }}"
-    uberspace_currentprice: "{{ parsed_currentprice }}"
+    uberspace_price_current: "{{ parsed_currentprice }}"
 
 - name: Put host keys into local known_hosts
   delegate_to: localhost
@@ -143,4 +143,4 @@
     per_host: yes
     data:
       balance: "{{ uberspace_balance }}"
-      currentprice: "{{ uberspace_currentprice }}"
+      currentprice: "{{ uberspace_price_current }}"

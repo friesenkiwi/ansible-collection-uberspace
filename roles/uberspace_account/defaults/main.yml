@@ -6,7 +6,7 @@ uberspace_sessionfile: "{{ uberspace_credential_destination }}session"
 uberspace_passwordfetch_destination: "{{ uberspace_credential_destination }}loginpassword"
 uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_destination) }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
-uberspace_price_goal: ""
+uberspace_price_goal: 10.0
 uberspace_price_crossfinanced_request: false
 uberspace_price_current:
 
