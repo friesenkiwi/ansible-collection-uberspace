@@ -1,0 +1,24 @@
+# - name: Get authentication page
+#   check_mode: no
+#   delegate_to: localhost
+#   uri:
+#     url: "{{ uberspace_urls.authentication }}"
+#     headers: "{{ uberspace_headers }}"
+#     return_content: yes
+#     follow_redirects: none
+#   register: formresult
+
+- name: Set price if different
+  delegate_to: localhost
+  when: (uberspace_price_goal != uberspace_price_current) && uberspace_price_crossfinanced_check
+  uri:
+    url: "{{ uberspace_urls.setprice }}"
+    headers: "{{ uberspace_headers }}"
+    method: POST
+    follow_redirects: none
+    body_format: form-urlencoded
+    body:
+      _csrf_token: "{{ csrftoken }}"
+      price: "{{ uberspace_price_goal }}"
+      came_from_cross_financed_price: "{{ (uberspace_price_goal < uberspace_price_crossfinanced_limit) | ternary("1", omit) }}"
+    status_code: 302

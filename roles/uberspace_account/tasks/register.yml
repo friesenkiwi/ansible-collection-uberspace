@@ -25,6 +25,11 @@
     return_content: yes
     status_code: 302
   register: registerresult
+  # Forwards to https://dashboard.uberspace.de/register/../dashboard/while_u_wait
+
+- name: Output registerresult
+  debug:
+    var: registerresult
 
 - name: Store session cookie as fact
   set_fact:
@@ -40,6 +45,7 @@
     content: "{{ uberspace_cookie.split('=')[1] }}"
     dest: "{{ uberspace_sessionfile }}"
 
+# TODO: In the future probably check https://dashboard.uberspace.de/register/../dashboard/while_u_wait (HTTP Refresh), will 302 forward to "{{ uberspace_urls.datasheet }}" as soon as creation is finished
 - name: Wait for space creation to finish
   delegate_to: localhost
   uri:
@@ -56,15 +62,16 @@
 #   debug:
 #     var: checkresult
 
-- name: Get firstboot page
+- name: Get firstboot (datasheet) page
   delegate_to: localhost
+#  ignore_errors: true
   uri:
-    url: "{{ uberspace_urls.firstboot }}"
+    url: "{{ uberspace_urls.datasheet }}"
     method: GET
     return_content: yes
     headers: "{{ uberspace_headers }}"
   register: firstbootresult
 
-# - name: Show firstboot page
+# - name: Show firstboot (datasheet) page
 #   debug:
 #     var: firstbootresult

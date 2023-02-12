@@ -10,6 +10,8 @@ uberspace_html_balance: '<h2><a name=\"balance\"></a>Dein Kontostand</h2>\s*<p>\
 uberspace_html_currentprice: '<input type=\"text\" name=\"price\" value=\"(.*)\" size=\"3\" style=\"text-align: center;\" id=\"accounting_price\" />'
 uberspace_url_main: "https://dashboard.uberspace.de/"
 uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
+uberspace_price_crossfinanced_limit: 5
+uberspace_price_crossfinanced_check: "{{ (uberspace_price_goal > uberspace_price_crossfinanced_limit) or ((uberspace_price_goal < uberspace_price_crossfinanced_limit) and uberspace_price_crossfinanced_request) }}"
 
 uberspace_domain_short_official: uber.space
 uberspace_domain_official: "{{ uberspace_loginname }}.{{ uberspace_domain_short_official }}"
@@ -27,6 +29,7 @@ uberspace_urls:
   firstboot: "{{ uberspace_url_dashboard }}firstboot"
   authentication: "{{ uberspace_url_dashboard }}authentication"
   setwebpassword: "{{ uberspace_url_dashboard }}set_web_password"
+  setprice: "{{ uberspace_url_dashboard }}set_price"
   addkey: "{{ uberspace_url_dashboard }}add_ssh_key"
   datasheet: "{{ uberspace_url_dashboard }}datasheet"
   delete: "{{ uberspace_url_dashboard }}delete"
@@ -38,7 +41,7 @@ uberspace_urls:
 uberspace_headers:
   Cookie: "{{ uberspace_cookie }}"
 
-csrftoken: "{{ formresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1')}}"
+csrftoken: "{{ formresult.content | regex_search(uberspace_csrf_field) | regex_replace(uberspace_csrf_field, '\\1') }}"
 parsed_ipv4address: "{{ datasheetresult.content | regex_search(uberspace_html_ipv4address) | regex_replace(uberspace_html_ipv4address, '\\1')}}"
 parsed_ipv6address: "{{ datasheetresult.content | regex_search(uberspace_html_ipv6address) | regex_replace(uberspace_html_ipv6address, '\\1')}}"
 parsed_hostname: "{{ datasheetresult.content | regex_search(uberspace_html_hostname) | regex_replace(uberspace_html_hostname, '\\1')}}"

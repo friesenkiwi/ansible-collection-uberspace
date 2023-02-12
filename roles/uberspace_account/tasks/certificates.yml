@@ -7,8 +7,8 @@
   uri:
     url: "https://{{ item }}"
   register: certificates
-  failed_when: false
+  failed_when: certificates.status == -1
   changed_when: certificates.elapsed > 10
-# - name: Show certificates
-#   debug:
-#     var: certificates
+- name: Show certificates
+  debug:
+    var: certificates

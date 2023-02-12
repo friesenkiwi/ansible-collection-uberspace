@@ -3,3 +3,5 @@ uberspace_tools_goal_pleroma:
   erlang: 25
 
 pleroma_repo: https://git.pleroma.social/pleroma/pleroma.git
+
+pleroma_user_already_present_check: 'email: {"has already been taken"'

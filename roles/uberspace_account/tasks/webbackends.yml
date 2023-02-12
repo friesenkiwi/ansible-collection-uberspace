@@ -15,15 +15,19 @@
     uberspace_webbackends_objects: "{{ uberspace_webbackends_objects | default([]) + [uberspace_webbackend_object] }}"
     uberspace_webbackends_pathportmap: "{{ uberspace_webbackends_objects | default([]) | items2dict(key_name='path', value_name='port') }}"
 
-# - name: show uberspace_webbackends_pathportmap
-#   tags: backends
-#   debug:
-#     msg: "{{ uberspace_webbackends_pathportmap }}"
-# - name: show uberspace_webbackends_goal
-#   tags: backends
-#   loop: "{{ uberspace_webbackends_goal | default([]) }}"
-#   debug:
-#     msg: "{{ item }}"
+- name: show uberspace_webbackends_objects
+  tags: backends
+  debug:
+    msg: "{{ uberspace_webbackends_objects }}"
+- name: show uberspace_webbackends_pathportmap
+  tags: backends
+  debug:
+    msg: "{{ uberspace_webbackends_pathportmap }}"
+- name: show uberspace_webbackends_goal
+  tags: backends
+  loop: "{{ uberspace_webbackends_goal | default([]) }}"
+  debug:
+    msg: "{{ item }}"
 
 - name: Add web backends to uberspace config
   tags: backends

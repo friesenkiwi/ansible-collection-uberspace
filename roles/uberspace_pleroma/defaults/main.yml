@@ -15,6 +15,8 @@ pleroma_db_pw: "{{ lookup('password', uberspace_credential_destination + 'plerom
 pleroma_db_name: "{{ pleroma_db_user }}"
 pleroma_db_host: "{{ uberspace_spacedir }}/tmp/"
 
+pleroma_remote_post_retention_days: 60
+
 pleroma_mix_environment: prod
 pleroma_environment:
   MIX_ENV: "{{ pleroma_mix_environment }}"
@@ -47,7 +49,7 @@ pleroma_config_adjustments:
 - line: '  public: false,'
   regexp: '^  public:'
   insertafter: "^config :pleroma, :instance,$"
-- line: '  remote_post_retention_days: 28,'
+- line: '  remote_post_retention_days: {{ pleroma_remote_post_retention_days }},'
   regexp: '^  remote_post_retention_days:'
   insertafter: "^config :pleroma, :instance,$"
 - line: '  queue_target: 5000,'
@@ -76,7 +78,7 @@ pleroma_webbackends:
 pleroma_users_default:
 - nickname: "{{ uberspace_loginname }}"
   email: "{{ pleroma_adminmail }}"
-  password: "{{ pleroma_users_passwordlookup }}"
+#  password: "{{ pleroma_users_passwordlookup }}"
   admin: true
 pleroma_users_passwordlookup: "{{ lookup('password', uberspace_credential_destination + 'pleroma_users/' + item.nickname ) }}"
 

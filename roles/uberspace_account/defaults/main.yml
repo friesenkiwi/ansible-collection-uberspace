@@ -6,6 +6,10 @@ uberspace_sessionfile: "{{ uberspace_credential_destination }}session"
 uberspace_passwordfetch_destination: "{{ uberspace_credential_destination }}loginpassword"
 uberspace_newloginpassword: "{{ lookup('password', uberspace_passwordfetch_destination) }}"
 uberspace_loginpassword: "{{ lookup('file', uberspace_passwordfetch_destination) }}"
+uberspace_price_goal: ""
+uberspace_price_crossfinanced_request: false
+uberspace_price_current:
+
 uberspace_loginkey_path: "~/.ssh/id_uberspace_{{ uberspace_loginname }}"
 uberspace_loginkey: "{{ lookup('file', uberspace_loginkey_path + '.pub', errors='ignore') }}"
 uberspace_mycnffetch_destination: "{{ uberspace_credential_destination }}mycnf"

@@ -1,4 +1,4 @@
-- name: Reread supervisord config
+- name: Reread supervisord config for postgresql
   command:
     cmd: supervisorctl reread
   notify: Update supervisord group postgresql

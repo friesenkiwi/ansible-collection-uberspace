@@ -39,7 +39,7 @@
   command: mix local.hex --force
   args:
     chdir: "{{ pleroma_main_dir }}"
-    creates: "{{ uberspace_spacedir }}/.mix/archives/hex-2.0.0/"
+    creates: "{{ uberspace_spacedir }}/.mix/archives/hex-2.0.6/"
 - name: Install rebar
   environment: "{{ pleroma_environment }}"
   command: mix local.rebar --force
@@ -58,7 +58,7 @@
     responses:
       'Shall I install Hex': 'Y'
 
-- name: Run mix pleroma.instance gen with choices to compile files and generate a configuration file
+- name: Run mix pleroma.instance gen with choices to compile files and generate a configuration file (takes a while, no worries)
   tags: config
   vars:
     forceswitch: "{{ pleroma_reconfigure | default(false) | bool | ternary(' --force','') }}"
@@ -118,6 +118,7 @@
 - name: Prepare PostgreSQL for Pleroma - Run generated script via command module
   tags: sql
   when: not pleroma_db_name in pleroma_postgresql_databases.databases
+  environment: "{{ postgres_environment }}"
   args:
     chdir: "{{ pleroma_main_dir }}"
   command: "psql -f {{ pleroma_main_dir }}/config/setup_db.psql"
@@ -139,7 +140,7 @@
 #     path_to_script: "{{ pleroma_main_dir }}/config/setup_db.psql"
 #     encoding: UTF-8
 
-- name: Run mix ecto.migrate to run the database migrations
+- name: Run mix ecto.migrate to run the database migrations (takes a while, no worries)
   environment: "{{ pleroma_environment }}"
   command: "mix ecto.migrate"
   args:
@@ -160,9 +161,9 @@
     - "{{ pleroma_exiftool_name }}/lib/"
     dest:  "{{ uberspace_spacedir }}/bin"
 
-- name: Set up prune-vacuum cronjob for remote posts older than 28 days to remove
+- name: "Set up prune-vacuum cronjob for remote posts older than {{ pleroma_remote_post_retention_days }} days to remove"
   cron:
-    name: "Check daily at midnight for remote posts older than 28 days to remove"
+    name: "Check daily at midnight for remote posts older than {{ pleroma_remote_post_retention_days }} days to remove"
     special_time: daily
     job: "cd {{ pleroma_main_dir }} && {{ pleroma_environment_string }} mix pleroma.database prune_objects --vacuum >> /dev/null"
 
@@ -180,6 +181,10 @@
 - name: Flush handlers to enact changes
   meta: flush_handlers
 
+- name: Output users
+  debug:
+    msg: "{{ pleroma_users }}"
+
 - name: Create users
   environment: "{{ pleroma_environment }}"
   loop: "{{ pleroma_users }}"
@@ -187,6 +192,8 @@
   args:
     chdir: "{{ pleroma_main_dir }}"
   register: useroutput
-- name: output useroutput
-  debug:
-    var: useroutput
+  failed_when: useroutput.rc > 0 and pleroma_user_already_present_check not in useroutput.stderr
+  changed_when: pleroma_user_already_present_check not in useroutput.stderr
+# - name: Output useroutput
+#   debug:
+#     msg: "{{ useroutput }}"

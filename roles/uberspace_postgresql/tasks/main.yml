@@ -25,7 +25,7 @@
     src: pgpass.j2
     dest: "{{ postgres_pgpassfile }}"
     mode: "0600"
-- name: "Check PostgreSQL cluster is already initialized"
+- name: "Check whether PostgreSQL cluster is already initialized"
   stat:
     path: "{{ postgres_data_dir }}"
   register: postgresqlinitialized
@@ -55,7 +55,7 @@
   template:
     src: postgresql.ini.j2
     dest: "{{ uberspace_services_dir }}/postgresql.ini"
-  notify: Reread supervisord config
+  notify: Reread supervisord config for postgresql
 
 - name: Flush handlers to enact changes
   meta: flush_handlers

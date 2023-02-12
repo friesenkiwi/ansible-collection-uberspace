@@ -1,11 +1,17 @@
 - name: Get deletion page
   tags: delete
   delegate_to: localhost
+  check_mode: no
   uri:
     url: "{{ uberspace_urls.delete }}"
     headers: "{{ uberspace_headers }}"
     return_content: yes
   register: formresult
+
+- name: Show deletion page result
+  tags: delete
+  debug:
+    var: formresult
 
 - name: Delete uberspace
   tags: delete
@@ -21,6 +27,7 @@
   register: deleteresult
   changed_when: (deleteresult.location == uberspace_urls.deleteresult_register) or (deleteresult.location == uberspace_urls.deleteresult_login)
 
-# - name: Show deletion result
-#   debug:
-#     var: deleteresult
+- name: Show deletion result
+  tags: delete
+  debug:
+    var: deleteresult
