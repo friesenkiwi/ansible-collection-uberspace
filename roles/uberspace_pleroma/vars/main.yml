@@ -1,6 +1,6 @@
 uberspace_tools_goal_pleroma:
-  postgresql: 13
-  erlang: 25
+  postgresql: "13"
+  erlang: "25"
 
 pleroma_repo: https://git.pleroma.social/pleroma/pleroma.git
 

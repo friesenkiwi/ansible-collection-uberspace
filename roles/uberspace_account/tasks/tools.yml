@@ -1,30 +1,22 @@
-# TODO replace with using default collected facts from /etc/ansible/facts.d and /home/foobar2/etc/userfacts into ansible_local.users.foobar2.versions.
-- name: Get versions of desired tools
+- name: Construct filtered list of tools
   tags: tools
   loop: "{{ uberspace_tools_goal | default({}) | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
-  command: "uberspace tools version show {{ item.key }}"
-  register: uberspace_tools_versions_result
-  changed_when: false
-- name: Store tools versions as fact
-  tags: tools
-  loop: "{{ uberspace_tools_versions_result.results }}"
-  loop_control:
-    label: "{{ item.item.key }}"
-  vars:
-    uberspace_regex_toolversion: "Using '(.*)' version: '(.*)'"
-    newkey: "{{ item.item.key }}"
-    newvalue: "{{ (item.stdout | regex_search(uberspace_regex_toolversion, '\\1', '\\2'))[1] }}"
+  when: (item.key in uberspace_tools_goal_only | default([])) or ((uberspace_tools_goal_only | default([])) | length == 0)
   set_fact:
-    uberspace_tools_versions: "{{ uberspace_tools_versions | default({}) | combine({ newkey: newvalue }) }}"
+    uberspace_tools_filtered: "{{ uberspace_tools_filtered | default({}) | combine ([item] | items2dict) }}"
 
 - name: Set tools versions
-  loop: "{{ uberspace_tools_goal | default({}) | dict2items }}"
-  when: uberspace_tools_versions[item.key] | int != item.value | int
+  tags: tools
+  loop: "{{ uberspace_tools_filtered | dict2items }}"
+  when: uberspace_tools_versions[item.key] != item.value
   command: "uberspace tools version use {{ item.key }} {{ item.value }}"
   register: toolsversionresult
   changed_when: toolsversionresult.rc == 0
 #- name: Output tools versions configuration results
 #  debug:
 #    msg: "{{ toolsversionresult }}"
+
+- name: Reset filtered list of tools
+  tags: tools
+  set_fact:
+    uberspace_tools_filtered: {}

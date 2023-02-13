@@ -1,10 +1,11 @@
 - name: Set PostgreSQL version
   debug:
     msg: "Set desired PostgreSQL version as uberspace_tools_goal.postgresql via uberspace_account role"
-# TODO only run for postgresql
 - name: Run tools tasks of uberspace account role
   tags: tools
-  import_role:
+  vars:
+    uberspace_tools_goal_only: ["postgresql"]
+  include_role:
     name: uberspace_account
     tasks_from: tools
 

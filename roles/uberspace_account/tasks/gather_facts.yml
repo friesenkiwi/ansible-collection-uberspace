@@ -49,11 +49,11 @@
   gather_facts:
 
 # TODO replace with using default collected facts from /etc/ansible/facts.d , /opt/uberspace/userfacts/foobar2/ into ansible_local.
-# Only available if configured e.g. ports at refuger (prosody)
-- name: Show all facts
-  tags: dev_gatherfacts
-  debug:
-    msg: "{{ ansible_facts }}"
+# To go: webbackends
+# - name: Show all facts
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ ansible_facts }}"
 - name: Show some facts
   tags: dev_gatherfacts
   debug:
@@ -68,7 +68,7 @@
     uberspace_ports: "{{ ansible_local.users[uberspace_loginname].public_ports | default([]) }}"
     uberspace_webbackends: "{{ ansible_local.users[uberspace_loginname].global_backends | default([]) }}" # overwritten later
     uberspace_webheaders: "{{ ansible_local.users[uberspace_loginname].global_headers | default([]) }}"
-    uberspace_tools_versions: "{{ ansible_local.users[uberspace_loginname].versions }}" # overwritten later
+    uberspace_tools_versions: "{{ ansible_local.users[uberspace_loginname].versions }}"
 
 - name: Retrieve web backends
   tags: backends
@@ -112,17 +112,6 @@
   tags: dev_gatherfacts
   debug:
     msg: "{{ all_backends_structured | default([]) }}"
-
-- name: Retrieve tools list
-  tags: tools
-  check_mode: no
-  command: "uberspace tools version list"
-  changed_when: false
-  register: uberspace_tools
-- name: Store tools as fact
-  tags: tools
-  set_fact:
-    uberspace_tools: "{{ uberspace_tools.stdout_lines | map('regex_replace', '- ', '') | list }}"
 
 - name: Get MySQL my.cnf file
   tags: mysql
