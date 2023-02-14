@@ -45,7 +45,7 @@
     content: "{{ uberspace_cookie.split('=')[1] }}"
     dest: "{{ uberspace_sessionfile }}"
 
-# TODO: In the future probably check https://dashboard.uberspace.de/register/../dashboard/while_u_wait (HTTP Refresh), will 302 forward to "{{ uberspace_urls.datasheet }}" as soon as creation is finished
+# In the future probably check https://dashboard.uberspace.de/register/../dashboard/while_u_wait (HTTP Refresh), will 302 forward to "{{ uberspace_urls.datasheet }}" as soon as creation is finished
 - name: Wait for space creation to finish
   delegate_to: localhost
   uri:

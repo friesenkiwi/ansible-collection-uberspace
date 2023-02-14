@@ -48,16 +48,14 @@
   tags: dev_gatherfacts
   gather_facts:
 
-# TODO replace with using default collected facts from /etc/ansible/facts.d , /opt/uberspace/userfacts/foobar2/ into ansible_local.
-# To go: webbackends
 # - name: Show all facts
 #   tags: dev_gatherfacts
 #   debug:
 #     msg: "{{ ansible_facts }}"
-- name: Show some facts
-  tags: dev_gatherfacts
-  debug:
-    msg: "{{ ansible_local }}"
+# - name: Show some facts
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ ansible_local }}"
 
 - name: Set uberspace facts from ansible facts
   set_fact:
@@ -66,16 +64,16 @@
     uberspace_host: "{{ ansible_hostname }}"
     uberspace_domains: "{{ ((ansible_local.users[uberspace_loginname].domains) | default({})).keys() | list }}"
     uberspace_ports: "{{ ansible_local.users[uberspace_loginname].public_ports | default([]) }}"
-    uberspace_webbackends: "{{ ansible_local.users[uberspace_loginname].global_backends | default([]) }}" # overwritten later
+    uberspace_webbackends: "{{ ansible_local.users[uberspace_loginname].global_backends | default([]) }}"
     uberspace_webheaders: "{{ ansible_local.users[uberspace_loginname].global_headers | default([]) }}"
     uberspace_tools_versions: "{{ ansible_local.users[uberspace_loginname].versions }}"
 
-- name: Retrieve web backends
-  tags: backends
-  check_mode: no
-  command: "uberspace web backend list"
-  changed_when: false
-  register: uberspace_webbackends
+# - name: Retrieve web backends
+#   tags: backends
+#   check_mode: no
+#   command: "uberspace web backend list"
+#   changed_when: false
+#   register: uberspace_webbackends
 - name: Store web backends as fact
   tags: backends,dev_gatherfacts
   set_fact:
@@ -90,28 +88,58 @@
   set_fact:
     all_backends_per_domain_blownup: "{{ all_backends_per_domain_blownup | default([]) + backends_per_domain_blownup }}"
 
-- name: Show blown-up web backends
-  tags: dev_gatherfacts
-  debug:
-    msg: "{{ all_backends_per_domain_blownup | default([]) }}"
+# - name: Show blown-up web backends
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ all_backends_per_domain_blownup | default([]) }}"
 
 - name: Structure web backends
   tags: backends,dev_gatherfacts
   loop: "{{ all_backends_per_domain_blownup | default([]) }}"
   vars:
-    backend_structured: "{{ {'domain': item[0].domain, 'path': item[1].key, 'port': item[1].value.port, 'remove_prefix': item[1].value.remove_prefix, 'transport': item[1].value.transport} }}"
+    backend_structured: "{{ {'domain': item[0].domain, 'path': item[1].key, 'port': item[1].value.port, 'fullpath': (item[0].domain + item[1].key), 'remove_prefix': item[1].value.remove_prefix, 'transport': item[1].value.transport} }}"
   set_fact:
     all_backends_structured: "{{ all_backends_structured | default([]) + [ backend_structured ] }}"
 
-- name: Show global web backends
-  tags: dev_gatherfacts
-  debug:
-    msg: "{{ ansible_local.users[uberspace_loginname].global_backends | default([]) }}"
+# - name: Show global web backends (facts)
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ ansible_local.users[uberspace_loginname].global_backends | default([]) }}"
+#
+# - name: Show structured web backends (facts)
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ all_backends_structured | default([]) }}"
+#
+# - name: Show global backends itemwise
+#   tags: backends,dev_gatherfacts
+#   loop: "{{ ansible_local.users[uberspace_loginname].global_backends | default({}) | dict2items }}"
+#   debug:
+#     msg: "{{ item }}"
 
-- name: Show structured web backends
-  tags: dev_gatherfacts
-  debug:
-    msg: "{{ all_backends_structured | default([]) }}"
+- name: Merge global and structured web backends
+  tags: backends,dev_gatherfacts
+  loop: "{{ ansible_local.users[uberspace_loginname].global_backends | default({}) | dict2items }}"
+  vars:
+    backend_global_adjusted: "{{ item.value | combine({'path': item.key, 'fullpath': item.key}) }}"
+  set_fact:
+    all_backends_merged: "{{ all_backends_merged | default(all_backends_structured) | default([]) + [ backend_global_adjusted ] }}"
+
+# - name: Finally set merged backends
+#   tags: backends,dev_gatherfacts
+#   loop: "{{ all_backends_merged | default(all_backends_structured) | default([]) }}"
+#   set_fact:
+#     all_backends_merged_final: "{{ all_backends_merged_final | default([]) }}"
+
+- name: Finally set merged backends
+  tags: backends,dev_gatherfacts
+  set_fact:
+    all_backends_merged: "{{ all_backends_merged | default(all_backends_structured) | default([]) }}"
+
+# - name: Show all web backends (merged)
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ all_backends_merged | default(all_backends_structured) | default([]) }}"
 
 - name: Get MySQL my.cnf file
   tags: mysql

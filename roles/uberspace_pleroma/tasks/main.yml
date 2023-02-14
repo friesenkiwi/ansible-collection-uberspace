@@ -22,7 +22,8 @@
     dest: "{{ pleroma_main_dir }}"
     version: "{{ pleroma_version }}"
     force: yes
-    depth: 1
+#    depth: 1
+#    single_branch: true
 - name: Set mix environment
   lineinfile:
     path: ~/.bash_profile

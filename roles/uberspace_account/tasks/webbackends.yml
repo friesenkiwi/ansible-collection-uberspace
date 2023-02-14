@@ -2,41 +2,67 @@
 #   tags: backends
 #   debug:
 #     msg: "{{ uberspace_webbackends }}"
-- name: Construct web backends structures
+# - name: Construct web backends structures
+#   tags: backends
+#   loop: "{{ uberspace_webbackends }}"
+#   vars:
+#     item_split_1: "{{ item.split('=>') }}"
+#     item_split_2: "{{ (item_split_1[0]| default('')).split(',') }}"
+#     item_split_3: "{{ (item_split_2[0]| default('')).split(' ') }}"
+#     item_split_4: "{{ (item_split_3[0]| default('')).split('/') }}"
+#     uberspace_webbackend_object: {'path': "{{ item_split_4[0] }}", 'port': "{{ item_split_3[1] | default('') }}", 'extra': "{{ item_split_2[1] | default('') }}", 'state': "{{ item_split_1[1] | default('') }}"}
+#   set_fact:
+#     uberspace_webbackends_objects: "{{ uberspace_webbackends_objects | default([]) + [uberspace_webbackend_object] }}"
+#     uberspace_webbackends_pathportmap: "{{ uberspace_webbackends_objects | default([]) | items2dict(key_name='path', value_name='port') }}"
+
+# - name: Construct web backends pathportmap
+#   tags: backends
+#   set_fact:
+#     uberspace_webbackends_pathportmap_new: "{{ all_backends_merged | default([]) | items2dict(key_name='fullpath', value_name='port') }}"
+
+# - name: show uberspace_webbackends_objects
+#   tags: backends
+#   debug:
+#     msg: "{{ uberspace_webbackends_objects }}"
+# - name: Show all web backends (merged)
+#   tags: dev_gatherfacts
+#   debug:
+#     msg: "{{ all_backends_merged }}"
+#
+# - name: show uberspace_webbackends_pathportmap (command)
+#   tags: backends
+#   debug:
+#     msg: "{{ uberspace_webbackends_pathportmap }}"
+# - name: show uberspace_webbackends_pathportmap (facts)
+#   tags: backends
+#   debug:
+#     msg: "{{ uberspace_webbackends_pathportmap_new }}"
+# - name: show uberspace_webbackends_goal
+#   tags: backends
+#   loop: "{{ uberspace_webbackends_goal | default([]) }}"
+#   debug:
+#     msg: "{{ item }}"
+
+- name: Add web backends to uberspace config via all_backends_merged
   tags: backends
-  loop: "{{ uberspace_webbackends }}"
   vars:
-    item_split_1: "{{ item.split('=>') }}"
-    item_split_2: "{{ (item_split_1[0]| default('')).split(',') }}"
-    item_split_3: "{{ (item_split_2[0]| default('')).split(' ') }}"
-    item_split_4: "{{ (item_split_3[0]| default('')).split('/') }}"
-    uberspace_webbackend_object: {'path': "{{ item_split_4[0] }}", 'port': "{{ item_split_3[1] | default('') }}", 'extra': "{{ item_split_2[1] | default('') }}", 'state': "{{ item_split_1[1] | default('') }}"}
-  set_fact:
-    uberspace_webbackends_objects: "{{ uberspace_webbackends_objects | default([]) + [uberspace_webbackend_object] }}"
-    uberspace_webbackends_pathportmap: "{{ uberspace_webbackends_objects | default([]) | items2dict(key_name='path', value_name='port') }}"
-
-- name: show uberspace_webbackends_objects
-  tags: backends
-  debug:
-    msg: "{{ uberspace_webbackends_objects }}"
-- name: show uberspace_webbackends_pathportmap
-  tags: backends
-  debug:
-    msg: "{{ uberspace_webbackends_pathportmap }}"
-- name: show uberspace_webbackends_goal
-  tags: backends
+    uberspace_webbackends_pathportmap_new: "{{ all_backends_merged | default([]) | items2dict(key_name='fullpath', value_name='port') }}"
   loop: "{{ uberspace_webbackends_goal | default([]) }}"
-  debug:
-    msg: "{{ item }}"
-
-- name: Add web backends to uberspace config
-  tags: backends
-  loop: "{{ uberspace_webbackends_goal | default([]) }}"
-  when: (item.path not in uberspace_webbackends_pathportmap.keys()) or (item.path in uberspace_webbackends_pathportmap.keys() and not uberspace_webbackends_pathportmap[item.path].endswith(item.port | string))
+  when: (item.path not in uberspace_webbackends_pathportmap_new.keys()) or (item.path in uberspace_webbackends_pathportmap_new.keys() and not (uberspace_webbackends_pathportmap_new[item.path] | int ) == (item.port | int))
+  # debug:
+  #   msg: "uberspace web backend set {{ item.path }} --http --port {{ item.port }} {{ item.extra | default()}}"
   command: "uberspace web backend set {{ item.path }} --http --port {{ item.port }} {{ item.extra | default()}}"
   register: addedbackends
   changed_when: addedbackends.rc == 0
-# - name: show addedbackends
+
+# - name: Add web backends to uberspace config
 #   tags: backends
-#   debug:
-#     var: addedbackends
+#   loop: "{{ uberspace_webbackends_goal | default([]) }}"
+#   when: (item.path not in uberspace_webbackends_pathportmap.keys()) or (item.path in uberspace_webbackends_pathportmap.keys() and not uberspace_webbackends_pathportmap[item.path].endswith(item.port | string))
+#   command: "uberspace web backend set {{ item.path }} --http --port {{ item.port }} {{ item.extra | default()}}"
+#   register: addedbackends
+#   changed_when: addedbackends.rc == 0
+- name: show addedbackends
+  tags: backends
+  debug:
+    var: addedbackends

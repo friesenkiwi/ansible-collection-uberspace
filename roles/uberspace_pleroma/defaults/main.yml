@@ -72,7 +72,7 @@ inwx_records_a:
 - "{{ uberspace_servicedomain }}"
 
 pleroma_webbackends:
-- path: "{{ pleroma_host }}"
+- path: "{{ pleroma_host }}/"
   port: "{{ pleroma_port }}"
 
 pleroma_users_default:
