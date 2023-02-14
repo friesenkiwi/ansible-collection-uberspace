@@ -6,9 +6,9 @@
   when: item not in uberspace_ports and ((uberspace_ports | length) + ansible_loop.index0) < (uberspace_ports_goal | length)
   command: "uberspace port add"
   register: addedports
-# - name: show addedports
+# - name: Show addedports
 #   debug:
-#     var: addedports
+#     msg: "{{ addedports }}"
 - name: Show added ports
   loop: "{{ addedports.results | default([]) }}"
   loop_control:

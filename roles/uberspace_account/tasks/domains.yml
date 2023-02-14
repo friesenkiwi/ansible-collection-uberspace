@@ -1,9 +1,11 @@
-# - name: show uberspace_domains_goal
+# - name: Show uberspace_domains_goal
+#   tags: domains
 #   debug:
-#     var: uberspace_domains_goal
-# - name: show uberspace_domains
+#     msg: "{{ uberspace_domains_goal }}"
+# - name: Show uberspace_domains
+#   tags: domains
 #   debug:
-#     var: uberspace_domains
+#     msg: "{{ uberspace_domains }}"
 
 - name: Add domains to uberspace config
   tags: domains
@@ -11,9 +13,11 @@
   when: item not in uberspace_domains
   command: "uberspace web domain add {{ item }}"
   register: addeddomains
-  # - name: show addeddomains
-  #   debug:
-  #     var: addeddomains
+
+# - name: show addeddomains
+#   tags: domains
+#   debug:
+#     msg: "{{ addeddomains }}"
 # - name: Run certificates task
 #   tags: domains
 #   import_tasks: certificates.yml

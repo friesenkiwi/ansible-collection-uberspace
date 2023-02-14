@@ -1,4 +1,4 @@
-- name: Get deletion page
+- name: Get deletion page for CSRF token
   tags: delete
   delegate_to: localhost
   check_mode: no
@@ -8,10 +8,10 @@
     return_content: yes
   register: formresult
 
-- name: Show deletion page result
-  tags: delete
-  debug:
-    var: formresult
+# - name: Show deletion page result
+#   tags: delete
+#   debug:
+#     msg: "{{ formresult }}"
 
 - name: Delete uberspace
   tags: delete
@@ -30,4 +30,4 @@
 - name: Show deletion result
   tags: delete
   debug:
-    var: deleteresult
+    msg: "{{ deleteresult }}"

@@ -11,4 +11,4 @@
   changed_when: certificates.elapsed > 10
 - name: Show certificates
   debug:
-    var: certificates
+    msg: "{{ certificates }}"

@@ -16,7 +16,7 @@
 
 # - name: Show testpageresult page
 #   debug:
-#     var: testpageresult
+#     msg: "{{ testpageresult }}"
 - name: Show parsing result
   vars:
     uberspace_html_hostkey: '<th>RSA</th>\s*<td><code>(.*)</code>'

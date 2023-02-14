@@ -29,7 +29,7 @@
 
 - name: Output registerresult
   debug:
-    var: registerresult
+    msg: "{{ registerresult }}"
 
 - name: Store session cookie as fact
   set_fact:
@@ -60,7 +60,7 @@
   delay: 5 # Every 5 seconds
 # - name: Output checkresult
 #   debug:
-#     var: checkresult
+#     msg: "{{ checkresult }}"
 
 - name: Get firstboot (datasheet) page
   delegate_to: localhost
@@ -74,4 +74,4 @@
 
 # - name: Show firstboot (datasheet) page
 #   debug:
-#     var: firstbootresult
+#     msg: "{{ firstbootresult }}"

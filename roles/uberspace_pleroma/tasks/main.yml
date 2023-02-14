@@ -5,13 +5,13 @@
   import_role:
     name: uberspace_postgresql
 
-# - name: test environment
+# - name: Test environment
 #   shell: "echo $PATH"
 #   register: envtest
 #   changed_when: false
-# - name: output envtest
+# - name: Output envtest
 #   debug:
-#     var: envtest.stdout_lines
+#     msg: "{{ envtest.stdout_lines }}"
 - name: "Create target dir {{ pleroma_main_dir }}"
   file:
     dest: "{{ pleroma_main_dir }}"
@@ -150,7 +150,7 @@
   changed_when: '"[info] Migrations already up" not in migrateoutput.stdout'
 # - name: output migrateoutput
 #   debug:
-#     var: migrateoutput
+#     msg: "{{ migrateoutput }}"
 
 - name: Get ExifTool
   unarchive:
