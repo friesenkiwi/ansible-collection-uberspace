@@ -15,7 +15,6 @@
     block: "{{ lookup('template', 'bash_profile.j2') }}"
     insertbefore: export PATH
     marker: "# {mark} ANSIBLE MANAGED BLOCK PostgreSQL"
-
 - name: Store PostgreSQL environment as fact for later use
   tags: environment
   set_fact:
@@ -48,7 +47,7 @@
 
 - name: Change config file to set socket directory
   lineinfile:
-    dest: "{{ postgres_data_dir }}/postgresql.conf"
+    dest: "{{ postgres_configfile }}"
     regexp: 'unix_socket_directories'
     line: "unix_socket_directories = '{{ uberspace_spacedir }}/tmp'"
 
@@ -57,7 +56,6 @@
     src: postgresql.ini.j2
     dest: "{{ uberspace_services_dir }}/postgresql.ini"
   notify: Reread supervisord config for postgresql
-
 - name: Flush handlers to enact changes
   meta: flush_handlers
 

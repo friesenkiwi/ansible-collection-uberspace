@@ -4,21 +4,30 @@ This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks
 
 When using this role, make sure that you understand, respect and cherish the [philosophy](https://wiki.uberspace.de/philosophy) and share the values of Uberspace. Specifically: Don't abuse the provided priviledges and don't overburden the technical infrastructure!
 
+When setting the desired price (see below), please make sure you understand the pricing model, and it's implications: https://manual.uberspace.de/en/billing-general/#price / https://blog.uberspace.de/ein-bekenntnis-zur-freien-preiswahl-und-ein-aber/
+
 By using this role, anybody can set up a desired application in a matter of minutes. But beware, you should be aware of what is happening in the back, since you will be responsible for it and the impact it has on it's users. That includes updates, privacy and other security aspects. So read through the [`tasks/*.yml`](tasks/) files to understand it's magic!
 
 This role is tailored to run from a Linux controller only for Uberspace v7, not v6! It can
 * Register new account
-* Set password
+* Get and set price and get current balance
+* Set web login password
 * Deploy SSH login authorized key, generate in advance if necessary
 * Delete an account
 * Trust SSH host keys via local user `known_hosts` file
 * Gather facts (for other roles/tasks running afterwards)
   * Opened ports
   * Registered domains
+  * Web Backends
+  * Web Headers
+  * Tools and their versions
   * public/private IPv4/v6 addresses
   * Hostname and other common variables (E-Mail etc.)
+  * MySQL password
++ Set basic shell aliases
 * Register/open new ports
 * Set up web backends
+* Set tools versions
 * Connect domains to the uberspace
 * Set A(AAA) and SRV DNS records at the facultative/complementary separate German Domain/DNS hoster [INWX](https://www.inwx.de/de/)  (separate tasks file, use `tasks_from: inwx_domains` on the `import_role:` module)
 
@@ -37,6 +46,9 @@ There are some variables necessary to be set in order for this role to function 
 #### Inputs
 * `uberspace_loginname` - by default `{{ ansible_user }}` from the inventory
 * `uberspace_registeradminnmailaddress` - external admin email address, needs to be provided
+* `uberspace_price_goal` - default `10.00` €, the current suggested price
+* `uberspace_price_crossfinanced_request` - needs to be set to true, if you want to set a prics below 5 € (the current limit for uberspaces cross-financed by other ubernauten out of solidarity)
+* `uberspace_credential_destination` - the location and schema for storage and lookup of passwords and other credentials - by default "credentials/uberspace/{{ uberspace_loginname }}/"
 * `uberspace_loginpassword` - by default read from `credentials/uberspace/{{ uberspace_loginname }}/loginpassword`
 * `uberspace_loginkey` - by default read from `~/.ssh/id_uberspace_{{ uberspace_loginname }}`
 * `uberspace_action_setup` - whether to register a new account, set the password or deploy the loginkey - by default `false`
@@ -50,25 +62,31 @@ There are some variables necessary to be set in order for this role to function 
 * `inwx_pw` - password at INWX, by default read from `credentials/inwx/{{ inwx_user }}-pw`
 * `inwx_records_a` - list of domains for A and AAAA records
 * `inwx_records_srv` - dictionary of domains, services and ports for SRV records. The expected structure is like this (`xmpp-client`/`xmpp-server` are the service names and need to be adjusted for your case, as you can see, the `inwx_records_a` list can be reused):
-  ```yml
-  inwx_records_srv:
-    xmpp-client:
-      port: "{{ prosody_port_client }}"
-      domains: ['']
-    xmpp-server:
-      port: "{{ prosody_port_server }}"
-      domains: "{{ inwx_records_a }}"
-  ```
-  The above would result in the following DNS resource records:
-  ```
-  _xmpp-client._tcp.{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.   3600 IN    SRV 10       0     {{ prosody_port_client }} {{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.
-  _xmpp-server._tcp.{{ inwx_records_a[0] }}.{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.   3600 IN    SRV 10       0     {{ prosody_port_client }} {{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.
-  [… more depending on the contents of inwx_records_a]
-  ```
-  e.g.
-  ```
-  _xmpp-server._tcp.conference.im.example.com.   3600 IN    SRV 10       0     43682 im.example.com.
-  ```
+
+```yml
+inwx_records_srv:
+  xmpp-client:
+    port: "{{ prosody_port_client }}"
+    domains: ['']
+  xmpp-server:
+    port: "{{ prosody_port_server }}"
+    domains: "{{ inwx_records_a }}"
+```
+
+The above would result in the following DNS resource records:
+
+```
+_xmpp-client._tcp.{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.   3600 IN    SRV 10       0     {{ prosody_port_client }} {{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.
+_xmpp-server._tcp.{{ inwx_records_a[0] }}.{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.   3600 IN    SRV 10       0     {{ prosody_port_client }} {{ uberspace_servicedomain }}.{{ uberspace_basedomain }}.
+[… more depending on the contents of inwx_records_a]
+```
+
+e.g.
+
+```
+_xmpp-server._tcp.conference.im.example.com.   3600 IN    SRV 10       0     43682 im.example.com.
+```
+
 There are a couple more variables available for fine-grained control, please check [`defaults/main.yml`](defaults/main.yml) and [`vars/main.yml`](vars/main.yml).
 
 #### Outputs/published facts
@@ -88,11 +106,14 @@ The names, locations or lookup methods (e.g. to switch to [Ansible Vault](https:
 ### Example Playbook
 
 Using an inventory `account-inventory` like this
+
 ```ini
 [g_uberspace_isabell]
 isabell.uber.space ansible_user=isabell ansible_ssh_private_key_file="{{ uberspace_loginkey_path }}"
 ```
+
 and a playbook `example.yml` like this
+
 ```yml
 ---
 - name: Setup, query and delete again an Uberspace
@@ -129,6 +150,7 @@ and a playbook `example.yml` like this
     include_role:
       name: uberspace_account
 ```
+
 you can execute `ansible-playbook -i account-inventory example.yml`. It will register a new account `isabell`, gather and display the facts, setup ports and domains including DNS over at INWX and afterwards delete the account again.
 
 ### License

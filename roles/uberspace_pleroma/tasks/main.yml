@@ -22,8 +22,10 @@
     dest: "{{ pleroma_main_dir }}"
     version: "{{ pleroma_version }}"
     force: yes
-#    depth: 1
-#    single_branch: true
+    # see https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
+#    depth: 1 # leads to (uncritical) errormessages because `it describe` doesn't work anymore
+#    single_branch: true # would probably work, but only with newer Ansible versions
+    # probably best would be a Treeless clone using `--filter=tree:0` but that's not supported by Ansible's git module yet
 - name: Set mix environment
   lineinfile:
     path: ~/.bash_profile

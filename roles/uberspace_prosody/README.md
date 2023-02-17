@@ -3,7 +3,7 @@
 This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) sets up the [Prosody](https://prosody.im/) XMPP/Jabber server at the German exceptional hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is largely based on the guide https://github.com/fapsi/lab/blob/guide_prosody/source/guide_prosody.rst with some small additions and tweaks.
 
 ### Requirements / Dependencies
-This role depends on my `uberspace_account` Account Setup role, which needs to be run before to provide some facts.
+This role depends on my `uberspace_account` Account Setup role, which needs to be run before to provide some facts. 
 
 ### Role Variables
 
@@ -19,11 +19,14 @@ There are some variables necessary to be set in order for this role to function 
 ### Example Playbook
 
 Using an inventory `account-inventory` like this
+
 ```ini
 [g_uberspace_isabell]
 isabell.uber.space ansible_user=isabell  ansible_ssh_private_key_file="{{ uberspace_loginkey_path }}"
 ```
+
 and a playbook `example.yml` like this
+
 ```yml
 ---
 - name: Setup Prosody on Uberspace

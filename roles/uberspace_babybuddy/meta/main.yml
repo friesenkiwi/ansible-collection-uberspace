@@ -1,6 +1,6 @@
 galaxy_info:
   author: friesenkiwi
-  description: Setup of the Pleroma Fediverse/Mastodon server at the German exceptional hoster "Uberspace". Not official.
+  description: Setup of the Babybuddy infant child activity management tool at the German exceptional hoster "Uberspace". Not official.
   license: BSD-3-Clause
   min_ansible_version: 2.9
   platforms:
@@ -13,6 +13,6 @@ galaxy_info:
 
   galaxy_tags:
   - uberspace
-  - fediverse
-  - mastodon
-  - pleroma
+  - babybuddy
+  - baby
+  - buddy

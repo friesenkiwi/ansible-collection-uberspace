@@ -2,19 +2,16 @@ postgres_dir_name: postgresql
 postgres_projectsdir: "opt/"
 postgres_main_dir: "{{ (uberspace_spacedir + '/' + postgres_projectsdir) | default(uberspace_projectsdir) | realpath }}/{{ postgres_dir_name }}"
 postgres_data_dir: "{{ postgres_main_dir }}/data/"
-#postgres_configfile_name: "postgresql.conf"
-#postgres_configfile: "{{ postgres_data_dir }}{{ postgres_configfile_name }}"
-#postgres_pidfile: "{{ postgres_main_dir }}/postgresql.pid"
+postgres_configfile_name: "postgresql.conf"
+postgres_configfile: "{{ postgres_data_dir }}{{ postgres_configfile_name }}"
 postgres_pidfile: "{{ postgres_main_dir }}/var/run/postgresql.pid"
-
-postgres_curversion_dir: "{{ postgres_main_dir }}/{{ postgres_version }}"
 
 postgres_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
 postgres_hostname: "localhost"
 postgres_port: "5432"
-postgres_databasename: ""
 postgres_username_clusteruser: "{{ uberspace_loginname }}"
 postgres_password_clusteruser: "{{ lookup('password', uberspace_credential_destination + 'postgres_password_clusteruser' + ' chars=ascii_letters,digits length=64') }}"
 postgres_pgpassfile: "{{ uberspace_spacedir }}/.pgpass"
+
 postgres_databases: [ "{{ uberspace_loginname }}" ]
 postgres_users: []

@@ -16,6 +16,7 @@
     path: ~/.bash_profile
     block: "{{ luarocks_path.stdout }}"
     insertbefore: export PATH
+    marker: "# {mark} ANSIBLE MANAGED BLOCK Prosody"
 
 - name: Install runtime lua-dependencies
   loop:

@@ -1,0 +1,20 @@
+galaxy_info:
+  author: friesenkiwi
+  description: Setup of the PostgreSQL database server at the German exceptional hoster "Uberspace". Not official.
+  license: BSD-3-Clause
+  min_ansible_version: 2.9
+  platforms:
+  - name: Linux
+    versions:
+    - all
+  - name: Uberspace
+    versions:
+    - 7
+
+  galaxy_tags:
+  - uberspace
+  - database
+  - db
+  - postgresql
+  - postgres
+  - pgsql
