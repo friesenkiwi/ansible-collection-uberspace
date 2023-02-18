@@ -4,6 +4,7 @@ version: "2.0.0"
 readme: "README.md"
 authors:
 - "Friesenkiwi"
+license: BSD-3-Clause
 tags:
 - uberspace
 - webhosting
