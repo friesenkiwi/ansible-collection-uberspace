@@ -191,7 +191,7 @@
 - name: Create users
   environment: "{{ pleroma_environment }}"
   loop: "{{ pleroma_users }}"
-  command: "mix pleroma.user new {{ item.nickname }} {{ item.email }} --password {{ item.password | default(pleroma_users_passwordlookup) }} {{ item.admin | ternary('--admin','') }} --assume-yes"
+  command: "mix pleroma.user new {{ item.nickname }} {{ item.email }} --password {{ item.password | default(pleroma_users_passwordlookup) }} {{ item.admin | default(false) | ternary('--admin','') }} --assume-yes"
   args:
     chdir: "{{ pleroma_main_dir }}"
   register: useroutput

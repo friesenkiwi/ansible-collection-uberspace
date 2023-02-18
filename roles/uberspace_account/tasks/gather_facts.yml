@@ -13,6 +13,10 @@
     uberspace_ip_public_v6: "{{ parsed_ipv6address }}"
     uberspace_hostname: "{{ parsed_hostname }}"
 
+- name: Show uberspace_hostname
+  debug:
+    msg: "Your uberspace name is: {{ uberspace_hostname }}"
+
 - name: Get accounting page
   delegate_to: localhost
   check_mode: no
