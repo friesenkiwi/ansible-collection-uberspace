@@ -24,7 +24,7 @@ This role is tailored to run from a Linux controller only for Uberspace v7, not 
   * public/private IPv4/v6 addresses
   * Hostname and other common variables (E-Mail etc.)
   * MySQL password
-+ Set basic shell aliases
+* Set basic shell aliases
 * Register/open new ports
 * Set up web backends
 * Set tools versions
