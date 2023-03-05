@@ -1,12 +1,12 @@
 # Uberspace account administration Ansible role
 
-This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) helps with the administration of accounts at the German exceptional intenet hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is acting through the user frontend via HTTPS and content parsing, but since there is no official API, things can break easily as soon as Uberspace changes anything in the frontend, specifically does a frontend relaunch etc.
+This [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) helps with the administration of accounts at the German exceptional internet hoster [Uberspace](https://uberspace.de/). It is not officially maintained by the company. I am only one of their customers. It is acting through the user frontend via HTTPS and content parsing, but since there is no official API, things can break easily as soon as Uberspace changes anything in the frontend, specifically does a frontend relaunch etc.
 
-When using this role, make sure that you understand, respect and cherish the [philosophy](https://wiki.uberspace.de/philosophy) and share the values of Uberspace. Specifically: Don't abuse the provided priviledges and don't overburden the technical infrastructure!
+When using this role, make sure that you understand, respect and cherish the [philosophy](https://wiki.uberspace.de/philosophy) and share the values of Uberspace. Specifically: Don't abuse the provided privileges and don't overburden the technical infrastructure!
 
 When setting the desired price (see below), please make sure you understand the pricing model, and it's implications: https://manual.uberspace.de/en/billing-general/#price / https://blog.uberspace.de/ein-bekenntnis-zur-freien-preiswahl-und-ein-aber/
 
-By using this role, anybody can set up a desired application in a matter of minutes. But beware, you should be aware of what is happening in the back, since you will be responsible for it and the impact it has on it's users. That includes updates, privacy and other security aspects. So read through the [`tasks/*.yml`](tasks/) files to understand it's magic!
+By using this role, anybody can set up a desired application in a matter of minutes. But beware, you should be aware of what is happening in the back, since you will be responsible for it and the impact it has on its users. That includes updates, privacy and other security aspects. So read through the [`tasks/*.yml`](tasks/) files to understand it's magic!
 
 This role is tailored to run from a Linux controller only for Uberspace v7, not v6! It can
 * Register new account
@@ -41,17 +41,17 @@ For some PostgreSQL parts, you need to have `ansible-galaxy collection install c
 
 ### Role Variables
 
-There are some variables necessary to be set in order for this role to function properly, and some more available to control it's behaviour. Also there are some facts gathered which can be used in tasks/role executions afterwards, e.g. to install/configure applications running on the uberspace. Also there are a couple of files written and read from by default which are security relevant because they contain credentials. Make sure to only use it on encrypted filessystems and put them into your `.gitignore`.
+There are some variables necessary to be set in order for this role to function properly, and some more available to control its behaviour. Also, there are some facts gathered which can be used in tasks/role executions afterwards, e.g. to install/configure applications running on the uberspace. Also, there are a couple of files written and read from by default which are security relevant because they contain credentials. Make sure to only use it on encrypted filesystems and add them to your `.gitignore`.
 
 #### Inputs
 * `uberspace_loginname` - by default `{{ ansible_user }}` from the inventory
 * `uberspace_registeradminnmailaddress` - external admin email address, needs to be provided
 * `uberspace_price_goal` - default `10.00` €, the current suggested price
-* `uberspace_price_crossfinanced_request` - needs to be set to true, if you want to set a prics below 5 € (the current limit for uberspaces cross-financed by other ubernauten out of solidarity)
+* `uberspace_price_crossfinanced_request` - needs to be set to true, if you want to set a price below 5 € (the current limit for uberspaces cross-financed by other Ubernauts out of solidarity)
 * `uberspace_credential_destination` - the location and schema for storage and lookup of passwords and other credentials - by default "credentials/uberspace/{{ uberspace_loginname }}/"
 * `uberspace_loginpassword` - by default read from `credentials/uberspace/{{ uberspace_loginname }}/loginpassword`
 * `uberspace_loginkey` - by default read from `~/.ssh/id_uberspace_{{ uberspace_loginname }}`
-* `uberspace_action_setup` - whether to register a new account, set the password or deploy the loginkey - by default `false`
+* `uberspace_action_setup` - whether to register a new account, set the password or deploy the login-key - by default `false`
 * `uberspace_action_delete` - whether to delete an account - by default `false`
 * `uberspace_ports_goal` - list of ports used by running services. Since Uberspace can only open ports on an availability base, users cannot request a *specific* port to be opened. Rather, the length of this list is compared to the actual open ports and the missing number of ports requested. This variable should afterwards be adjusted manually in the code accordingly.
 * `uberspace_domains_goal` - list of domains to be registered to the uberspace via `uberspace web domain add`
