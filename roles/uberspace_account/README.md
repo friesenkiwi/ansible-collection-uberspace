@@ -96,10 +96,11 @@ There are a couple more variables available for fine-grained control, please che
 * `uberspace_domains` - The domains registered to the uberspace (using `uberspace web domain list` on the command line)
 
 #### Files
-There are a couple of files expected, read or written by this role, all in the directory `credentials/` next to the playbook `.yml` file:
-* `uberspace_loginpassword_{{ uberspace_loginname }}` - Required for basic operation, place there manually. beforehand. In case of new account creation would be randomly generated if not present before.
-* `uberspace_session_{{ uberspace_loginname }}` - Will automatically be written as a cache for the web session ID, will automatically be refreshed when the session expired. Using this ID in the HTTP header, you can log into the uberspace dashboard.
-* `inwx-{{ inwx_user }}-pw` - Required for DNS operations, place there manually beforehand.
+There are a couple of files expected, read and written by this role, all in the directory `credentials/` next to the playbook `.yml` file.
+
+* `credentials/uberspace/{{uberspace_loginname}}/loginpassword` - If you provide an empty file, the password will be randomly generated during account creation.
+* `credentials/uberspace/{{uberspace_loginname}}/session` - Provide an empty file. Will automatically be written to as a cache for the web session ID, will automatically be refreshed when the session expired. Using this ID in the HTTP header, you can log into the Uberspace dashboard.
+* `credentials/inwx/{{ inwx_user }}-pw` - Required for DNS operations, place there manually beforehand.
 
 The names, locations or lookup methods (e.g. to switch to [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)) can be changed by overriding the values of `defaults/main.yml`.
 
