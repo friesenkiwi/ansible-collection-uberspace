@@ -110,7 +110,7 @@ Using an inventory `account-inventory` like this
 
 ```ini
 [g_uberspace_isabell]
-isabell.uber.space ansible_user=isabell ansible_ssh_private_key_file="{{ uberspace_loginkey_path }}"
+isabell.uber.space
 ```
 
 and a playbook `example.yml` like this
