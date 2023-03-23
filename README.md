@@ -28,5 +28,6 @@ and run `ansible-galaxy collection install -r requirements.yml` afterwards.
 
 There are some other projects, approaching "Ansible @ Uberspace" from a slightly different angle:
 * https://github.com/Snapstromegon/ansible-roles-uberspace
+* https://gitlab.com/macrominds/provision/uberspace/readme
 * https://github.com/yeah/ansible-uberspace
 * https://github.com/golderweb/ansible-dotqmail
