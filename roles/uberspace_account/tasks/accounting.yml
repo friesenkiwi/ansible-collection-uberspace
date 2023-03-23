@@ -1,10 +1,10 @@
 - name: Get accounting page for CSRF token
-  check_mode: no
+  check_mode: true
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.accounting }}"
     headers: "{{ uberspace_headers }}"
-    return_content: yes
+    return_content: true
     follow_redirects: none
   register: formresult
 
@@ -31,7 +31,7 @@
     url: "{{ uberspace_urls.setprice }}"
     headers: "{{ uberspace_headers }}"
     method: POST
-    return_content: yes
+    return_content: true
     body_format: form-urlencoded
     body:
       _csrf_token: "{{ csrftoken }}"
@@ -58,7 +58,7 @@
 
 - name: Record current price as custom stat (set show_custom_stats = yes in ansible.cfg or ANSIBLE_SHOW_CUSTOM_STATS=yes in env)
   set_stats:
-    per_host: yes
+    per_host: true
     aggregate: false
     data:
       currentprice: "{{ uberspace_price_current }}"

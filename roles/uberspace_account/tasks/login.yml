@@ -2,7 +2,7 @@
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.login }}"
-    return_content: yes
+    return_content: true
   register: formresult
 
 - name: Login to get session

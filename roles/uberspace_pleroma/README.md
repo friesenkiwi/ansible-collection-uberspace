@@ -39,7 +39,7 @@ and a playbook `example.yml` like this
 ---
 - name: Setup Pleroma Fediverse/Mastodon server on Uberspace
   hosts: g_uberspace_isabell
-  gather_facts: no
+  gather_facts: false
   vars:
     uberspace_basedomain: example.com
     uberspace_servicedomain: "social"

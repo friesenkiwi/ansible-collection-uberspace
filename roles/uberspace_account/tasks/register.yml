@@ -2,7 +2,7 @@
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.registerform }}"
-    return_content: yes
+    return_content: true
   register: formresult
 
 - name: Store session as cookie
@@ -22,7 +22,7 @@
       login: "{{ uberspace_loginname }}"
       houserules: 1
       password: "{{ uberspace_newloginpassword }}"
-    return_content: yes
+    return_content: true
     status_code: 302
   register: registerresult
   # Forwards to https://dashboard.uberspace.de/register/../dashboard/while_u_wait
@@ -52,7 +52,7 @@
     url: "{{ uberspace_urls.check }}"
     follow_redirects: none
     method: GET
-    return_content: yes
+    return_content: true
     headers: "{{ uberspace_headers }}"
   register: checkresult
   until: checkresult.content == "active"
@@ -68,7 +68,7 @@
   uri:
     url: "{{ uberspace_urls.datasheet }}"
     method: GET
-    return_content: yes
+    return_content: true
     headers: "{{ uberspace_headers }}"
   register: firstbootresult
 

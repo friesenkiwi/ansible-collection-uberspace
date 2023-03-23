@@ -1,7 +1,7 @@
 - name: Check loginname availability
   tags: session
   delegate_to: localhost
-  check_mode: no
+  check_mode: false
   uri:
     url: "{{ uberspace_urls.register }}"
   register: checkresult
@@ -21,14 +21,14 @@
     uberspace_cookie: "uberspace_session={{ uberspace_session }}"
 - name:
   tags: session
-  check_mode: no
+  check_mode: false
   block:
   - name: Get main dashboard page to check if session expired
     delegate_to: localhost
     uri:
       url: "{{ uberspace_url_dashboard }}"
       headers: "{{ uberspace_headers }}"
-      return_content: yes
+      return_content: true
       follow_redirects: none
     register: dashboardresult
   rescue:

@@ -31,7 +31,7 @@ and a playbook `example.yml` like this
 ---
 - name: Setup Prosody on Uberspace
   hosts: g_uberspace_isabell
-  gather_facts: no
+  gather_facts: false
   vars:
     uberspace_projectsdir: "{{ uberspace_spacedir }}/projekte/"
     inwx_user: isabell

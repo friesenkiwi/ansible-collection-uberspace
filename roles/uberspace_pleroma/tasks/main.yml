@@ -21,7 +21,7 @@
     repo: "{{ pleroma_repo }}"
     dest: "{{ pleroma_main_dir }}"
     version: "{{ pleroma_version }}"
-    force: yes
+    force: true
     # see https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
 #    depth: 1 # leads to (uncritical) errormessages because `it describe` doesn't work anymore
 #    single_branch: true # would probably work, but only with newer Ansible versions
@@ -156,13 +156,13 @@
 
 - name: Get ExifTool
   unarchive:
-    remote_src: yes
+    remote_src: true
     src: "{{ pleroma_exiftool_url }}"
     extra_opts:
     - "--strip-components=1"
     - "{{ pleroma_exiftool_name }}/exiftool"
     - "{{ pleroma_exiftool_name }}/lib/"
-    dest:  "{{ uberspace_spacedir }}/bin"
+    dest: "{{ uberspace_spacedir }}/bin"
 
 - name: "Set up prune-vacuum cronjob for remote posts older than {{ pleroma_remote_post_retention_days }} days to remove"
   cron:

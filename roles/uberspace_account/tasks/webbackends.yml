@@ -22,8 +22,8 @@
   loop: "{{ uberspace_webbackends_goal | default([]) }}"
   when: (item.path not in uberspace_webbackends_pathportmap.keys()) or (item.path in uberspace_webbackends_pathportmap.keys() and not (uberspace_webbackends_pathportmap[item.path] | int ) == (item.port | int))
   # debug:
-  #   msg: "uberspace web backend set {{ item.path }} {{ port_or_apache }} {{ item.extra | default()}}"
-  command: "uberspace web backend set {{ item.path }} {{ port_or_apache }} {{ item.extra | default()}}"
+  #   msg: "uberspace web backend set {{ item.path }} {{ port_or_apache }} {{ item.extra | default() }}"
+  command: "uberspace web backend set {{ item.path }} {{ port_or_apache }} {{ item.extra | default() }}"
   register: addedbackends
   changed_when: addedbackends.rc == 0
 

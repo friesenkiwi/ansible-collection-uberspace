@@ -8,7 +8,7 @@
     path: "{{ item }}"
 - name: "Download and unpack {{ coturn_version }}"
   unarchive:
-    remote_src: yes
+    remote_src: true
     src: "{{ coturn_download_url }}"
     dest: "{{ coturn_main_dir }}"
 

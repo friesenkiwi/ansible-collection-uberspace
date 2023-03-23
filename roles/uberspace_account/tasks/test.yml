@@ -11,7 +11,7 @@
   uri:
     url: "{{ uberspace_urls.datasheet }}"
     headers: "{{ uberspace_headers }}"
-    return_content: yes
+    return_content: true
   register: testpageresult
 
 # - name: Show testpageresult page
@@ -21,7 +21,7 @@
   vars:
     uberspace_html_hostkey: '<th>RSA</th>\s*<td><code>(.*)</code>'
   debug:
-    msg: "{{ testpageresult.content | regex_search(uberspace_html_hostkey)}}"
+    msg: "{{ testpageresult.content | regex_search(uberspace_html_hostkey) }}"
 
 # - name: Show variables
 #   debug:

@@ -2,7 +2,7 @@
   tags: ports
   loop: "{{ uberspace_ports_goal | default([]) }}"
   loop_control:
-    extended: yes
+    extended: true
   when: item not in uberspace_ports and ((uberspace_ports | length) + ansible_loop.index0) < (uberspace_ports_goal | length)
   command: "uberspace port add"
   register: addedports

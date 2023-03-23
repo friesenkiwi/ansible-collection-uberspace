@@ -6,7 +6,7 @@
     insertbefore: export PATH
 
 - name: Configure luarocks - Get luarocks env variables
-  check_mode: no
+  check_mode: false
   shell: 'echo "$(luarocks path)"'
   register: luarocks_path
   changed_when: false
@@ -71,7 +71,7 @@
 - name: "Download and unpack {{ prosody_version }}"
   tags: build
   unarchive:
-    remote_src: yes
+    remote_src: true
     src: "{{ prosody_downloadurl }}"
     dest: "{{ prosody_main_dir }}"
 

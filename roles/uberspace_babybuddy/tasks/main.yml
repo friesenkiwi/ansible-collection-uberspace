@@ -16,7 +16,7 @@
   loop:
   - ~/uwsgi/apps-enabled
   - "{{ babybuddy_install_dir }}"
-  - "{{ babybuddy_main_dir}}/data/media"
+  - "{{ babybuddy_main_dir }}/data/media"
   file:
     path: "{{ item }}"
     state: directory
@@ -26,7 +26,7 @@
   - out
   copy:
     content: ""
-    force: no
+    force: false
     dest: "~/uwsgi/{{ item }}.log"
 - name: Deploy uwsgi service
   template:
@@ -38,10 +38,10 @@
   git:
     repo: "{{ babybuddy_repo_url }}"
     dest: "{{ babybuddy_install_dir }}"
-    force: yes
+    force: true
 
 - name: Check if a virtualenv is already created
-  check_mode: no
+  check_mode: false
   ignore_errors: true
   args:
     chdir: "{{ babybuddy_install_dir }}"
@@ -56,7 +56,7 @@
   command: "~/.local/bin/pipenv install --three"
 
 - name: Check virtualenv
-  check_mode: no
+  check_mode: false
   args:
     chdir: "{{ babybuddy_install_dir }}"
   command: "~/.local/bin/pipenv --venv"

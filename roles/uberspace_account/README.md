@@ -98,8 +98,8 @@ There are a couple more variables available for fine-grained control, please che
 #### Files
 There are a couple of files expected, read and written by this role, all in the directory `credentials/` next to the playbook `.yml` file.
 
-* `credentials/uberspace/{{uberspace_loginname}}/loginpassword` - If you provide an empty file, the password will be randomly generated during account creation.
-* `credentials/uberspace/{{uberspace_loginname}}/session` - Provide an empty file. Will automatically be written to as a cache for the web session ID, will automatically be refreshed when the session expired. Using this ID in the HTTP header, you can log into the Uberspace dashboard.
+* `credentials/uberspace/{{ uberspace_loginname }}/loginpassword` - If you provide an empty file, the password will be randomly generated during account creation.
+* `credentials/uberspace/{{ uberspace_loginname }}/session` - Provide an empty file. Will automatically be written to as a cache for the web session ID, will automatically be refreshed when the session expired. Using this ID in the HTTP header, you can log into the Uberspace dashboard.
 * `credentials/inwx/{{ inwx_user }}-pw` - Required for DNS operations, place there manually beforehand.
 
 The names, locations or lookup methods (e.g. to switch to [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)) can be changed by overriding the values of `defaults/main.yml`.
@@ -119,7 +119,7 @@ and a playbook `example.yml` like this
 ---
 - name: Setup, query and delete again an Uberspace
   hosts: g_uberspace_isabell
-  gather_facts: no
+  gather_facts: false
   vars:
     service_port: 40132
     uberspace_basedomain: example.com
@@ -147,7 +147,7 @@ and a playbook `example.yml` like this
 
   - name: Delete uberspace
     vars:
-      uberspace_action_delete: yes
+      uberspace_action_delete: true
     include_role:
       name: uberspace_account
 ```

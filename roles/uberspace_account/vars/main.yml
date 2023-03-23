@@ -36,7 +36,7 @@ uberspace_urls:
   deletequeue: "{{ uberspace_url_dashboard }}delete_queue"
   deleteresult_register: "{{ uberspace_url_dashboard }}../register"
   deleteresult_login: "{{ uberspace_url_dashboard }}../login"
-  accounting:  "{{ uberspace_url_dashboard }}accounting"
+  accounting: "{{ uberspace_url_dashboard }}accounting"
 
 uberspace_headers:
   Cookie: "{{ uberspace_cookie }}"

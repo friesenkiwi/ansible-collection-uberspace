@@ -1,11 +1,11 @@
 - name: Get deletion page for CSRF token
   tags: delete
   delegate_to: localhost
-  check_mode: no
+  check_mode: false
   uri:
     url: "{{ uberspace_urls.delete }}"
     headers: "{{ uberspace_headers }}"
-    return_content: yes
+    return_content: true
   register: formresult
 
 # - name: Show deletion page result

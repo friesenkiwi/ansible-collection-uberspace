@@ -28,8 +28,8 @@
   # Direct URL extract runs infinitively
 #  tags: wekan
   unarchive:
-    remote_src: yes
-    unsafe_writes: yes
+    remote_src: true
+    unsafe_writes: true
     src: "{{ wekan_main_dir }}/{{ wekan_download_url | urlsplit('path') | basename }}"
     dest: "{{ wekan_main_dir }}"
 

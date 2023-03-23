@@ -1,10 +1,10 @@
 - name: Get datasheet page
   delegate_to: localhost
-  check_mode: no
+  check_mode: false
   uri:
     url: "{{ uberspace_urls.datasheet }}"
     headers: "{{ uberspace_headers }}"
-    return_content: yes
+    return_content: true
   register: datasheetresult
 
 - name: Set uberspace facts from dashboard
@@ -19,11 +19,11 @@
 
 - name: Get accounting page
   delegate_to: localhost
-  check_mode: no
+  check_mode: false
   uri:
     url: "{{ uberspace_urls.accounting }}"
     headers: "{{ uberspace_headers }}"
-    return_content: yes
+    return_content: true
   register: accountingresult
 
 - name: Set uberspace facts from accounting
@@ -108,9 +108,9 @@
 
 - name: Get MySQL my.cnf file
   tags: mysql
-  check_mode: no
+  check_mode: false
   fetch:
-    flat: yes
+    flat: true
     src: ".my.cnf"
     dest: "{{ uberspace_mycnffetch_destination }}"
 
@@ -122,7 +122,7 @@
 
 - name: Record some facts as custom stat (set show_custom_stats = yes in ansible.cfg or ANSIBLE_SHOW_CUSTOM_STATS=yes in env)
   set_stats:
-    per_host: yes
+    per_host: true
     data:
       balance: "{{ uberspace_balance }}"
       currentprice: "{{ uberspace_price_current }}"

@@ -9,7 +9,7 @@
 
 - name: Download and unpack bootstrap
   unarchive:
-    remote_src: yes
+    remote_src: true
     src: "{{ prosody_bootstrap_downloadurl }}"
     dest: "{{ prosody_libjs_path }}"
 
