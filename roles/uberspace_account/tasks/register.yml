@@ -31,6 +31,11 @@
   debug:
     msg: "{{ registerresult }}"
 
+- name: Fail if forwarded to unexpected URL
+  when: registerresult.location != uberspace_urls.while_u_wait
+  fail:
+    msg: "The result of the registration request was unexpected. Forwarded to {{ registerresult.location }} instead of {{ uberspace_urls.while_u_wait }}. Maybe missing/invalid mailaddress, login name or password?"
+
 - name: Store session cookie as fact
   set_fact:
     uberspace_cookie: "{{ registerresult.set_cookie.split(';')[0] }}"

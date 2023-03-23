@@ -7,7 +7,7 @@
 
 - name: Set tools versions
   tags: tools
-  loop: "{{ uberspace_tools_goal_filtered | dict2items }}"
+  loop: "{{ uberspace_tools_goal_filtered | default({}) | dict2items }}"
   when: uberspace_tools[item.key] != item.value
   command: "uberspace tools version use {{ item.key }} {{ item.value }}"
   register: toolsversionresult

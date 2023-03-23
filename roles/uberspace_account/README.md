@@ -157,3 +157,9 @@ you can execute `ansible-playbook -i account-inventory example.yml`. It will reg
 ### License
 
 [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
+
+### Todo
+
+* Automatically accept host key on first SSH connect (TOFU) or even already have the key scraped from the dashboard
+* Reset/remove host key on deletion (ssh-keygen -R "xxx.uber.space")
+* Use https://docs.ansible.com/ansible/latest/collections/community/general/supervisorctl_module.html
