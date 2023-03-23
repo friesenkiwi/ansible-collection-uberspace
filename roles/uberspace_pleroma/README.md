@@ -16,6 +16,7 @@ There are some variables necessary to be set in order for this role to function 
 * `pleroma_instancename` - The name of the Pleroma server, default "Pleroma"
 * `pleroma_host` - Hostname of the Pleroma server, default `{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}`
 * `pleroma_adminmail` - Admin mail address of the Pleroma server, default `{{ uberspace_mail }}`
+* `pleroma_config_adjustments` - See https://docs.pleroma.social/backend/configuration/cheatsheet/#instance
 * `pleroma_remote_post_retention_days` - Retention period for stored remote posts, after which they are cleaned up by the vaccuum process, default 60
 * `pleroma_mix_environment` - Pleroma execution mode, can be "dev", default "prod"
 * `pleroma_version` - Github Git repository reference, can be develop, default "stable"

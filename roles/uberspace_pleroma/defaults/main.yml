@@ -21,6 +21,7 @@ pleroma_mix_environment: prod
 pleroma_environment:
   MIX_ENV: "{{ pleroma_mix_environment }}"
 pleroma_environment_string: "{{ pleroma_environment.items()|map('join', '=')|join('') }}"
+pleroma_static_dir: 'instance/static/'
 pleroma_config_genquestion_responses:
   'Shall I install rebar3': 'Y'
   'What domain will your instance use': "{{ pleroma_host }}"
@@ -37,7 +38,7 @@ pleroma_config_genquestion_responses:
   'What port will the app listen to': "{{ pleroma_port }}"
   'What ip will the app listen to': "{{ pleroma_interface_ipv4 }}"
   'What directory should media uploads go in': 'uploads'
-  'What directory should custom public files be read from': 'instance/static/'
+  'What directory should custom public files be read from': "{{ pleroma_static_dir }}"
   'Do you want to strip location \(GPS\) data from uploaded images': 'y'
   'Do you want to read data from uploaded files so clients can use it to prefill fields like image description': 'n'
   'Do you want to anonymize the filenames of uploads': 'y'
