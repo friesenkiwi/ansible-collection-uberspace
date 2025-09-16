@@ -1,0 +1,22 @@
+conventure_eventname: Event
+conventure_eventlogo: logo.png
+conventure_eventhandle: event
+conventure_groups_mobile:
+- name: Supergroup 1
+  groups:
+  - tid: g1
+    name: Group 1
+- name: Supergroup 2
+  groups:
+  - tid: g2
+    name: Group 2
+conventure_groups_stationary: 
+- name: Stationen
+  groups:
+  - tid: s1
+    name: Station 1
+conventure_groups_special:
+- name: Sonderrollen
+  groups:
+  - tid: XX
+    name: Game-Master
