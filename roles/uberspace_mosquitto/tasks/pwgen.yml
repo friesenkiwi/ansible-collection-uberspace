@@ -1,0 +1,8 @@
+- name: Generate password hash
+  command:
+    chdir: "{{ mosquitto_authplugin_go_install_dir }}"
+    cmd: "{{ mosquitto_authplugin_go_pwgen_command }}"
+  register: generated_pw_hash
+#- name: Show generated hash
+#  debug:
+#    msg: "{{ generated_pw_hash }}"

@@ -1,0 +1,30 @@
+auth_plugin {{ uberspace_spacedir }}/etc/mosquitto/conf.d/{{ mosquitto_authplugin_classic_filename }}
+
+auth_opt_backends mysql
+auth_opt_anonusername anonymous
+auth_opt_superusers {{ mosquitto_authplugin_classic_superusers }}
+auth_opt_host {{ mosquitto_mysql_host }}
+auth_opt_port 3306
+auth_opt_user {{ mosquitto_mysql_user }}
+auth_opt_pass {{ mosquitto_mysql_password }}
+auth_opt_dbname {{ mosquitto_mysql_database }}
+auth_opt_userquery SELECT pw FROM users WHERE username = '%s'
+auth_opt_superquery SELECT COUNT(*) FROM users WHERE username = '%s' AND super = 1
+auth_opt_aclquery SELECT topic FROM acls WHERE (username = '%s') AND (rw >= %d)
+
+auth_opt_mysql_opt_reconnect true
+auth_opt_mysql_auto_connect true
+
+
+
+
+
+
+
+auth_opt_cacheseconds 300
+
+
+
+
+
+auth_opt_log_quiet false

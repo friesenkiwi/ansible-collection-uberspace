@@ -1,0 +1,71 @@
+mosquitto_project_name: "mosquitto"
+mosquitto_main_dir: "{{ uberspace_projectsdir | realpath }}/{{ mosquitto_project_name }}"
+mosquitto_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+mosquitto_authplugin_go_filename: "go-auth.so"
+mosquitto_authplugin_go_pwgen_command: "./pw -p {{ user_password }}"
+mosquitto_authplugin_classic_filename: "auth-plug.so"
+mosquitto_authplugin_classic_superusers: admin
+mosquitto_otrecorder_qos: 2
+mosquitto_otrecorder_user: otrecorder
+mosquitto_otrecorder_pw: "{{ lookup('password','credentials/mosquitto/' + mosquitto_otrecorder_user) }}"
+mosquitto_topic_wildcard_multilevel: "owntracks/#"
+mosquitto_topic_wildcard_explicit: "owntracks/+/+"
+mosquitto_topic_wildcard_pub: ""
+mosquitto_topic_otrecorder_sub: "{{ mosquitto_topic_wildcard_multilevel }}"
+mosquitto_otrecorder_storagedir: "{{ uberspace_spacedir }}/lib/ot-recorder"
+mosquitto_otrecorder_viewsdir: "{{ uberspace_spacedir }}/etc/ot-recorder/views"
+mosquitto_otrecorder_docroot: "{{ mosquitto_otrecorder_storagedir }}/htdocs"
+mosquitto_otrecorder_configfilepath: "{{ mosquitto_main_dir }}/ot-recorder/etc/config"
+mosquitto_otrecorder_compileconfig_adjustments: 
+- key: 'STORAGEDEFAULT '
+  value: '{{ mosquitto_otrecorder_storagedir }}'
+- key: 'DOCROOT '
+  value: '{{ mosquitto_otrecorder_docroot }}'
+- key: 'CONFIGFILE '
+  value: '{{ mosquitto_otrecorder_configfilepath }}'
+- key: 'INSTALLDIR '
+  value: '{{ uberspace_spacedir }}'
+- key: 'WITH_LUA ?'
+  value: 'yes'
+- key: 'WITH_ENCRYPT ?'
+  value: 'yes'
+- key: 'TZDATADB '
+  value: '{{ mosquitto_main_dir }}/ot-recorder/timezone16.bin'
+mosquitto_otfrontend_webpath: "/frontend"
+mosquitto_conventure_webpath: "/conventure"
+
+
+mosquitto_mysql_host: "localhost"
+mosquitto_mysql_user: "{{ uberspace_loginname }}"
+mosquitto_mysql_password: "{{ uberspace_mysqlpassword }}"
+mosquitto_mysql_database: "{{ uberspace_loginname }}_owntracks"
+
+mosquitto_build_subdir: "build"
+
+# only internal, available via uberspace webbackends
+mosquitto_port_otrecorder: 8083
+mosquitto_port_mosquitto_websockets: 9001
+
+mosquitto_ports:
+- "{{ mosquitto_port_mosquitto }}"
+#- "{{ mosquitto_port_otrecorder }}"
+
+mosquitto_otrecorder_webbackends:
+- path: "{{ mosquitto_host }}/api"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/ws"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/utils"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/static"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/view"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/map"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/table"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/last"
+  port: "{{ mosquitto_port_otrecorder }}"
+- path: "{{ mosquitto_host }}/mqtt"
+  port: "{{ mosquitto_port_mosquitto_websockets }}"

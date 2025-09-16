@@ -1,0 +1,5 @@
+[program:ot-recorder]
+command=%(ENV_HOME)s/sbin/ot-recorder '{{ mosquitto_topic_otrecorder_sub }}'
+autostart=yes
+autorestart=unexpected
+startsecs=30

@@ -1,0 +1,26 @@
+mosquitto_cmake_repo_url: https://github.com/Kitware/CMake.git
+mosquitto_cmake_install_dir: "{{ mosquitto_main_dir }}/src/cmake"
+mosquitto_cmake_install_version: v3.31.6
+
+mosquitto_cjson_repo_url: https://github.com/DaveGamble/cJSON.git
+mosquitto_cjson_install_dir: "{{ mosquitto_main_dir }}/src/cjson"
+
+mosquitto_libwebsockets_repo_url: https://github.com/warmcat/libwebsockets.git
+mosquitto_libwebsockets_install_dir: "{{ mosquitto_main_dir }}/src/libwebsockets"
+
+mosquitto_mosquitto_repo_url: https://github.com/eclipse-mosquitto/mosquitto.git
+mosquitto_mosquitto_install_dir: "{{ mosquitto_main_dir }}/src/mosquitto"
+
+mosquitto_authplugin_go_repo_url: https://github.com/iegomez/mosquitto-go-auth.git
+mosquitto_authplugin_go_install_dir: "{{ mosquitto_main_dir }}/src/mosquitto-go-auth"
+
+mosquitto_authplugin_classic_repo_url: https://github.com/jpmens/mosquitto-auth-plug.git
+mosquitto_authplugin_classic_install_dir: "{{ mosquitto_main_dir }}/src/mosquitto-auth-plug"
+
+
+mosquitto_otrecorder_repo_url: https://github.com/owntracks/recorder.git
+mosquitto_otrecorder_install_dir: "{{ mosquitto_main_dir }}/src/ot-recorder"
+
+mosquitto_otfrontend_repo_url: https://github.com/owntracks/frontend.git
+mosquitto_otfrontend_install_dir: "{{ mosquitto_main_dir }}/src/frontend"
+

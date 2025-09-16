@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="robots" content="noindex,nofollow" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <title>
+      {{ conventure_eventname }}
+    </title>
+  </head>
+  <body>
+    <img src="{{ conventure_eventlogo }}" align="right">
+    <h1>
+      {{ conventure_eventname }}
+    </h1>
+    <form name="selectform" id="selectform" action="customizeConfig.php">
+      <ol>
+        <li>
+          App herunterladen und installieren
+          <ul>
+            <li>
+              <a href="https://play.google.com/store/apps/details?id=org.owntracks.android" target="_blank">
+                Android - Google Play Store
+              </a>
+            </li>
+            <!--
+            <li>
+              <a href="org.owntracks.android.apk" target="_blank">
+                Android - rohe APK-Datei
+              </a>
+            </li>
+            -->
+            <li>
+              <a href="https://f-droid.org/de/packages/org.owntracks.android/" target="_blank">
+                Android - F-Droid
+              </a>
+            </li>
+            <li>
+              <a href="https://itunes.apple.com/us/app/mqttitude/id692424691?mt=8" target="_blank">
+                iOS
+              </a>
+            </li>
+          </ul>
+          Nach dem Installieren in der App keine Konfiguration vornehmen, sondern hier mit Schritt 2 weitermachen:
+        </li>
+        <li>
+          Eigenen Namen (Vor- + Nach-) eingeben (nur Kleinbuchstaben, keine Leerzeichen, keine Sonderzeichen/Akzent etc.):
+          <input type="text" name="username" pattern="^[a-z]{1,32}$" required>
+        </li>
+        <li><ul><li>
+          ENTWEDER Gruppe auswählen:
+          <select name="tid-group" onselect="">
+            <optgroup label="-- Bitte wählen --">
+            <option value="">-- Bitte wählen --</option>
+            </optgroup>
+            {% for supergroups in conventure_groups_mobile %}
+              <optgroup label="{{ supergroups.name }}">
+                {% for mobile_groups in supergroups.groups %}
+                  <option value="{{ mobile_groups.tid }}">{{ mobile_groups.name }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select></li><li>
+          ODER Station auswählen:
+          <select name="tid-station" onselect="">
+            <optgroup label="-- Bitte wählen --">
+            <option value="">-- Bitte wählen --</option>
+            </optgroup>
+            {% for supergroups in conventure_groups_stationary %}
+              <optgroup label="{{ supergroups.name }}">
+                {% for stationary_groups in supergroups.groups %}
+                  <option value="{{ stationary_groups.tid }}">{{ stationary_groups.name }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select></li><li>
+          ODER Sonderrolle auswählen:
+          <select name="tid-special" onselect="">
+            <optgroup label="-- Bitte wählen --">
+            <option value="">-- Bitte wählen --</option>
+            </optgroup>
+            {% for supergroups in conventure_groups_special %}
+              <optgroup label="{{ supergroups.name }}">
+                {% for special_groups in supergroups.groups %}
+                  <option value="{{ special_groups.tid }}">{{ special_groups.name }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select></li></ul>
+        </li>
+        <li>
+          <input type="submit" value="Konfigurations-Datei herunterladen">
+        </li>
+        <li>
+          Heruntergeladene Datei in OwnTracks importieren
+          <ul>
+            <li>
+              Android:
+              <ul>
+                <li>
+                  Heruntergeladene Datei antippen -> Mit OwnTracks öffnen -> Haken oben rechts
+                </li>
+                ODER, falls das nicht funktioniert:
+              <li>
+                App "OwnTracks" öffnen, Menü->Einstellungen->Konfigurationsverwaltung->Drei Punkte oben rechts -> Import -> Datei auswählen -> Haken oben rechts -> App neu starten
+              </li>
+            </ul>
+            </li>
+            <li>
+              iOS: Heruntergeladene Datei "teilen mit" "OwnTracks" (ggf. Standortzugriff erlauben)
+            </li>
+          </ul>
+        </li>
+        <li>
+          App öffnen und kontrollieren, ob funktioniert
+        </li>
+        <li>
+          <a href="https://{{ mosquitto_host }}/karte">
+            Übersichtskarte anschauen
+          </a>
+        </li>
+        <li>
+          Nach der Veranstaltung bitte die App löschen oder zumindest zurücksetzen: Ansonsten wird der eigene Standort die ganze Zeit über weiterhin geteilt und zugänglich sein.
+        </li>
+      </ol>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+[program:mosquitto]
+environment=LD_LIBRARY_PATH=%(ENV_HOME)s/lib/
+# command=mosquitto -c {{ mosquitto_main_dir }}/etc/mosquitto.conf
+# command=mosquitto -c %(ENV_HOME)s/etc/mosquitto/mosquitto.conf
+command=%(ENV_HOME)s/sbin/mosquitto -c %(ENV_HOME)s/etc/mosquitto/mosquitto.conf
+autostart=yes
+autorestart=yes
+# `startsecs` is set by Uberspace monitoring team, to prevent a broken service from looping
+startsecs=30

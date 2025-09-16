@@ -1,0 +1,81 @@
+<?php
+
+$debug = false;
+$remote = false;
+
+if($debug){
+  echo '<pre>';
+}
+
+$filename_otrc_output = "owntracks-config-{{ conventure_eventhandle }}.otrc";
+
+if(!empty($_GET['tid-group']) && empty($_GET['tid-station'])){
+  $tid=$_GET['tid-group'];
+}
+if(empty($_GET['tid-group']) && !empty($_GET['tid-station'])){
+  $tid=$_GET['tid-station'];
+}
+if(!empty($_GET['tid-special'])){
+  $tid=$_GET['tid-special'];
+}
+
+createuser($_GET['username'], $tid);
+
+// Read JSON file
+$otrcDefaultContent = file_get_contents('./config-default.otrc');
+
+//Decode JSON
+$otrc = json_decode($otrcDefaultContent,true);
+
+$otrc['tid']=$tid;
+$otrc['deviceId']=$_GET['deviceId'];
+$otrc['username']=$_GET['username'];
+$otrc['password']=$_GET['username']; // FIXME
+
+$otrcJSON = json_encode($otrc);
+
+if($debug) {
+  //Print data
+
+  print_r($otrcDefaultContent);
+  print_r($_GET);
+  print_r($otrc);
+} else {
+  header('Content-disposition: attachment; filename="'.$filename_otrc_output.'"');
+  header('Content-type: application/octet-stream');
+
+  echo($otrcJSON);
+}
+
+function createuser($username, $tid){
+  global $remote;
+  if($remote){
+    createuser_remote($username, $tid, $username);
+  } else {
+    createuser_local($username, $tid, "default");
+  }
+}
+
+function createuser_remote($username, $tid, $deviceId){
+  $url='https://{{ mosquitto_host }}/admin/createuser.php?username='.$username.'&tid='.$tid;
+  $http_auth_credentials= "username:password";
+  //echo $url;
+  //echo file_get_contents($url);
+
+  $curlSession = curl_init();
+  curl_setopt($curlSession, CURLOPT_URL, $url);
+  curl_setopt($curlSession, CURLOPT_BINARYTRANSFER, true);
+  curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($curlSession, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+  curl_setopt($curlSession, CURLOPT_USERPWD, $http_auth_credentials );
+
+  $content = curl_exec($curlSession);
+  curl_close($curlSession);
+}
+
+function createuser_local($username, $tid, $deviceId){
+  $_GET['tid']=$tid;
+  $_GET['deviceId']=$deviceId;
+  include("createuser.php");
+
+}

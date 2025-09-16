@@ -1,0 +1,30 @@
+auth_plugin {{ uberspace_spacedir }}/etc/mosquitto/conf.d/{{ mosquitto_authplugin_go_filename }}
+
+auth_opt_backends mysql
+
+
+auth_opt_mysql_host {{ mosquitto_mysql_host }}
+auth_opt_mysql_port 3306
+auth_opt_mysql_user {{ mosquitto_mysql_user }}
+auth_opt_mysql_password {{ mosquitto_mysql_password }}
+auth_opt_mysql_dbname {{ mosquitto_mysql_database }}
+auth_opt_mysql_userquery SELECT pw FROM users WHERE username = ? LIMIT 1
+auth_opt_mysql_superquery SELECT COUNT(*) FROM users WHERE username = ? AND super = 1
+auth_opt_mysql_aclquery SELECT topic FROM acls WHERE (username = ?) AND (rw & ?)
+auth_opt_mysql_allow_native_passwords true
+
+
+
+auth_opt_hasher pbkdf2
+
+auth_opt_cache false
+auth_opt_cache_type go-cache
+auth_opt_cache_reset true
+auth_opt_cache_refresh true
+auth_opt_auth_cache_seconds 30
+auth_opt_acl_cache_seconds 30
+auth_opt_auth_jitter_seconds 3
+auth_opt_acl_jitter_seconds 3
+
+auth_opt_log_level debug
+# auth_opt_log_level warn

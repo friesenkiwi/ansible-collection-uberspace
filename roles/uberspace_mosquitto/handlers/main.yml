@@ -1,0 +1,11 @@
+- name: Restart mosquitto
+  tags: supervisor
+  supervisorctl:
+    name: mosquitto
+    state: restarted
+
+- name: Restart ot-recorder
+  tags: supervisor
+  supervisorctl:
+    name: ot-recorder
+    state: restarted

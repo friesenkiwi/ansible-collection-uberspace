@@ -1,0 +1,12 @@
+cafile {{ uberspace_cafile }}
+certfile {{ uberspace_spacedir }}/etc/certificates/{{ mosquitto_host }}.crt
+keyfile {{ uberspace_spacedir }}/etc/certificates/{{ mosquitto_host }}.key
+port {{ mosquitto_port_mosquitto }}
+allow_anonymous false
+
+#connection_messages true
+#log_timestamp true
+
+listener {{ mosquitto_port_mosquitto_websockets }}
+protocol websockets 
+
