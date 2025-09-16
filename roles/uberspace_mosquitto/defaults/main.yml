@@ -10,7 +10,7 @@ mosquitto_otrecorder_user: otrecorder
 mosquitto_otrecorder_pw: "{{ lookup('password','credentials/mosquitto/' + mosquitto_otrecorder_user) }}"
 mosquitto_topic_wildcard_multilevel: "owntracks/#"
 mosquitto_topic_wildcard_explicit: "owntracks/+/+"
-mosquitto_topic_wildcard_pub: ""
+mosquitto_topic_wildcard_pub: "owntracks/%u/%d"
 mosquitto_topic_otrecorder_sub: "{{ mosquitto_topic_wildcard_multilevel }}"
 mosquitto_otrecorder_storagedir: "{{ uberspace_spacedir }}/lib/ot-recorder"
 mosquitto_otrecorder_viewsdir: "{{ uberspace_spacedir }}/etc/ot-recorder/views"
