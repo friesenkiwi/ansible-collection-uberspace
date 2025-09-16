@@ -24,7 +24,12 @@ uberspace_action_setup: false
 uberspace_session: "{{ lookup('file', uberspace_sessionfile, errors='ignore') }}"
 
 uberspace_spacedir: "{{ '/home/' + uberspace_loginname }}"
-uberspace_webroot: "{{ '/var/www/virtual/' + uberspace_loginname + '/html'}}"
+uberspace_webstore: "{{ '/var/www/virtual/' + uberspace_loginname }}"
+uberspace_webroot: "{{ uberspace_webstore + '/html'}}"
+uberspace_cafile: "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+# /etc/ssl/certs/ca-bundle.crt
+# /etc/pki/tls/certs/ca-bundle.crt
+
 
 inwx_pw: "{{ lookup('file', uberspace_credentialstore_location + 'inwx/' + inwx_user + '-pw') }}"
 inwx_ttl: 3600

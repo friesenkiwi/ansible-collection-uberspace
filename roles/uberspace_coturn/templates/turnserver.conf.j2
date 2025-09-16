@@ -469,7 +469,7 @@ cipher-list="ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH
 # certificate is not checked.
 #
 # Example:
-CA-file=/etc/pki/tls/certs/ca-bundle.crt
+CA-file={{ uberspace_cafile }}
 
 # Curve name for EC ciphers, if supported by OpenSSL
 # library (TLS and DTLS). The default value is prime256v1,

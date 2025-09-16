@@ -16,7 +16,7 @@
       login: "{{ uberspace_loginname }}"
       password: "{{ uberspace_loginpassword }}"
       submit: "login"
-    status_code: 302
+    status_code: 200
   register: loginresult
 
 - name: Store session cookie as fact

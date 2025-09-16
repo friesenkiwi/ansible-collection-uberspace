@@ -1,4 +1,5 @@
 - name: Get datasheet page
+  tags: webfacts
   delegate_to: localhost
   check_mode: false
   uri:
@@ -8,16 +9,19 @@
   register: datasheetresult
 
 - name: Set uberspace facts from dashboard
+  tags: webfacts
   set_fact:
     uberspace_ip_public_v4: "{{ parsed_ipv4address }}"
     uberspace_ip_public_v6: "{{ parsed_ipv6address }}"
     uberspace_hostname: "{{ parsed_hostname }}"
 
 - name: Show uberspace_hostname
+  tags: webfacts
   debug:
     msg: "Your uberspace name is: {{ uberspace_hostname }}"
 
 - name: Get accounting page
+  tags: webfacts
   delegate_to: localhost
   check_mode: false
   uri:
@@ -27,11 +31,13 @@
   register: accountingresult
 
 - name: Set uberspace facts from accounting
+  tags: webfacts
   set_fact:
     uberspace_balance: "{{ parsed_balance }}"
     uberspace_price_current: "{{ parsed_currentprice }}"
 
 - name: Put host keys into local known_hosts
+  tags: webfacts
   delegate_to: localhost
   vars:
     hostkey: "{{ lookup('pipe','ssh-keyscan -t ' + item + ' ' + uberspace_domain_official + ' 2>/dev/null | cut -d \" \" -f 1 --complement') }}"
@@ -121,6 +127,7 @@
     uberspace_mysqlpassword_readonly: "{{ lookup('ini', 'password section=clientreadonly file=' + uberspace_mycnffetch_destination) }}"
 
 - name: Record some facts as custom stat (set show_custom_stats = yes in ansible.cfg or ANSIBLE_SHOW_CUSTOM_STATS=yes in env)
+  tags: webfacts
   set_stats:
     per_host: true
     data:

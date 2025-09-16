@@ -154,7 +154,7 @@ ssl = {
 	-- Allow perfect forward secrecy.
 	dhparam = "{{ prosody_dhparam_path }}";
 	-- Where Uberspace (or CentOS in general) stores it's trusted CAs.
-	cafile = "/etc/pki/tls/certs/ca-bundle.crt";
+	cafile = "{{ uberspace_cafile }}";
 	-- Best ciphers for perfect forward secrecy.
 	--ciphers = "HIGH+kEDH:HIGH+kEECDH:!HIGH+DSA:!HIGH+ECDSA:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED:!AES128:!CAMELLIA128:!SHA";
   --protocol = "tlsv1+";
