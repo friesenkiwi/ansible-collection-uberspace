@@ -1,7 +1,7 @@
-conventure_eventname: Event
-conventure_eventlogo: logo.png
-conventure_eventhandle: event
-conventure_groups_mobile:
+geogame_eventname: Event
+geogame_eventlogo: logo.png
+geogame_eventhandle: event
+geogame_groups_mobile:
 - name: Supergroup 1
   groups:
   - tid: g1
@@ -10,12 +10,12 @@ conventure_groups_mobile:
   groups:
   - tid: g2
     name: Group 2
-conventure_groups_stationary: 
+geogame_groups_stationary: 
 - name: Stationen
   groups:
   - tid: s1
     name: Station 1
-conventure_groups_special:
+geogame_groups_special:
 - name: Sonderrollen
   groups:
   - tid: XX

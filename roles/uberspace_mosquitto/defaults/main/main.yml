@@ -35,7 +35,7 @@ mosquitto_otrecorder_compileconfig_adjustments:
 - key: 'TZDATADB '
   value: '{{ mosquitto_main_dir }}/ot-recorder/timezone16.bin'
 mosquitto_otfrontend_webpath: "/frontend"
-mosquitto_conventure_webpath: "/conventure"
+mosquitto_geogame_webpath: "/geogame"
 
 
 mosquitto_mysql_host: "localhost"

@@ -29,8 +29,7 @@
   copy:
     remote_src: yes
     src: "{{ mosquitto_otfrontend_install_dir }}/dist/"
-    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_otfrontend_webpath }}/"
-    force: false
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_otfrontend_webpath }}"
 
 - name: Deploy frontend config file
   tags: frontend

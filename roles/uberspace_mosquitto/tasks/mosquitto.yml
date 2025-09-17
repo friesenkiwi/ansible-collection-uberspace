@@ -45,3 +45,8 @@
   tags: ports
   set_fact:
     uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + mosquitto_ports }}"
+
+- name: Add shared libraries to LD_LIBRARY_PATH, so shell commands work
+  lineinfile:
+    path: ~/.bash_profile
+    line: 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/{{ uberspace_loginname }}/lib64/'

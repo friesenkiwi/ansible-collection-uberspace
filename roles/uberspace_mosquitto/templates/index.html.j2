@@ -7,13 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css" type="text/css">
     <title>
-      {{ conventure_eventname }}
+      {{ geogame_eventname }}
     </title>
   </head>
   <body>
-    <img src="{{ conventure_eventlogo }}" align="right">
+    <img src="{{ geogame_eventlogo }}" align="right">
     <h1>
-      {{ conventure_eventname }}
+      {{ geogame_eventname }}
     </h1>
     <form name="selectform" id="selectform" action="customizeConfig.php">
       <ol>
@@ -55,7 +55,7 @@
             <optgroup label="-- Bitte wählen --">
             <option value="">-- Bitte wählen --</option>
             </optgroup>
-            {% for supergroups in conventure_groups_mobile %}
+            {% for supergroups in geogame_groups_mobile %}
               <optgroup label="{{ supergroups.name }}">
                 {% for mobile_groups in supergroups.groups %}
                   <option value="{{ mobile_groups.tid }}">{{ mobile_groups.name }}</option>
@@ -68,7 +68,7 @@
             <optgroup label="-- Bitte wählen --">
             <option value="">-- Bitte wählen --</option>
             </optgroup>
-            {% for supergroups in conventure_groups_stationary %}
+            {% for supergroups in geogame_groups_stationary %}
               <optgroup label="{{ supergroups.name }}">
                 {% for stationary_groups in supergroups.groups %}
                   <option value="{{ stationary_groups.tid }}">{{ stationary_groups.name }}</option>
@@ -81,7 +81,7 @@
             <optgroup label="-- Bitte wählen --">
             <option value="">-- Bitte wählen --</option>
             </optgroup>
-            {% for supergroups in conventure_groups_special %}
+            {% for supergroups in geogame_groups_special %}
               <optgroup label="{{ supergroups.name }}">
                 {% for special_groups in supergroups.groups %}
                   <option value="{{ special_groups.tid }}">{{ special_groups.name }}</option>
@@ -117,7 +117,7 @@
           App öffnen und kontrollieren, ob funktioniert
         </li>
         <li>
-          <a href="https://{{ mosquitto_host }}/karte">
+          <a href="https://{{ mosquitto_host }}/frontend">
             Übersichtskarte anschauen
           </a>
         </li>

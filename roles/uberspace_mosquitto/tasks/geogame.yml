@@ -1,0 +1,27 @@
+- name: Create geogame webbpath directory
+  tags: geogame
+  file:
+    state: directory
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_geogame_webpath }}"
+
+- name: Deploy geogame files
+  tags: geogame
+  loop:
+  - index.html
+  - customizeConfig.php
+  - config-default.otrc
+  - createuser.php
+  - styles.css
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_geogame_webpath }}/{{ item }}"
+
+- name: Deploy geogame static files
+  tags: geogame
+  loop:
+  - "{{ geogame_eventlogo }}"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_geogame_webpath }}/{{ item }}"
+
+# prefix/owntracks/GAME/FACTION/user/device

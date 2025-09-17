@@ -10,6 +10,6 @@
 - name: Setup OwnTracks specifics - frontend
   tags: frontend
   include_tasks: frontend.yml
-- name: Setup conventure specifics
-  tags: conventure
-  include_tasks: conventure.yml
+- name: Setup geogame specifics
+  tags: geogame
+  include_tasks: geogame.yml
