@@ -1,0 +1,56 @@
+- name: Clone the ot-recorder source code from GitHub
+  tags: otrecorder
+  git:
+    repo: "{{ mosquitto_otrecorder_repo_url }}"
+    dest: "{{ mosquitto_otrecorder_install_dir }}"
+    force: true
+
+- name: Copy compile config file template
+  tags: otrecorder
+  copy:
+    remote_src: true
+    src: "{{ mosquitto_otrecorder_install_dir }}/config.mk.in"
+    dest: "{{ mosquitto_otrecorder_install_dir }}/config.mk"
+    force: false
+
+- name: Change specific settings in compile config file
+  tags: otrecorder
+  loop: "{{ mosquitto_otrecorder_compileconfig_adjustments }}"
+  lineinfile:
+    dest: "{{ mosquitto_otrecorder_install_dir }}/config.mk"
+    line: "{{ item.key }}= {{ item.value }}"
+    regexp: "^{{ item.key }}"
+  notify: Restart ot-recorder
+
+
+- name: Build otrecorder via make
+  tags: otrecorder
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_otrecorder_install_dir }}"
+    cmd: "make && make install"
+    creates: "{{ uberspace_spacedir }}/sbin/ot-recorder"
+  register: otrecorder_build_result
+- name: Show otrecorder build result
+  tags: otrecorder
+  debug:
+    msg: "{{ otrecorder_build_result }}"
+
+- name: Deploy otrecorder config
+  tags: otrecorder
+  template:
+    src: owntracks_recorder_config.j2
+    dest: "{{ mosquitto_otrecorder_configfilepath }}"
+
+
+- name: Deploy ot-recorder supervisord service description ini
+  tags: otrecorder
+  template:
+    src: ot-recorder.ini.j2
+    dest: "{{ uberspace_services_dir }}/ot-recorder.ini"
+  notify: Restart ot-recorder
+- name: Activate ot-recorder supervisord daemon
+  tags: otrecorder, supervisor
+  supervisorctl:
+    name: ot-recorder
+    state: present

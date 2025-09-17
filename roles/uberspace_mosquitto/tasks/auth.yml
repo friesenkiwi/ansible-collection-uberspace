@@ -1,0 +1,78 @@
+- name: Clone the mosquitto-go-auth source code from GitHub
+  git:
+    repo: "{{ mosquitto_authplugin_go_repo_url }}"
+    dest: "{{ mosquitto_authplugin_go_install_dir }}"
+    force: true
+# - name: Build mosquitto-go-auth
+#   make:
+#     chdir: "{{ mosquitto_authplugin_go_install_dir }}"
+#     creates: "{{ mosquitto_authplugin_go_install_dir }}/{{ mosquitto_authplugin_go_filename }}"
+#   notify: Restart mosquitto
+- name: Build mosquitto-go-auth via make
+  tags: authplugin
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_authplugin_go_install_dir }}"
+    cmd: "source ~/.bash_profile && make"
+    creates: "{{ mosquitto_authplugin_go_install_dir }}/{{ mosquitto_authplugin_go_filename }}"
+  notify: Restart mosquitto
+
+- name: Link mosquitto-go-auth into config dir
+  tags: authplugin
+  file:
+    state: link
+    src: "{{ mosquitto_authplugin_go_install_dir }}/{{ mosquitto_authplugin_go_filename }}"
+    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/{{ mosquitto_authplugin_go_filename }}"
+  notify: Restart mosquitto
+
+# - name: Clone the jpmens mosquitto-auth-plug source code from GitHub
+#  tags: authplugin, classic
+#  git:
+#    repo: "{{ mosquitto_authplugin_classic_repo_url }}"
+#    dest: "{{ mosquitto_authplugin_classic_install_dir }}"
+#    force: true
+
+# sourcecodechange
+# compile
+
+- name: Link mosquitto-auth-plug into config dir
+  tags: authplugin
+  file:
+    state: link
+    src: "{{ mosquitto_authplugin_classic_install_dir }}/{{ mosquitto_authplugin_classic_filename }}"
+    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/{{ mosquitto_authplugin_classic_filename }}"
+  notify: Restart mosquitto
+
+
+
+- name: Copy database dump file
+  copy:
+    src: owntracks_db.sql
+    dest: "{{ mosquitto_main_dir }}"
+- name: Create owntracks MySQL db
+  tags: stillchanged
+  mysql_db:
+    name: "{{ mosquitto_mysql_database }}"
+    collation: utf8_general_ci
+    encoding: utf8
+    state: import
+    target: "{{ mosquitto_main_dir }}/owntracks_db.sql"
+
+- name: Generate pw
+  tags: stillchanged
+  vars: 
+    user_password: "{{ mosquitto_otrecorder_pw }}"
+  include_tasks:
+    file: pwgen.yml
+    apply:
+      tags: stillchanged
+- name: Add user to DB
+  tags: stillchanged
+  mysql_query:
+    login_db: "{{ mosquitto_mysql_database }}"
+    query:
+    - "INSERT INTO users (username, pw) VALUES('{{ mosquitto_otrecorder_user }}', '{{ generated_pw_hash.stdout }}') ON DUPLICATE KEY UPDATE pw='{{ generated_pw_hash.stdout }}';"
+#    - "INSERT INTO acl (username, topic, rw) VALUES ('{{ mosquitto_otrecorder_user }}', '{{ mosquitto_topic_otrecorder_sub }}', 1)  ON DUPLICATE KEY UPDATE topic=', 1);"
+    single_transaction: true
+
+    # ot-recorder auth => NO AUTH!!

@@ -1,0 +1,47 @@
+- name: Deploy supervisord service description ini
+  template:
+    src: mosquitto.ini.j2
+    dest: "{{ uberspace_services_dir }}/mosquitto.ini"
+  notify: Restart mosquitto
+- name: Activate supervisord daemon
+  tags: supervisor
+  supervisorctl:
+    name: mosquitto
+    state: present
+
+- name: Link default config
+  tags: config
+  file:
+    state: link
+    src: /etc/mosquitto/mosquitto.conf
+    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/10_default.conf"
+  notify: Restart mosquitto
+- name: Deploy main config file
+  tags: config
+  template:
+    src: mosquitto.conf.j2
+    dest: "{{ uberspace_spacedir }}/etc/mosquitto/mosquitto.conf"
+  notify: Restart mosquitto
+- name: Deploy custom config file
+  tags: config
+  template:
+    src: 20_custom.conf.j2
+    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/20_custom.conf"
+  notify: Restart mosquitto
+- name: Deploy go-auth config file
+  tags: authplugin,config
+  template:
+    src: 30_go-auth.conf.j2
+    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/30_go-auth.conf"
+  notify: Restart mosquitto
+
+- name: Start supervisord daemon
+  tags: supervisor
+  supervisorctl:
+    name: mosquitto
+    state: started
+
+- name: Add mosquitto ports to the uberspace requested ones
+  tags: ports
+  set_fact:
+    uberspace_ports_goal: "{{ uberspace_ports_goal | default([]) + mosquitto_ports }}"

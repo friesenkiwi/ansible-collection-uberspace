@@ -1,0 +1,27 @@
+- name: Create conventure webbpath directory
+  tags: conventure
+  file:
+    state: directory
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_conventure_webpath }}"
+
+- name: Deploy conventure files
+  tags: conventure
+  loop:
+  - index.html
+  - customizeConfig.php
+  - config-default.otrc
+  - createuser.php
+  - styles.css
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_conventure_webpath }}/{{ item }}"
+
+- name: Deploy conventure static files
+  tags: conventure
+  loop:
+  - "{{ conventure_eventlogo }}"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_conventure_webpath }}/{{ item }}"
+
+# prefix/owntracks/GAME/FACTION/user/device

@@ -1,0 +1,50 @@
+- name: Clone the frontend source code from GitHub
+  tags: frontend
+  git:
+    repo: "{{ mosquitto_otfrontend_repo_url }}"
+    dest: "{{ mosquitto_otfrontend_install_dir }}"
+    force: true
+
+- name: Build frontend via yarn
+  tags: frontend
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_otfrontend_install_dir }}"
+    cmd: "yarn install && yarn build"
+    creates: "{{ mosquitto_otfrontend_install_dir }}/dist"
+
+- name: Add otfrontend as web backend to the uberspace requested ones
+  tags: frontend
+  set_fact:
+    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + mosquitto_otrecorder_webbackends }}"
+
+- name: Create frontend config directory
+  tags: frontend
+  file:
+    state: directory
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_otfrontend_webpath }}/config"
+
+- name: Copy frontend into webroot
+  tags: frontend
+  copy:
+    remote_src: yes
+    src: "{{ mosquitto_otfrontend_install_dir }}/dist/"
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_otfrontend_webpath }}/"
+    force: false
+
+- name: Deploy frontend config file
+  tags: frontend
+  template:
+    src: "frontend-config.js.j2"
+    dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_otfrontend_webpath }}/config/config.js"
+
+
+
+
+
+# - name: Link frontend into webroot
+#   tags: frontend
+#   file:
+#     state: link
+#     src: "{{ mosquitto_otfrontend_install_dir }}/dist"
+#     dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}/frontend"

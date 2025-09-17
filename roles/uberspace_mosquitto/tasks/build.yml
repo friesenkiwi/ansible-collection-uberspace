@@ -1,0 +1,105 @@
+- name: Clone the cmake source code from GitHub
+  tags: cmake
+  git:
+    repo: "{{ mosquitto_cmake_repo_url }}"
+    dest: "{{ mosquitto_cmake_install_dir }}"
+    version: "{{ mosquitto_cmake_install_version }}"
+    # specific version, because CJSON needs cmake>3 and <4
+    force: true
+
+- name: Build cmake via make
+  tags: cmake
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_cmake_install_dir }}"
+    cmd: "source ~mosquitto/.bash_profile && ./bootstrap --prefix=${HOME} && make && make install"
+    creates: "{{ uberspace_spacedir }}/bin/cmake"
+  register: cmake_build_result
+- name: Show cmake build result
+  tags: cmake
+  debug:
+    msg: "{{ cmake_build_result }}"
+
+
+- name: Clone the cjson source code from GitHub
+  tags: cjson
+  git:
+    repo: "{{ mosquitto_cjson_repo_url }}"
+    dest: "{{ mosquitto_cjson_install_dir }}"
+    force: true
+
+- name: Create cjson build directory
+  tags: cjson
+  file:
+    path: "{{ mosquitto_cjson_install_dir }}/{{ mosquitto_build_subdir }}"
+    state: directory
+
+- name: Build cjson via cmake / make
+  tags: cjson
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_cjson_install_dir }}/{{ mosquitto_build_subdir }}"
+    cmd: "source ~/.bash_profile && cmake -DCMAKE_INSTALL_PREFIX:PATH=${HOME} .. && make && make install"
+    creates: "{{ uberspace_spacedir }}/lib64/libcjson.so"
+  register: cjson_build_result
+
+- name: Show cjson build result
+  tags: cjson
+  debug:
+    msg: "{{ cjson_build_result }}"
+
+- name: Clone the libwebsockets source code from GitHub
+  tags: websockets
+  git:
+    repo: "{{ mosquitto_libwebsockets_repo_url }}"
+    dest: "{{ mosquitto_libwebsockets_install_dir }}"
+    version: "{{ mosquitto_libwebsockets_version }}"
+    force: true
+
+- name: Create libwebsockets build directory
+  tags: websockets
+  file:
+    path: "{{ mosquitto_libwebsockets_install_dir }}/{{ mosquitto_build_subdir }}"
+    state: directory
+    
+- name: Build libwebsockets via cmake / make
+  tags: websockets
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_libwebsockets_install_dir }}/{{ mosquitto_build_subdir }}"
+    cmd: "source ~/.bash_profile && cmake -DCMAKE_INSTALL_PREFIX:PATH=${HOME} -DLWS_WITH_EXTERNAL_POLL=ON .. && make && make install"
+    creates: "{{ uberspace_spacedir }}/lib/libwebsockets.so"
+  register: libwebsockets_build_result
+
+- name: Show libwebsockets build result
+  tags: websockets
+  debug:
+    msg: "{{ libwebsockets_build_result }}"
+
+
+- name: Clone the mosquitto source code from GitHub
+  tags: build_mosquitto
+  git:
+    repo: "{{ mosquitto_mosquitto_repo_url }}"
+    dest: "{{ mosquitto_mosquitto_install_dir }}"
+    force: true
+
+- name: Create mosquitto build directory
+  tags: build_mosquitto
+  file:
+    path: "{{ mosquitto_mosquitto_install_dir }}/{{ mosquitto_build_subdir }}"
+    state: directory
+
+- name: Build mosquitto via cmake / make
+  tags: build_mosquitto
+  shell:
+    executable: /bin/bash
+    chdir: "{{ mosquitto_mosquitto_install_dir }}/{{ mosquitto_build_subdir }}"
+    cmd: "source ~/.bash_profile && cmake -DCMAKE_INSTALL_PREFIX:PATH=${HOME} -DWITH_WEBSOCKETS=yes .. && make && make install"
+    creates: "{{ uberspace_spacedir }}/sbin/mosquitto"
+  register: mosquitto_build_result
+
+- name: Show mosquitto build result
+  tags: build_mosquitto
+  debug:
+    msg: "{{ mosquitto_build_result }}"
