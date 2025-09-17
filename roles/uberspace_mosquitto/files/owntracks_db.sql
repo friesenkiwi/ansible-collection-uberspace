@@ -1,4 +1,4 @@
-CREATE TABLE `users` (
+CREATE TABLE  IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `creator_hash` varchar(100) DEFAULT NULL,
   `username` varchar(255) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_unique` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
-CREATE TABLE `acls` (
+CREATE TABLE  IF NOT EXISTS `acls` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `topic` varchar(255) NOT NULL,

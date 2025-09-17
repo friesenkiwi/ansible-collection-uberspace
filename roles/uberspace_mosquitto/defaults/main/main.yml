@@ -1,6 +1,9 @@
 mosquitto_project_name: "mosquitto"
 mosquitto_main_dir: "{{ uberspace_projectsdir | realpath }}/{{ mosquitto_project_name }}"
-mosquitto_host: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+mosquitto_domain: "{{ uberspace_servicedomain }}.{{ uberspace_basedomain }}"
+mosquitto_host: "{{ mosquitto_domain }}"
+uberspace_domains_goal:
+- "{{ mosquitto_domain }}"
 mosquitto_authplugin_go_filename: "go-auth.so"
 mosquitto_authplugin_go_pwgen_command: "./pw -p {{ user_password }}"
 mosquitto_authplugin_classic_filename: "auth-plug.so"

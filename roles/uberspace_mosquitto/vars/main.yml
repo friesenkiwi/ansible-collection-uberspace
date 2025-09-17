@@ -7,6 +7,7 @@ mosquitto_cjson_install_dir: "{{ mosquitto_main_dir }}/src/cjson"
 
 mosquitto_libwebsockets_repo_url: https://github.com/warmcat/libwebsockets.git
 mosquitto_libwebsockets_install_dir: "{{ mosquitto_main_dir }}/src/libwebsockets"
+mosquitto_libwebsockets_version: v4.3.5
 
 mosquitto_mosquitto_repo_url: https://github.com/eclipse-mosquitto/mosquitto.git
 mosquitto_mosquitto_install_dir: "{{ mosquitto_main_dir }}/src/mosquitto"
