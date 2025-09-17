@@ -13,11 +13,11 @@ $mosquitto_topic = '{{ mosquitto_topic_wildcard_multilevel }}';
 static $mosquitto_acl_rw_default = '2';
 
 $user_password_hash = simplePassHash($_GET['username']);
+$creator_hash = hash('sha256', serialize(getallheaders()));
 
-insert_user($mysqli, $_GET['username'], $_GET['tid'], $user_password_hash, $mosquitto_topic, $mosquitto_acl_rw_default);
+insert_user($mysqli, $_GET['username'], $_GET['tid'], $user_password_hash, $mosquitto_topic, $mosquitto_acl_rw_default, $creator_hash);
 
-function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission){
-    $creator_hash = hash('sha256', serialize(getallheaders()));
+function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission, $creator_hash){
 
     if ($mysqli->connect_errno) {
         echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -36,17 +36,24 @@ function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $per
         if (!$stmt->bind_param("ssss",$creator_hash , $username, $tid, $password)) {
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
-
-        if (!$stmt->execute()) {
-            echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+        try {
+          if (!$stmt->execute()) {
+              echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+          }
+        } catch(mysqli_sql_exception $exception){
+          if($exception->getSqlState() == "23000"){ // ER_DUP_KEY Duplicate entry '' for key 'users_unique'
+            if(!update_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission, $creator_hash)){
+              print "Username $username already in use. Please choose a different one.";              
+            }
+          } else {
+            throw $exception;
+          }
         }
-
-
-        if (!($stmt = $mysqli->prepare("INSERT INTO acls(username, topic, rw) VALUES (?,?,?)"))) {
+        if (!($stmt = $mysqli->prepare("INSERT INTO acls(username, topic, rw) VALUES (?,?,?) ON DUPLICATE KEY UPDATE rw=?"))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         }
 
-        if (!$stmt->bind_param("sss", $username, $mosquitto_topic, $permission)) {
+        if (!$stmt->bind_param("ssss", $username, $mosquitto_topic, $permission, $permission)) {
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
 
@@ -58,13 +65,36 @@ function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $per
         $mysqli->commit();
 
     } catch(mysqli_sql_exception $exception){
-        $mysqli->rollback();
-
-        throw $exception;
+        if($exception->getSqlState() == "23000"){ // ER_DUP_KEY Duplicate entry '' for key 'users_unique'
+          $mysqli->rollback();
+          print "Username $username already in use. Please choose a different one.";
+          return false;
+        } else {
+          $mysqli->rollback();
+          print_r($exception);
+          throw $exception;
+          return false;
+        }
     }
 
     $stmt->close();
+    return true;
+}
 
+
+function update_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission, $creator_hash){
+        // Prepared statement, stage 1: prepare
+        if (!($stmt = $mysqli->prepare("UPDATE users SET tid=?, pw=? WHERE creator_hash=? AND username=?"))) {
+            echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+        }
+
+        if (!$stmt->bind_param("ssss", $tid, $password, $creator_hash , $username)) {
+            echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        if (!$stmt->execute()) {
+            echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+        return $mysqli->affected_rows==1;
 }
 
 //echo "done";
