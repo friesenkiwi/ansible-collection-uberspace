@@ -8,7 +8,7 @@
 - name: Login to get session
   delegate_to: localhost
   uri:
-    url: "{{ uberspace_urls.login }}"
+    url: "{{ uberspace_urls.loginvalidate }}"
     method: POST
     body_format: form-urlencoded
     body:
@@ -16,7 +16,7 @@
       login: "{{ uberspace_loginname }}"
       password: "{{ uberspace_loginpassword }}"
       submit: "login"
-    status_code: 200
+    status_code: 302
   register: loginresult
 
 - name: Store session cookie as fact

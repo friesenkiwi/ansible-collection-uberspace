@@ -1,5 +1,5 @@
 - name: Get accounting page for CSRF token
-  check_mode: true
+#  check_mode: true
   delegate_to: localhost
   uri:
     url: "{{ uberspace_urls.accounting }}"
@@ -8,21 +8,31 @@
     follow_redirects: none
   register: formresult
 
-# - name: Show current price
-#   debug:
-#     msg: "{{ uberspace_price_current }}"
-#
-# - name: Show uberspace_price_goal
-#   debug:
-#     msg: "{{ uberspace_price_goal }}"
-#
-# - name: Show uberspace_price_crossfinanced_limit
-#   debug:
-#     msg: "{{ uberspace_price_crossfinanced_limit }}"
-#
-# - name: Show uberspace_price_crossfinanced_check
-#   debug:
-#     msg: "{{ uberspace_price_crossfinanced_check }}"
+- name:
+  vars:
+    accountingresult: "{{ formresult }}"
+  set_fact:
+    uberspace_balance: "{{ parsed_balance }}"
+    uberspace_price_current: "{{ parsed_currentprice }}"
+
+#- name: Show accountingresult
+#  debug:
+#    msg: "{{ accountingresult }}"
+
+- name: Show current price
+  debug:
+    msg: "{{ uberspace_price_current }}"
+- name: Show uberspace_price_goal
+  debug:
+    msg: "{{ uberspace_price_goal }}"
+
+- name: Show uberspace_price_crossfinanced_limit
+  debug:
+    msg: "{{ uberspace_price_crossfinanced_limit }}"
+
+- name: Show uberspace_price_crossfinanced_check
+  debug:
+    msg: "{{ uberspace_price_crossfinanced_check }}"
 
 - name: Set price if different
   delegate_to: localhost

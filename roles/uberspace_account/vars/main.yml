@@ -11,7 +11,7 @@ uberspace_html_currentprice: '<input type=\"text\" id=\"price\" name=\"price\" v
 uberspace_url_main: "https://dashboard.uberspace.de/"
 uberspace_url_dashboard: "{{ uberspace_url_main }}dashboard/"
 uberspace_price_crossfinanced_limit: 5
-uberspace_price_crossfinanced_check: "{{ (uberspace_price_goal >= uberspace_price_crossfinanced_limit) or ((uberspace_price_goal < uberspace_price_crossfinanced_limit) and uberspace_price_crossfinanced_request) }}"
+uberspace_price_crossfinanced_check: "{{ (uberspace_price_goal >= uberspace_price_crossfinanced_limit) or ((uberspace_price_goal < uberspace_price_crossfinanced_limit) and uberspace_price_crossfinanced_request | bool) }}"
 
 uberspace_domain_short_official: uber.space
 uberspace_domain_official: "{{ uberspace_loginname }}.{{ uberspace_domain_short_official }}"
@@ -25,6 +25,7 @@ uberspace_urls:
   register: "{{ uberspace_url_main }}register/check_name?login={{ uberspace_loginname }}&AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
   create: "{{ uberspace_url_main }}register/create"
   login: "{{ uberspace_url_main }}login"
+  loginvalidate: "{{ uberspace_url_main }}login/validate"
   check: "{{ uberspace_url_dashboard }}ajax_state?AjaxRequestUniqueId={{ lookup('pipe','date +%s%5N') }}"
   firstboot: "{{ uberspace_url_dashboard }}firstboot"
   authentication: "{{ uberspace_url_dashboard }}authentication"
