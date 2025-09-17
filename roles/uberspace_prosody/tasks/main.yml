@@ -23,6 +23,7 @@
   - luasocket
   - luafilesystem
   - luasec
+  - luaunbound
   command:
     cmd: "luarocks install {{ item }} --local"
     creates: "~/.luarocks/lib64/luarocks/rocks/{{ item }}"
