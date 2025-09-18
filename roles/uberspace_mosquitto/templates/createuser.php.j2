@@ -6,34 +6,33 @@ $mysql_password = "{{ mosquitto_mysql_password }}";
 $mysql_database = "{{ mosquitto_mysql_database }}";
 $mysqli = new mysqli($mysql_host, $mysql_user, $mysql_password, $mysql_database);
 
+define("MOSQUITTO_AUTH_READ",0b1);
+define("MOSQUITTO_AUTH_WRITE",0b10);
+define("MOSQUITTO_AUTH_SUBSCRIBE",0b100);
 
+$mosquitto_topics = [['topic' => '{{ mosquitto_topic_wildcard_multilevel }}', 'permission' => MOSQUITTO_AUTH_SUBSCRIBE],['topic' => '{{ mosquitto_topic_wildcard_multilevel_userspecific }}', 'permission' => MOSQUITTO_AUTH_READ | MOSQUITTO_AUTH_WRITE]];
 
-$mosquitto_topic = '{{ mosquitto_topic_wildcard_multilevel }}';
+s$userPasswordHash = passwordHash($_GET['username']);
+$creatorClientHash = hash('sha256', serialize(getallheaders()));
 
-static $mosquitto_acl_rw_default = '2';
+insert_user($mysqli, $_GET['username'], $_GET['tid'], $userPasswordHash, $mosquitto_topics, $creatorClientHash);
 
-$user_password_hash = simplePassHash($_GET['username']);
-$creator_hash = hash('sha256', serialize(getallheaders()));
-
-insert_user($mysqli, $_GET['username'], $_GET['tid'], $user_password_hash, $mosquitto_topic, $mosquitto_acl_rw_default, $creator_hash);
-
-function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission, $creator_hash){
+function insert_user($mysqli, $username, $tid, $userPasswordHash, $mosquitto_topics, $creatorClientHash){
 
     if ($mysqli->connect_errno) {
         echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
     }
-
 
     try {
         /* Transaktion starten */
         $mysqli->begin_transaction();
 
         // Prepared statement, stage 1: prepare
-        if (!($stmt = $mysqli->prepare("INSERT INTO users(creator_hash, username, tid, pw) VALUES (?, ?,?,?)"))) {
+        if (!($stmt = $mysqli->prepare("INSERT INTO users(creator_hash, username, tid, pw) VALUES (?, ?, ?, ?)"))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         }
 
-        if (!$stmt->bind_param("ssss",$creator_hash , $username, $tid, $password)) {
+        if (!$stmt->bind_param("ssss",$creatorClientHash , $username, $tid, $userPasswordHash)) {
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
         try {
@@ -42,25 +41,28 @@ function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $per
           }
         } catch(mysqli_sql_exception $exception){
           if($exception->getSqlState() == "23000"){ // ER_DUP_KEY Duplicate entry '' for key 'users_unique'
-            if(!update_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission, $creator_hash)){
+            if(!update_user($mysqli, $username, $tid, $userPasswordHash, $creatorClientHash)){
               print "Username $username already in use. Please choose a different one.";              
             }
           } else {
             throw $exception;
           }
         }
-        if (!($stmt = $mysqli->prepare("INSERT INTO acls(username, topic, rw) VALUES (?,?,?) ON DUPLICATE KEY UPDATE rw=?"))) {
+
+        foreach( $mosquitto_topics as $CUR_topic){
+
+        if (!($stmt = $mysqli->prepare("INSERT INTO acls(username, topic, rw) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE rw = ?"))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         }
 
-        if (!$stmt->bind_param("ssss", $username, $mosquitto_topic, $permission, $permission)) {
+        if (!$stmt->bind_param("ssss", $username, $CUR_topic['topic'], $CUR_topic['permission'], $CUR_topic['permission'])) {
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
 
         if (!$stmt->execute()) {
             echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
         }
-
+        }
         /* Wenn der Code bis hierher fehlerfrei ist, die Daten in der Datenbank bestätigen */
         $mysqli->commit();
 
@@ -82,13 +84,13 @@ function insert_user($mysqli, $username, $tid, $password, $mosquitto_topic, $per
 }
 
 
-function update_user($mysqli, $username, $tid, $password, $mosquitto_topic, $permission, $creator_hash){
+function update_user($mysqli, $username, $tid, $userPasswordHash, $creatorClientHash){
         // Prepared statement, stage 1: prepare
         if (!($stmt = $mysqli->prepare("UPDATE users SET tid=?, pw=? WHERE creator_hash=? AND username=?"))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         }
 
-        if (!$stmt->bind_param("ssss", $tid, $password, $creator_hash , $username)) {
+        if (!$stmt->bind_param("ssss", $tid, $userPasswordHash, $creatorClientHash , $username)) {
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
         if (!$stmt->execute()) {
@@ -97,78 +99,33 @@ function update_user($mysqli, $username, $tid, $password, $mosquitto_topic, $per
         return $mysqli->affected_rows==1;
 }
 
-//echo "done";
+function passwordHash($password){
+  $keyDerivationFunction = "PBKDF2";
+  $hashAlgorithm = "sha512";
+  $saltSize = 16;
+  $salt = random_bytes($saltSize);
+  $saltBase64Encoded = base64_encode($salt);
+  $iterations = 100000;
+  $keyLength = 64;
+  $binaryOutput = true;
+  $passwordHashStringSeparator = '$';
 
-function simplePassHash($pass){
-//  $size = mcrypt_get_iv_size(MCRYPT_CAST_256, MCRYPT_MODE_CFB);
-//  $salt = mcrypt_create_iv(16, MCRYPT_DEV_URANDOM);
+//  $password = test;
+//  $saltBase64Encoded = "KZkuK3gbQywDRDDuNFlPfw==";
+//  $salt = base64_decode($saltBase64Encoded);
+//  $compareString='PBKDF2$sha512$100000$KZkuK3gbQywDRDDuNFlPfw==$qiTLzAo3QNpaIvBmEraoXU5ZgP8RnaB1irCPSxT5OYzw69iKTny0SCEQwHYUpxuMnjkvffkjIs0YhdY683VxsA==';
 
-//$iterations = 901;
+  $passwordHash = hash_pbkdf2($hashAlgorithm, $password, $salt, $iterations , $keyLength , $binaryOutput);
 
-//  $passHash = pbkdf2('SHA512', $pass, $salt, 8192, 256) ;
-//  $passHash = hash_pbkdf2(sha256, $pass, $salt, $iterations , 24 , true);
-//  $passHash = 'PBKDF2$sha256$'.$iterations.'$'.$salt.'$'.base64_encode($passHash);
-//  $passHash = "sdfsd";
+  $passwordHashBase64Encoded = base64_encode($passwordHash);
 
+  $passwordHashStringArray[] = $keyDerivationFunction;
+  $passwordHashStringArray[] = $hashAlgorithm;
+  $passwordHashStringArray[] = $iterations;
+  $passwordHashStringArray[] = $saltBase64Encoded;
+  $passwordHashStringArray[] = $passwordHashBase64Encoded;
+  $passwordHashString = implode($passwordHashStringSeparator, $passwordHashStringArray);
 
-// see https://www.php.net/manual/en/function.hash-pbkdf2.php and https://github.com/iegomez/mosquitto-go-auth?tab=readme-ov-file#hashing
+  return $passwordHashString;
 
-    $shellCmd='{{ mosquitto_authplugin_go_install_dir }}/pw -p '.escapeshellcmd($pass);
-
-//    $shellCmd='mosquitto-auth-plug/np -p '.escapeshellcmd($pass);
-//    echo $shellCmd;
-
-    $passHash=trim(shell_exec ($shellCmd));
-
-//    echo "    ";
-//    echo $passHash;
-
-  return $passHash;
-}
-
-
-
-/*
- * PBKDF2 key derivation function as defined by RSA's PKCS #5: https://www.ietf.org/rfc/rfc2898.txt
- * $algorithm - The hash algorithm to use. Recommended: SHA256
- * $password - The password.
- * $salt - A salt that is unique to the password.
- * $count - Iteration count. Higher is better, but slower. Recommended: At least 1000.
- * $key_length - The length of the derived key in bytes.
- * $raw_output - If true, the key is returned in raw binary format. Hex encoded otherwise.
- * Returns: A $key_length-byte key derived from the password and salt.
- *
- * Test vectors can be found here: https://www.ietf.org/rfc/rfc6070.txt
- *
- * This implementation of PBKDF2 was originally created by https://defuse.ca
- * With improvements by http://www.variations-of-shadow.com
-*/
-
-function pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false){
-    $algorithm = strtolower($algorithm);
-    if(!in_array($algorithm, hash_algos(), true))
-        die('PBKDF2 ERROR: Invalid hash algorithm.');
-    if($count <= 0 || $key_length <= 0)
-        die('PBKDF2 ERROR: Invalid parameters.');
-
-    $hash_length = strlen(hash($algorithm, "", true));
-    $block_count = ceil($key_length / $hash_length);
-
-    $output = "";
-    for($i = 1; $i <= $block_count; $i++) {
-        // $i encoded as 4 bytes, big endian.
-        $last = $salt . pack("N", $i);
-        // first iteration
-        $last = $xorsum = hash_hmac($algorithm, $last, $password, true);
-        // perform the other $count - 1 iterations
-        for ($j = 1; $j < $count; $j++) {
-            $xorsum ^= ($last = hash_hmac($algorithm, $last, $password, true));
-        }
-        $output .= $xorsum;
-    }
-
-    if($raw_output)
-        return substr($output, 0, $key_length);
-    else
-        return bin2hex(substr($output, 0, $key_length));
 }
