@@ -19,7 +19,7 @@ if(!empty($_GET['tid-special'])){
   $tid=$_GET['tid-special'];
 }
 
-createuser($_GET['username'], $tid);
+$password=createuser($_GET['username'], $tid);
 
 // Read JSON file
 $otrcDefaultContent = file_get_contents('./config-default.otrc');
@@ -30,7 +30,7 @@ $otrc = json_decode($otrcDefaultContent,true);
 $otrc['tid']=$tid;
 $otrc['deviceId']=$_GET['deviceId'];
 $otrc['username']=$_GET['username'];
-$otrc['password']=$_GET['username']; // FIXME
+$otrc['password']=$password;
 
 $otrcJSON = json_encode($otrc);
 
@@ -52,7 +52,7 @@ function createuser($username, $tid){
   if($remote){
     createuser_remote($username, $tid, $username);
   } else {
-    createuser_local($username, $tid, "default");
+    return createuser_local($username, $tid, "default");
   }
 }
 
@@ -74,8 +74,10 @@ function createuser_remote($username, $tid, $deviceId){
 }
 
 function createuser_local($username, $tid, $deviceId){
-  $_GET['tid']=$tid;
-  $_GET['deviceId']=$deviceId;
   include("createuser.php");
 
+  $password=generatePassword(15);
+  insert_user($username, $tid, $password);
+  
+  return $password;
 }

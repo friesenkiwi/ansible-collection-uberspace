@@ -1,23 +1,69 @@
 <?php
 
-$mysql_host = "{{ mosquitto_mysql_host }}";
-$mysql_user = "{{ mosquitto_mysql_user }}";
-$mysql_password = "{{ mosquitto_mysql_password }}";
-$mysql_database = "{{ mosquitto_mysql_database }}";
-$mysqli = new mysqli($mysql_host, $mysql_user, $mysql_password, $mysql_database);
-
 define("MOSQUITTO_AUTH_READ",0b1);
 define("MOSQUITTO_AUTH_WRITE",0b10);
 define("MOSQUITTO_AUTH_SUBSCRIBE",0b100);
 
-$mosquitto_topics = [['topic' => '{{ mosquitto_topic_wildcard_multilevel }}', 'permission' => MOSQUITTO_AUTH_SUBSCRIBE],['topic' => '{{ mosquitto_topic_wildcard_multilevel_userspecific }}', 'permission' => MOSQUITTO_AUTH_READ | MOSQUITTO_AUTH_WRITE]];
+class MariaDBConnection{
+  private static $mysqli;
 
-$userPasswordHash = passwordHash($_GET['username']);
-$creatorClientHash = hash('sha256', serialize(getallheaders()));
+  public static function getMysqli(){
+    if(self::$mysqli==null){
+      $mysql_host = "{{ mosquitto_mysql_host }}";
+      $mysql_user = "{{ mosquitto_mysql_user }}";
+      $mysql_password = "{{ mosquitto_mysql_password }}";
+      $mysql_database = "{{ mosquitto_mysql_database }}";
+      self::$mysqli = new mysqli($mysql_host, $mysql_user, $mysql_password, $mysql_database);
+    }
+    return self::$mysqli;
+  }
+}
 
-insert_user($mysqli, $_GET['username'], $_GET['tid'], $userPasswordHash, $mosquitto_topics, $creatorClientHash);
 
-function insert_user($mysqli, $username, $tid, $userPasswordHash, $mosquitto_topics, $creatorClientHash){
+
+function getMosquittoTopics(){
+  $mosquitto_topics = [['topic' => '{{ mosquitto_topic_wildcard_multilevel }}', 'permission' => MOSQUITTO_AUTH_SUBSCRIBE],['topic' => '{{ mosquitto_topic_wildcard_multilevel_userspecific }}', 'permission' => MOSQUITTO_AUTH_READ | MOSQUITTO_AUTH_WRITE]];
+  return $mosquitto_topics;
+}
+
+function getCreatorClientHash(){
+  $creatorClientHash = hash('sha256', serialize(getallheaders()));
+  return $creatorClientHash;
+}
+
+/**
+ * Generate a random string, using a cryptographically secure 
+ * pseudorandom number generator (random_int)
+ * 
+ * For PHP 7, random_int is a PHP core function
+ * For PHP 5.x, depends on https://github.com/paragonie/random_compat
+ * 
+ * @param int $length      How many characters do we want?
+ * @param string $keyspace A string of all possible characters
+ *                         to select from
+ * @return string
+ * https://stackoverflow.com/posts/31284266/revisions
+ */
+function generatePassword($length, $keyspace = '-!§()=?{[]}0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+    $password = '';
+    $max = mb_strlen($keyspace, '8bit') - 1;
+    if ($max < 1) {
+        throw new Exception('$keyspace must be at least two characters long');
+    }
+    for ($i = 0; $i < $length; ++$i) {
+        $password .= $keyspace[random_int(0, $max)];
+    }
+    return $password;
+}
+
+
+
+
+function insert_user($username, $tid, #[\SensitiveParameter] string $password){
+    $userPasswordHash = passwordHash($password);
+
+    $mysqli = MariaDBConnection::getMysqli();
+    $creatorClientHash = getCreatorClientHash();
 
     if ($mysqli->connect_errno) {
         echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -41,13 +87,15 @@ function insert_user($mysqli, $username, $tid, $userPasswordHash, $mosquitto_top
           }
         } catch(mysqli_sql_exception $exception){
           if($exception->getSqlState() == "23000"){ // ER_DUP_KEY Duplicate entry '' for key 'users_unique'
-            if(!update_user($mysqli, $username, $tid, $userPasswordHash, $creatorClientHash)){
+            if(!update_user($username, $tid, $password, $creatorClientHash)){
               print "Username $username already in use. Please choose a different one.";              
             }
           } else {
             throw $exception;
           }
         }
+
+        $mosquitto_topics = getMosquittoTopics();
 
         foreach( $mosquitto_topics as $CUR_topic){
 
@@ -84,7 +132,12 @@ function insert_user($mysqli, $username, $tid, $userPasswordHash, $mosquitto_top
 }
 
 
-function update_user($mysqli, $username, $tid, $userPasswordHash, $creatorClientHash){
+function update_user($username, $tid, #[\SensitiveParameter] string $password){
+    $userPasswordHash = passwordHash($password);
+
+        $mysqli = MariaDBConnection::getMysqli();
+        $creatorClientHash=getCreatorClientHash();
+
         // Prepared statement, stage 1: prepare
         if (!($stmt = $mysqli->prepare("UPDATE users SET tid=?, pw=? WHERE creator_hash=? AND username=?"))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
@@ -99,7 +152,7 @@ function update_user($mysqli, $username, $tid, $userPasswordHash, $creatorClient
         return $mysqli->affected_rows==1;
 }
 
-function passwordHash($password){
+function passwordHash(#[\SensitiveParameter] string $password){
   $keyDerivationFunction = "PBKDF2";
   $hashAlgorithm = "sha512";
   $saltSize = 16;
@@ -127,5 +180,4 @@ function passwordHash($password){
   $passwordHashString = implode($passwordHashStringSeparator, $passwordHashStringArray);
 
   return $passwordHashString;
-
 }
