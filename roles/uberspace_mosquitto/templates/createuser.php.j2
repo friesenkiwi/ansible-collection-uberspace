@@ -12,7 +12,7 @@ define("MOSQUITTO_AUTH_SUBSCRIBE",0b100);
 
 $mosquitto_topics = [['topic' => '{{ mosquitto_topic_wildcard_multilevel }}', 'permission' => MOSQUITTO_AUTH_SUBSCRIBE],['topic' => '{{ mosquitto_topic_wildcard_multilevel_userspecific }}', 'permission' => MOSQUITTO_AUTH_READ | MOSQUITTO_AUTH_WRITE]];
 
-s$userPasswordHash = passwordHash($_GET['username']);
+$userPasswordHash = passwordHash($_GET['username']);
 $creatorClientHash = hash('sha256', serialize(getallheaders()));
 
 insert_user($mysqli, $_GET['username'], $_GET['tid'], $userPasswordHash, $mosquitto_topics, $creatorClientHash);
