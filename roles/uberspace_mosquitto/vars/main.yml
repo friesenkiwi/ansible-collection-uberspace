@@ -25,5 +25,8 @@ mosquitto_otrecorder_install_dir: "{{ mosquitto_main_dir }}/src/ot-recorder"
 mosquitto_otfrontend_repo_url: https://github.com/owntracks/frontend.git
 mosquitto_otfrontend_install_dir: "{{ mosquitto_main_dir }}/src/frontend"
 
+mosquitto_webconfigurator_repo_url: https://github.com/owntracks/web-configurator.git
+mosquitto_webconfigurator_install_dir: "{{ uberspace_webstore }}/{{ mosquitto_host }}/configurator"
+
 mosquitto_caddy_repo_url: https://github.com/caddyserver/caddy.git
 

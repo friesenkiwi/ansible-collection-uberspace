@@ -37,8 +37,11 @@
     src: "frontend-config.js.j2"
     dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_otfrontend_webpath }}/config/config.js"
 
-
-
+- name: Clone the Web Configurator from GitHub
+  tags: frontend
+  git:
+    repo: "{{ mosquitto_webconfigurator_repo_url }}"
+    dest: "{{ mosquitto_webconfigurator_install_dir }}"
 
 
 # - name: Link frontend into webroot
