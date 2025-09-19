@@ -13,10 +13,10 @@
     cmd: "yarn install && yarn build"
     creates: "{{ mosquitto_otfrontend_install_dir }}/dist"
 
-- name: Add otfrontend as web backend to the uberspace requested ones
-  tags: frontend
-  set_fact:
-    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + mosquitto_otrecorder_webbackends }}"
+#- name: Add otfrontend as web backend to the uberspace requested ones
+#  tags: frontend
+#  set_fact:
+#    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + mosquitto_otrecorder_webbackends }}"
 
 - name: Create frontend config directory
   tags: frontend

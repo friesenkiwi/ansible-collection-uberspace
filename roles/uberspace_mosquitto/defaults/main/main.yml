@@ -11,7 +11,15 @@ mosquitto_authplugin_classic_superusers: admin
 mosquitto_otrecorder_qos: 2
 mosquitto_otrecorder_user: otrecorder
 mosquitto_otrecorder_pw: "{{ lookup('password','credentials/mosquitto/' + mosquitto_otrecorder_user) }}"
+mosquitto_caddy_project_name: caddy
+mosquitto_caddy_main_dir: "{{ mosquitto_main_dir }}/{{ mosquitto_caddy_project_name }}"
+mosquitto_caddy_configfile: "{{ mosquitto_caddy_main_dir }}/Caddyfile"
+mosquitto_otfrontend_admins:
+#- user: Username
+#  password: Password
+
 mosquitto_topic_wildcard_multilevel: "owntracks/#"
+mosquitto_topic_wildcard_multilevel_userspecific: "owntracks/%u/#"
 mosquitto_topic_wildcard_explicit: "owntracks/+/+"
 mosquitto_topic_wildcard_pub: "owntracks/%u/%d"
 mosquitto_topic_otrecorder_sub: "{{ mosquitto_topic_wildcard_multilevel }}"
@@ -48,6 +56,7 @@ mosquitto_build_subdir: "build"
 # only internal, available via uberspace webbackends
 mosquitto_port_otrecorder: 8083
 mosquitto_port_mosquitto_websockets: 9001
+mosquitto_port_caddy: 2080
 
 mosquitto_ports:
 - "{{ mosquitto_port_mosquitto }}"
@@ -55,20 +64,20 @@ mosquitto_ports:
 
 mosquitto_otrecorder_webbackends:
 - path: "{{ mosquitto_host }}/api"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/ws"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/utils"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/static"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/view"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/map"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/table"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/last"
-  port: "{{ mosquitto_port_otrecorder }}"
+  port: "{{ mosquitto_port_caddy }}"
 - path: "{{ mosquitto_host }}/mqtt"
   port: "{{ mosquitto_port_mosquitto_websockets }}"

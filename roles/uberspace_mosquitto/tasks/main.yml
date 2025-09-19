@@ -13,3 +13,6 @@
 - name: Setup geogame specifics
   tags: geogame
   include_tasks: geogame.yml
+- name: Setup caddy as reverse proxy
+  tags: caddy
+  include_tasks: caddy.yml

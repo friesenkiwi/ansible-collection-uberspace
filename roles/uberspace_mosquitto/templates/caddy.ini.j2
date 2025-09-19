@@ -1,0 +1,6 @@
+[program:caddy]
+command={{ mosquitto_caddy_main_dir }}/caddy/cmd/caddy/caddy run --config {{ mosquitto_caddy_configfile }}
+autostart=yes
+autorestart=yes
+# `startsecs` is set by Uberspace monitoring team, to prevent a broken service from looping
+startsecs=30

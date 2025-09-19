@@ -1,0 +1,46 @@
+- name: Clone the caddy source code from GitHub
+  tags: caddy
+  git:
+    repo: "{{ mosquitto_caddy_repo_url }}"
+    dest: "{{ mosquitto_caddy_main_dir }}/caddy"
+
+- name: Build caddy
+  tags: caddy
+  shell:
+    chdir: "{{ mosquitto_caddy_main_dir }}/caddy/cmd/caddy/"
+    cmd: "go build"
+    creates: "{{ mosquitto_caddy_main_dir }}/caddy/cmd/caddy/caddy"
+  register: caddy_build_result
+- name: Show caddy build result
+  tags: caddy
+  debug:
+    msg: "{{ caddy_build_result }}"
+
+- name: Deploy Caddyfile (will always be changed, since admin user's passwords will be rehashed)
+  tags: config,caddy
+  template:
+    src: Caddyfile.j2
+    dest: "{{ mosquitto_caddy_configfile }}"
+  notify: Restart caddy
+
+- name: Deploy caddy supervisord service description ini
+  template:
+    src: caddy.ini.j2
+    dest: "{{ uberspace_services_dir }}/caddy.ini"
+  notify: Restart caddy
+- name: Activate supervisord daemon
+  tags: supervisor
+  supervisorctl:
+    name: caddy
+    state: present
+- name: Start supervisord daemon
+  tags: supervisor
+  supervisorctl:
+    name: caddy
+    state: started
+
+- name: Add otfrontend as web backend to the uberspace requested ones
+  tags: frontend
+  set_fact:
+    uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + mosquitto_otrecorder_webbackends }}"
+

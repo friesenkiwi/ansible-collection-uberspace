@@ -1,0 +1,10 @@
+:{{ mosquitto_port_caddy }} {
+{% if mosquitto_otfrontend_admins is defined and mosquitto_otfrontend_admins %}
+	basic_auth {
+{% for admin in mosquitto_otfrontend_admins %}
+		{{ admin.user }} {{ admin.password | password_hash(hashtype='bcrypt') }}
+{% endfor %}
+	}
+{% endif %}
+	reverse_proxy :{{ mosquitto_port_otrecorder }}
+}

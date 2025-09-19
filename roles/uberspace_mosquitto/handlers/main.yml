@@ -9,3 +9,9 @@
   supervisorctl:
     name: ot-recorder
     state: restarted
+
+- name: Restart caddy
+  tags: supervisor
+  supervisorctl:
+    name: caddy
+    state: restarted
