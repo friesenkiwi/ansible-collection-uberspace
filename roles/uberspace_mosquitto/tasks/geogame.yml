@@ -13,7 +13,7 @@
   - createuser.php
   - styles.css
   template:
-    src: "{{ item }}.j2"
+    src: "geogame/{{ item }}.j2"
     dest: "{{ uberspace_webstore }}/{{ mosquitto_host }}{{ mosquitto_geogame_webpath }}/{{ item }}"
 
 - name: Deploy geogame static files

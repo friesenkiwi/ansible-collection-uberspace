@@ -115,12 +115,39 @@
           </ul>
         </li>
         <li>
-          App öffnen und kontrollieren, ob funktioniert
-        </li>
-        <li>
-          <a href="https://{{ mosquitto_host }}/frontend">
-            Übersichtskarte anschauen
-          </a>
+          Kontrollieren, ob es funktioniert: 
+          <ul>
+            <li>
+              App öffnen: Es sollten die Positionen der bisher angemeldeten Personen angezeigt werden.
+            </li>
+            <li>
+              <a href="https://{{ mosquitto_host }}/frontend">
+                Interaktive Karte anschauen
+              </a>
+            </li>
+            <li>
+              <a href="https://{{ mosquitto_host }}/last">
+                Interaktive Karte anschauen - Nur letzte Positionen
+              </a>
+            </li>
+            <li>
+              <a href="https://{{ mosquitto_host }}/table">
+                Tabelle
+              </a>
+            </li>
+            <li>
+              <a href="https://{{ mosquitto_host }}/map/index.html?format=geojson&user=user&device=default">
+                Karte
+              </a>
+            </li>
+            <!-- only, if ot-recorder "views" feature is in use https://github.com/owntracks/recorder/tree/master?tab=readme-ov-file#views
+            <li>
+              <a href="https://{{ mosquitto_host }}/view">
+                View
+              </a>
+            </li>
+             -->
+          </ul>
         </li>
         <li>
           Nach der Veranstaltung bitte die App löschen oder zumindest zurücksetzen: Ansonsten wird der eigene Standort die ganze Zeit über weiterhin geteilt und zugänglich sein.
