@@ -1,4 +1,5 @@
 :{{ mosquitto_port_caddy }} {
+	encode
 {% if mosquitto_otfrontend_admins is defined and mosquitto_otfrontend_admins %}
 	basic_auth {
 {% for admin in mosquitto_otfrontend_admins %}
