@@ -7,13 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css" type="text/css">
     <title>
-      {{ geogame_eventname }}
+      {{ cur_geogame.event.name }}
     </title>
   </head>
   <body>
-    <img src="{{ geogame_eventlogo }}" align="right">
+    <img src="{{ cur_geogame.event.logo }}" align="right">
     <h1>
-      {{ geogame_eventname }}
+      {{ cur_geogame.event.name }}
     </h1>
     <form name="selectform" id="selectform" action="customizeConfig.php">
       <ol>
@@ -55,7 +55,7 @@
             <optgroup label="-- Bitte wählen --">
             <option value="">-- Bitte wählen --</option>
             </optgroup>
-            {% for supergroups in geogame_groups_mobile %}
+            {% for supergroups in cur_geogame.groups_mobile %}
               <optgroup label="{{ supergroups.name }}">
                 {% for mobile_groups in supergroups.groups %}
                   <option value="{{ mobile_groups.tid }}">{{ mobile_groups.name }}</option>
@@ -68,7 +68,7 @@
             <optgroup label="-- Bitte wählen --">
             <option value="">-- Bitte wählen --</option>
             </optgroup>
-            {% for supergroups in geogame_groups_stationary %}
+            {% for supergroups in cur_geogame.groups_stationary %}
               <optgroup label="{{ supergroups.name }}">
                 {% for stationary_groups in supergroups.groups %}
                   <option value="{{ stationary_groups.tid }}">{{ stationary_groups.name }}</option>
@@ -81,7 +81,7 @@
             <optgroup label="-- Bitte wählen --">
             <option value="">-- Bitte wählen --</option>
             </optgroup>
-            {% for supergroups in geogame_groups_special %}
+            {% for supergroups in cur_geogame.groups_special %}
               <optgroup label="{{ supergroups.name }}">
                 {% for special_groups in supergroups.groups %}
                   <option value="{{ special_groups.tid }}">{{ special_groups.name }}</option>

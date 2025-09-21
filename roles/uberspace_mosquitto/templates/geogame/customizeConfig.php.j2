@@ -7,7 +7,7 @@ if($debug){
   echo '<pre>';
 }
 
-$filename_otrc_output = "owntracks-config-{{ geogame_eventhandle }}.otrc";
+$filename_otrc_output = "owntracks-config-{{ cur_geogame.event.handle }}.otrc";
 
 if(!empty($_GET['tid-group']) && empty($_GET['tid-station'])){
   $tid=$_GET['tid-group'];

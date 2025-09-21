@@ -1,22 +1,25 @@
-geogame_eventname: Event
-geogame_eventlogo: logo.png
-geogame_eventhandle: event
-geogame_groups_mobile:
-- name: Supergroup 1
-  groups:
-  - tid: g1
-    name: Group 1
-- name: Supergroup 2
-  groups:
-  - tid: g2
-    name: Group 2
-geogame_groups_stationary: 
-- name: Stationen
-  groups:
-  - tid: s1
-    name: Station 1
-geogame_groups_special:
-- name: Sonderrollen
-  groups:
-  - tid: XX
-    name: Game-Master
+geogames:
+- event:
+    name: Event
+    logo: logo.png
+    handle: event
+    webpath: "event"
+  groups_mobile:
+  - name: Supergroup 1
+    groups:
+    - tid: g1
+      name: Group 1
+  - name: Supergroup 2
+    groups:
+    - tid: g2
+      name: Group 2
+  groups_stationary:
+  - name: Stationen
+    groups:
+    - tid: s1
+      name: Station 1
+  groups_special:
+  - name: Sonderrollen
+    groups:
+    - tid: XX
+      name: Game-Master

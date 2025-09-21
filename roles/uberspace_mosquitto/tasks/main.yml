@@ -10,8 +10,12 @@
 - name: Setup OwnTracks specifics - frontend
   tags: frontend
   include_tasks: frontend.yml
-- name: Setup geogame specifics
+- name: Setup geogame specifics as loop
   tags: geogame
+  loop: "{{ geogames }}"
+  loop_control:
+    loop_var: cur_geogame
+    label: "{{ cur_geogame.event.handle }}"
   include_tasks: geogame.yml
 - name: Setup caddy as reverse proxy
   tags: caddy
