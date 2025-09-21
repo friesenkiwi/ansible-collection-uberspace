@@ -9,12 +9,18 @@
     name: mosquitto
     state: present
 
+
+- name: Create config directory
+  tags: config
+  file:
+    state: directory
+    path: "{{ mosquitto_configpath }}"
 - name: Link default config
   tags: config
   file:
     state: link
     src: /etc/mosquitto/mosquitto.conf
-    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/10_default.conf"
+    dest: "{{ mosquitto_configpath }}10_default.conf"
   notify: Restart mosquitto
 - name: Deploy main config file
   tags: config
@@ -26,20 +32,14 @@
   tags: config
   template:
     src: 20_custom.conf.j2
-    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/20_custom.conf"
+    dest: "{{ mosquitto_configpath }}20_custom.conf"
   notify: Restart mosquitto
 - name: Deploy go-auth config file
   tags: authplugin,config
   template:
     src: 30_go-auth.conf.j2
-    dest: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/30_go-auth.conf"
+    dest: "{{ mosquitto_configpath }}30_go-auth.conf"
   notify: Restart mosquitto
-
-- name: Start supervisord daemon
-  tags: supervisor
-  supervisorctl:
-    name: mosquitto
-    state: started
 
 - name: Add mosquitto ports to the uberspace requested ones
   tags: ports

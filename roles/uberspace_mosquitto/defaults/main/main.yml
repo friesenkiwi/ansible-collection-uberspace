@@ -44,7 +44,14 @@ mosquitto_otrecorder_compileconfig_adjustments:
   value: '{{ mosquitto_main_dir }}/ot-recorder/timezone16.bin'
 mosquitto_otfrontend_webpath: "/frontend"
 mosquitto_geogame_webpath: "/geogame"
+mosquitto_configpath: "{{ uberspace_spacedir }}/etc/mosquitto/conf.d/"
 
+inwx_records_a:
+- "{{ uberspace_servicedomain }}"
+inwx_records_srv:
+  secure-mqtt:
+    port: "{{ mosquitto_port_mosquitto }}"
+    domains: ["{{ uberspace_servicedomain }}"]
 
 mosquitto_mysql_host: "localhost"
 mosquitto_mysql_user: "{{ uberspace_loginname }}"

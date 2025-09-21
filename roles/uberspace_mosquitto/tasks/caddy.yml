@@ -40,7 +40,7 @@
     state: started
 
 - name: Add otfrontend as web backend to the uberspace requested ones
-  tags: caddy, frontend
+  tags: caddy, frontend, backends
   set_fact:
     uberspace_webbackends_goal: "{{ uberspace_webbackends_goal | default([]) + mosquitto_otrecorder_webbackends }}"
 

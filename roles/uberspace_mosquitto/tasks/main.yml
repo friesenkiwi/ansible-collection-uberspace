@@ -2,8 +2,10 @@
   tags: build
   include_tasks: build.yml
 - name: Setup and configure mosquitto
+  tags: config
   include_tasks: mosquitto.yml
 - name: Setup and configure auth plugin
+  tags: wip
   include_tasks: auth.yml
 - name: Setup OwnTracks specifics - ot recorder
   include_tasks: otrecorder.yml
@@ -18,5 +20,5 @@
     label: "{{ cur_geogame.event.handle }}"
   include_tasks: geogame.yml
 - name: Setup caddy as reverse proxy
-  tags: caddy
+  tags: caddy, backends
   include_tasks: caddy.yml
