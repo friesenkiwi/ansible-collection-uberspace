@@ -18,10 +18,11 @@ mosquitto_otfrontend_admins:
 #- user: Username
 #  password: Password
 
-mosquitto_topic_wildcard_multilevel: "owntracks/#"
-mosquitto_topic_wildcard_multilevel_userspecific: "owntracks/%u/#"
-mosquitto_topic_wildcard_explicit: "owntracks/+/+"
-mosquitto_topic_wildcard_pub: "owntracks/%u/%d"
+mosquitto_topic_prefix: owntracks
+mosquitto_topic_wildcard_multilevel: "{{ mosquitto_topic_prefix }}/#"
+mosquitto_topic_wildcard_multilevel_userspecific: "{{ mosquitto_topic_prefix }}/%u/#"
+mosquitto_topic_wildcard_explicit: "{{ mosquitto_topic_prefix }}/+/+"
+mosquitto_topic_wildcard_pub: "{{ mosquitto_topic_prefix }}/%u/%d"
 mosquitto_topic_otrecorder_sub: "{{ mosquitto_topic_wildcard_multilevel }}"
 mosquitto_otrecorder_storagedir: "{{ uberspace_spacedir }}/lib/ot-recorder"
 mosquitto_otrecorder_viewsdir: "{{ uberspace_spacedir }}/etc/ot-recorder/views"

@@ -21,8 +21,8 @@ class MariaDBConnection{
 
 
 
-function getMosquittoTopics(){
-  $mosquitto_topics = [['topic' => '{{ mosquitto_topic_wildcard_multilevel }}', 'permission' => MOSQUITTO_AUTH_SUBSCRIBE],['topic' => '{{ mosquitto_topic_wildcard_multilevel_userspecific }}', 'permission' => MOSQUITTO_AUTH_READ | MOSQUITTO_AUTH_WRITE]];
+function getMosquittoTopics($faction='+'){
+  $mosquitto_topics = [['topic' => '{{ mosquitto_topic_wildcard_multilevel }}', 'permission' => MOSQUITTO_AUTH_SUBSCRIBE],['topic' => '{{ mosquitto_topic_prefix }}/'.$faction.'/%u/#', 'permission' => MOSQUITTO_AUTH_READ | MOSQUITTO_AUTH_WRITE]];
   return $mosquitto_topics;
 }
 
@@ -59,7 +59,7 @@ function generatePassword($length, $keyspace = '-!§()=?{[]}0123456789abcdefghij
 
 
 
-function insert_user($username, $tid, #[\SensitiveParameter] string $password){
+function insert_user($username, $tid, $faction = '+', #[\SensitiveParameter] string $password){
     $userPasswordHash = passwordHash($password);
 
     $mysqli = MariaDBConnection::getMysqli();
@@ -87,7 +87,7 @@ function insert_user($username, $tid, #[\SensitiveParameter] string $password){
           }
         } catch(mysqli_sql_exception $exception){
           if($exception->getSqlState() == "23000"){ // ER_DUP_KEY Duplicate entry '' for key 'users_unique'
-            if(!update_user($username, $tid, $password, $creatorClientHash)){
+            if(!update_user($username, $tid, $faction, $password, $creatorClientHash)){
               print "Username $username already in use. Please choose a different one.";              
             }
           } else {
@@ -95,7 +95,7 @@ function insert_user($username, $tid, #[\SensitiveParameter] string $password){
           }
         }
 
-        $mosquitto_topics = getMosquittoTopics();
+        $mosquitto_topics = getMosquittoTopics($faction);
 
         foreach( $mosquitto_topics as $CUR_topic){
 
@@ -132,7 +132,7 @@ function insert_user($username, $tid, #[\SensitiveParameter] string $password){
 }
 
 
-function update_user($username, $tid, #[\SensitiveParameter] string $password){
+function update_user($username, $tid, $faction = '+', #[\SensitiveParameter] string $password){
     $userPasswordHash = passwordHash($password);
 
         $mysqli = MariaDBConnection::getMysqli();

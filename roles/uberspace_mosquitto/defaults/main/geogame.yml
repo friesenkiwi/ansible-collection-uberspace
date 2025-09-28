@@ -5,21 +5,25 @@ geogames:
     handle: event
     webpath: "event"
   groups_mobile:
-  - name: Supergroup 1
+  - name: Faction 1
+    faction: factionone
     groups:
     - tid: g1
       name: Group 1
-  - name: Supergroup 2
+  - name: Faction 2
+    faction: factiontwo
     groups:
     - tid: g2
       name: Group 2
   groups_stationary:
   - name: Stationen
+    faction: factionstations
     groups:
     - tid: s1
       name: Station 1
   groups_special:
   - name: Sonderrollen
+    faction: specialfaction
     groups:
     - tid: XX
       name: Game-Master

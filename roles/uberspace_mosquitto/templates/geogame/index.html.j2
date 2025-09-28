@@ -58,7 +58,7 @@
             {% for supergroups in cur_geogame.groups_mobile %}
               <optgroup label="{{ supergroups.name }}">
                 {% for mobile_groups in supergroups.groups %}
-                  <option value="{{ mobile_groups.tid }}">{{ mobile_groups.name }}</option>
+                  <option value="{{ supergroups.faction }}-{{ mobile_groups.tid }}">{{ mobile_groups.name }}</option>
                 {% endfor %}
               </optgroup>
             {% endfor %}
@@ -71,7 +71,7 @@
             {% for supergroups in cur_geogame.groups_stationary %}
               <optgroup label="{{ supergroups.name }}">
                 {% for stationary_groups in supergroups.groups %}
-                  <option value="{{ stationary_groups.tid }}">{{ stationary_groups.name }}</option>
+                  <option value="{{ supergroups.faction }}-{{ stationary_groups.tid }}">{{ stationary_groups.name }}</option>
                 {% endfor %}
               </optgroup>
             {% endfor %}
@@ -84,7 +84,7 @@
             {% for supergroups in cur_geogame.groups_special %}
               <optgroup label="{{ supergroups.name }}">
                 {% for special_groups in supergroups.groups %}
-                  <option value="{{ special_groups.tid }}">{{ special_groups.name }}</option>
+                  <option value="{{ supergroups.faction }}-{{ special_groups.tid }}">{{ special_groups.name }}</option>
                 {% endfor %}
               </optgroup>
             {% endfor %}

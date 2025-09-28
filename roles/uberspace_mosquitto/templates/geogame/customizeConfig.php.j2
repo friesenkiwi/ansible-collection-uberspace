@@ -9,17 +9,34 @@ if($debug){
 
 $filename_otrc_output = "owntracks-config-{{ cur_geogame.event.handle }}.otrc";
 
+$special=false;
+
 if(!empty($_GET['tid-group']) && empty($_GET['tid-station'])){
-  $tid=$_GET['tid-group'];
-}
-if(empty($_GET['tid-group']) && !empty($_GET['tid-station'])){
-  $tid=$_GET['tid-station'];
-}
-if(!empty($_GET['tid-special'])){
-  $tid=$_GET['tid-special'];
+  $factionTid=$_GET['tid-group'];
+} elseif(empty($_GET['tid-group']) && !empty($_GET['tid-station'])){
+  $factionTid=$_GET['tid-station'];
+} elseif(!empty($_GET['tid-special'])){
+  $factionTid=$_GET['tid-special'];
+  $special=true;
+} else {
+  $factionTid="XX-XX";
 }
 
-$password=createuser($_GET['username'], $tid);
+$factionTid_exploded=explode("-",$factionTid);
+$faction = $factionTid_exploded[0];
+
+$tid = $factionTid_exploded[1];
+
+$db_topic_faction=$faction;
+
+if($special){
+  $db_topic_faction = '+';
+}
+
+$password=createuser($_GET['username'], $tid, $db_topic_faction);
+
+$topic_prefix = "{{ mosquitto_topic_prefix }}";
+
 
 // Read JSON file
 $otrcDefaultContent = file_get_contents('./config-default.otrc');
@@ -31,6 +48,11 @@ $otrc['tid']=$tid;
 $otrc['deviceId']=$_GET['deviceId'];
 $otrc['username']=$_GET['username'];
 $otrc['password']=$password;
+$otrc['pubTopicBase']=$topic_prefix."/".$faction."/"."%u";
+$otrc['subTopic']=$topic_prefix."/".$db_topic_faction."/"."#";
+
+
+
 
 $otrcJSON = json_encode($otrc);
 
@@ -47,12 +69,12 @@ if($debug) {
   echo($otrcJSON);
 }
 
-function createuser($username, $tid){
+function createuser($username, $tid, $faction='+'){
   global $remote;
   if($remote){
     createuser_remote($username, $tid, $username);
   } else {
-    return createuser_local($username, $tid, "default");
+    return createuser_local($username, $tid, $faction, "default");
   }
 }
 
@@ -73,11 +95,11 @@ function createuser_remote($username, $tid, $deviceId){
   curl_close($curlSession);
 }
 
-function createuser_local($username, $tid, $deviceId){
+function createuser_local($username, $tid, $faction='+', $deviceId){
   include("createuser.php");
 
   $password=generatePassword(15);
-  insert_user($username, $tid, $password);
+  insert_user($username, $tid, $faction, $password);
   
   return $password;
 }
